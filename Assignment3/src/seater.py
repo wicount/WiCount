@@ -17,6 +17,9 @@ class Seater:
     # https://docs.python.org/2/library/re.html#re.MatchObject.group
     pat = re.compile("(.*) (\d+),(\d+) through (\d+),(\d+)")
     def __init__(self, size=1000):
+        # set up two dimensional array
+        self.auditorium = [[0 for x in range(size)] for x in range(size)]
+        #print("len(self.auditorium)", len(self.auditorium)) results in 1000
         # need to do some initialisation of data structures here...
         return
     
@@ -27,7 +30,7 @@ class Seater:
     
     def seat(self, line):
         cmd, x1, y1, x2, y2 = self.get_cmd(line)
-        print cmd, x1, y1, x2, y2
+        print (cmd, x1, y1, x2, y2)
         if cmd == 'toggle':
             self.toggle(x1, y1, x2, y2)
         elif cmd == "occupy":
@@ -40,20 +43,48 @@ class Seater:
         return
     
     def occupy(self, x1, y1, x2, y2):
-        #...
+        #-----------------------------------------------------#
+        #     set seats to occupied by setting them to 1      #
+        #-----------------------------------------------------#
+        for row in range(x1,x2 + 1):
+            for column in range(y1, y2 +1):
+                self.auditorium[row][column] = 1
         return
     
     def empty(self, x1, y1, x2, y2):
-        #...
+        #-----------------------------------------------------#
+        #      set seats to empty by setting them to 0        #
+        #-----------------------------------------------------#
+        for row in range(x1,x2 + 1):
+            for column in range(y1, y2 +1):
+                self.auditorium[row][column] = 0
         return 
     
     def toggle(self, x1, y1, x2, y2):
-        # ...
+        #-----------------------------------------------------#
+        #     set seats to occupied if empty and              #
+        #                 empty in occupied                   #
+        #-----------------------------------------------------#
+        for row in range(x1,x2 + 1):
+            #print("in here")
+            for column in range(y1, y2 +1):
+                if self.auditorium[row][column] == 1:
+                    self.auditorium[row][column] == 0
+                else:
+                    self.auditorium[row][column] = 1
         return
     
     def number_occupied(self):
-        # ...
-        return
+        #-----------------------------------------------------#
+        #          count how many occupied                    #
+        #-----------------------------------------------------#
+        counter = 0
+        for row in range(0,len(self.auditorium)):
+            for column in range(0,len(self.auditorium)):
+                counter += self.auditorium[row][column]
+        
+        print("number_occupied", self)
+        return counter
     
 if __name__ == '__main__':
     pass

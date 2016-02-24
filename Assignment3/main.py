@@ -19,13 +19,16 @@ def main(filename=None):
     with open(filename, 'r') as f:
         for line in f:
             seater.seat(line.strip())
-            
-    print 'number of occupied seats', seater.number_occupied()
+    print ('number of occupied seats', seater.number_occupied())
     return
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-i', dest="filename", default='data/input_assign3.txt')
+    #parser.add_option('-i', dest="filename", default='data/input_test1.txt') #answer should be 100
+    #parser.add_option('-i', dest="filename", default='data/input_test2.txt') #answer should be 200
+    #parser.add_option('-i', dest="filename", default='data/input_test3.txt') #answer should be 999,900
+    #parser.add_option('-i', dest="filename", default='data/input_lines.txt')
     options, remainder = parser.parse_args()
     
     sys.exit(main(filename=options.filename))
