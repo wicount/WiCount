@@ -68,8 +68,9 @@ class Seater:
         for row in range(x1,x2 + 1):
             #print("in here")
             for column in range(y1, y2 +1):
+                #print("Velda here if self.auditorium[row][column]", self.auditorium[row][column])
                 if self.auditorium[row][column] == 1:
-                    self.auditorium[row][column] == 0
+                    self.auditorium[row][column] = 0
                 else:
                     self.auditorium[row][column] = 1
         return
