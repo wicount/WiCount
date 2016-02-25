@@ -26,10 +26,10 @@ if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-i', dest="filename", default='data/input_assign3.txt')
     #Velda's tests
-    #parser.add_option('-i', dest="filename", default='data/input_test1.txt') #answer should be 300
-    #parser.add_option('-i', dest="filename", default='data/input_test2.txt') #answer should be 0
-    #parser.add_option('-i', dest="filename", default='data/input_test3.txt') #answer should be 999,900
-    #parser.add_option('-i', dest="filename", default='data/input_lines.txt')
+    #parser.add_option('-i', dest="filename", default='tests/input_test1.txt') #answer should be 300
+    #parser.add_option('-i', dest="filename", default='tests/input_test2.txt') #answer should be 0
+    #parser.add_option('-i', dest="filename", default='tests/input_test3.txt') #answer should be 999,900
+    #parser.add_option('-i', dest="filename", default='tests/input_lines.txt')
     options, remainder = parser.parse_args()
     
     sys.exit(main(filename=options.filename))
