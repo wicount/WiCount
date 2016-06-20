@@ -1,0 +1,30 @@
+Client Count CSCI B-04
+Generated: 2015-Nov-17, 11:30:04 GMT+00:00
+Report By: Floor Area
+Connection Protocol/SSID: All Clients/All SSIDs
+Reporting Period: Last 1 hour
+ 
+Total Client Count
+Total Count,Event Time,Associated Client Count,Authenticated Client Count
+total,Tue Nov 17 10:34:48 GMT+00:00 2015,105,104
+total,Tue Nov 17 10:40:13 GMT+00:00 2015,104,104
+total,Tue Nov 17 10:45:17 GMT+00:00 2015,37,37
+total,Tue Nov 17 10:50:32 GMT+00:00 2015,5,5
+total,Tue Nov 17 10:56:15 GMT+00:00 2015,8,8
+total,Tue Nov 17 11:01:59 GMT+00:00 2015,18,18
+total,Tue Nov 17 11:06:37 GMT+00:00 2015,32,32
+total,Tue Nov 17 11:13:19 GMT+00:00 2015,39,39
+total,Tue Nov 17 11:21:11 GMT+00:00 2015,42,42
+total,Tue Nov 17 11:26:07 GMT+00:00 2015,46,46
+Client Count
+Key,Event Time,Associated Client Count,Authenticated Client Count
+Belfield > Computer Science > B-004,Tue Nov 17 10:34:48 GMT+00:00 2015,105,104
+Belfield > Computer Science > B-004,Tue Nov 17 10:40:13 GMT+00:00 2015,104,104
+Belfield > Computer Science > B-004,Tue Nov 17 10:45:17 GMT+00:00 2015,37,37
+Belfield > Computer Science > B-004,Tue Nov 17 10:50:32 GMT+00:00 2015,5,5
+Belfield > Computer Science > B-004,Tue Nov 17 10:56:15 GMT+00:00 2015,8,8
+Belfield > Computer Science > B-004,Tue Nov 17 11:01:59 GMT+00:00 2015,18,18
+Belfield > Computer Science > B-004,Tue Nov 17 11:06:37 GMT+00:00 2015,32,32
+Belfield > Computer Science > B-004,Tue Nov 17 11:13:19 GMT+00:00 2015,39,39
+Belfield > Computer Science > B-004,Tue Nov 17 11:21:11 GMT+00:00 2015,42,42
+Belfield > Computer Science > B-004,Tue Nov 17 11:26:07 GMT+00:00 2015,46,46
