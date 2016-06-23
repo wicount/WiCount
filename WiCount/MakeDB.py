@@ -9,12 +9,13 @@ def ExtractDataCSV(fileName):
         if line[:9] == "Generated":
             date = line.split()[1]
             date = date[:-1]
-            print (date)
-        elif line[:8] == "Belfield" or line[:7] == "smurfit":
+            #print (date)
+        elif line[:8] == "Belfield" or line[:7] == "Smurfit":
             #Hard coding " > " I don't think this is ideal.
             here = line.replace(' > ',',').split(",")
             
             day = here[3].partition(' ')[0]
+            #We only want relevant data so get rid of data outside of this.
             if day == "Sat" or day == "Sun":
                 return ""   #skip weekends
             time = here[3].split(' ')[3]
@@ -51,3 +52,4 @@ for file in glob.glob("*.csv"):
         print("done: ", sqlvalues)  
         con.commit()
 con.close() 
+print("finished")
