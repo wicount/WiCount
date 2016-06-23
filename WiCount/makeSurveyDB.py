@@ -3,14 +3,55 @@ from sqlite3 import OperationalError
 import glob, os
 import numpy as np
 import pandas as pd
-import datetime
+from datetime import datetime
 from dateutil.parser import parse
 import math
 from _nsis import err
 
+def UpdateCollegeTable(occupancy_details):
+    #-------------------------------------------------------
+    #set up hard coding this will need to be passed in.
+    #-------------------------------------------------------
+    
+    campus = "Belfield"
+    building = "Computer Science"
+    #print(occupancy_details)
+    for x in range (0, len(occupancy_details[0])):
+        #room_ID = ""
+        try:
+            sql_String = "SELECT room_id FROM college WHERE campus = '" + campus + \
+                            "' AND building = '" + building + "' AND room = '" + occupancy_details[0][x] + "';"
+            #print ("sql_String: ", sql_String)
+            c.execute(sql_String)
+            room_ID = c.fetchone()
+            #print("room_ID: ", room_ID)
+            if room_ID:
+                sql_String = "UPDATE college SET occupancy=" + str(occupancy_details[1][x]) + \
+                             " WHERE room_id=" + str(room_ID[0]) + ";" 
+                c.execute(sql_String)
+                room_ids.append(room_ID[0])
+            else:
+                room = [campus,building,occupancy_details[0][x],occupancy_details[1][x]]
+                c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
+                c.execute(sql_String)
+                room_ID = c.fetchone()[0]
+                room_ids.append(room_ID)
+        except OperationalError:
+            print ("Command skipped: ", sql_String)
+        con.commit()
+    #print (room_ids)
+    return room_ids
+
+def UpdateSurveyTable(all_details):
+    print(all_details)
+    try:
+        c.executemany('INSERT INTO survey VALUES (?,?,?,?)', all_details)
+    except OperationalError:
+        print ("Command skipped: ", all_details)
+    con.commit()
+    
 
 def ConvertToCSV(file):
-    import pandas as pd
     data_xls = pd.read_excel(file, 'JustData', index_col=None)
     data_xls.to_csv('survey.csv', encoding='utf-8')
     
@@ -34,13 +75,13 @@ def is_date(string):
     
 def GetTime(data):
     # format the time for the database so it matches with other time formats
-    data = data.split()
-    #print ("data: ", data)
+    data = data.split("-")
     time = data[0]
+    #print ("data: ", type(time))
     if len(time) == 4:
-        time = str("0") + str(time) + str(":00")
+        time = str("0") + str(time[:1]) + ":" + str(time[2:]) + str(":00")
     else:
-        time = str(time) + ":00"
+        time = str(time[:2]) + ":" + str(time[3:]) + ":00"
     #print ("Time: ", time, " len: ", len(time))
     return time
 
@@ -50,7 +91,7 @@ c=con.cursor()
 
 # if the table doesn't exist create it.
 try:
-    c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATE  NOT NULL, \
+    c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
                 day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date));")
     c.execute ("create table if not exists college(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
                 building VARCHAR(16), room VARCHAR(5), occupancy INTEGER);")
@@ -58,12 +99,7 @@ except OperationalError:
     print("couldn't create the table")
 con.commit()
      
-#-------------------------------------------------------
-#set up hard coding this will need to be passed in.
-#-------------------------------------------------------
 
-campus = "Belfield"
-building = "Computer Science"
 
 #-------------------------------------------------------
 #set up variables.
@@ -72,9 +108,13 @@ dayList = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 timeList = ["9.00-10.00", "10.00-11.00", "11.00-12.00", "12.00-13.00", \
             "13.00-14.00", "14.00-15.00", "15.00-16.00", "16.00-17.00"]
 full_details = []
-occupancy_details = []
 room_ids = []
+occupancy_details = []
+full_list = []
 day = "Mon"    #initialise variable
+DateTime = ""
+date = ""
+
 
 # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
 os.chdir("Survey")
@@ -111,45 +151,28 @@ for file in glob.glob("*.xlsx"):
                     details.append(data[x])
                     #print("velda: ", details)
                 occupancy_details.append(details)
+                #print(occupancy_details)
+                room_ids = UpdateCollegeTable(occupancy_details)
         elif data[0] in timeList:
             details = []
+            date_str = date + " " + GetTime(data[0])
+            #date_str = datetime.strptime( date_str, '%b %d %Y %I:%M%p')
             for x in range(2, len(data),1):
+                data_list = [room_ids[x-2], date_str, day, data[x]]
                 details.append(data[x])
             #print("velda: ", details)
             full_details.append(details)
+            full_list.append(data_list)
         elif "OCCU" in data[0]:
             continue
         else:
             date = parse(data[0])
             #print(date)
-            date = date.strftime('%Y-%b-%d')
+            date = date.strftime('%Y-%m-%d')
             #print(date)
             
         #end if
-    room_details = []
-    for x in range (0, len(occupancy_details[0])):
-        room_details.append([campus,building,occupancy_details[0][x],occupancy_details[1][x]])
-    #print(room_details)
-    for room in room_details:
-        try:
-            sql_String = "SELECT room_id FROM college WHERE campus = '" + room[0] + \
-                            "' AND building = '" + room[1] + "' AND room = '" + room[2] + "';"
-            #print ("sql_String: ", sql_String)
-            c.execute(sql_String)
-            room_ID = c.fetchone()
-            if room_ID:
-                sql_String = "UPDATE college SET occupancy=" + str(room[3]) + \
-                             " WHERE room_id=" + str(room_ID[0]) + ";" 
-                c.execute(sql_String)
-                room_ids.append(room_ID[0])
-            else:
-                c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
-                c.execute(sql_String)
-                room_ID = c.fetchone()[0]
-                room_ids.append(room_ID)
-        except OperationalError:
-            print ("Command skipped: ", sql_String)
-        con.commit()
+    UpdateSurveyTable(full_list)
     
 
 con.close()
@@ -161,9 +184,11 @@ print("full_details: ")
 for x in range(0, len(full_details)):
     print(full_details[x])
 print("")
-print ("day: ", day)
-print("campus: ", campus)
-print("building: ", building)    
+print("full_list: ")
+for x in range(0, len(full_list)):
+    print(full_list[x])
+print("")
+print ("day: ", day)   
 
 
 
