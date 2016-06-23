@@ -44,24 +44,19 @@ def GetTime(data):
     #print ("Time: ", time, " len: ", len(time))
     return time
 
-def GetDay(i):
-    return {
-        1: "Mon",
-        3: "Tue",
-        5: "Wed",
-        7: "Thu",
-        9: "Fri",
-    }.get(i, 1)
 
-# con = lite.connect('wicount.sqlite3')
-# c=con.cursor()
-# # if the table doesn't exist create it.
-# try:
-#     c.execute("SELECT * from survey")
-# except OperationalError:
-#     c.execute ("CREATE TABLE survey(campus varchar(8),building varchar(16),room varchar(5), day varchar(3), \
-#             time time, date date, percentage int, totaloccupancy int);")
-# con.commit()
+con = lite.connect('wicount.sqlite3')
+c=con.cursor()
+
+# if the table doesn't exist create it.
+try:
+    c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATE  NOT NULL, \
+                day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date));")
+    c.execute ("create table if not exists college(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
+                building VARCHAR(16), room VARCHAR(5), occupancy INTEGER);")
+except OperationalError:
+    print("couldn't create the table")
+con.commit()
      
 #-------------------------------------------------------
 #set up hard coding this will need to be passed in.
@@ -69,11 +64,16 @@ def GetDay(i):
 
 campus = "Belfield"
 building = "Computer Science"
+
+#-------------------------------------------------------
+#set up variables.
+#-------------------------------------------------------
 dayList = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 timeList = ["9.00-10.00", "10.00-11.00", "11.00-12.00", "12.00-13.00", \
             "13.00-14.00", "14.00-15.00", "15.00-16.00", "16.00-17.00"]
 full_details = []
 occupancy_details = []
+room_ids = []
 day = "Mon"    #initialise variable
 
 # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
@@ -87,7 +87,7 @@ for file in glob.glob("*.xlsx"):
     sheet.to_csv('survey.csv', encoding='utf-8')
     #print(type(sheet))
     dataArray = sheet.as_matrix()
-    print(dataArray)
+    #print(dataArray)
     for data in dataArray:
         #print(data[0])
         if data[0] in dayList:
@@ -126,18 +126,47 @@ for file in glob.glob("*.xlsx"):
             #print(date)
             
         #end if
-        
+    room_details = []
+    for x in range (0, len(occupancy_details[0])):
+        room_details.append([campus,building,occupancy_details[0][x],occupancy_details[1][x]])
+    #print(room_details)
+    for room in room_details:
+        try:
+            sql_String = "SELECT room_id FROM college WHERE campus = '" + room[0] + \
+                            "' AND building = '" + room[1] + "' AND room = '" + room[2] + "';"
+            #print ("sql_String: ", sql_String)
+            c.execute(sql_String)
+            room_ID = c.fetchone()
+            if room_ID:
+                sql_String = "UPDATE college SET occupancy=" + str(room[3]) + \
+                             " WHERE room_id=" + str(room_ID[0]) + ";" 
+                c.execute(sql_String)
+                room_ids.append(room_ID[0])
+            else:
+                c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
+                c.execute(sql_String)
+                room_ID = c.fetchone()[0]
+                room_ids.append(room_ID)
+        except OperationalError:
+            print ("Command skipped: ", sql_String)
+        con.commit()
+    
+
+con.close()
 print("occupancy_details: ")
-for x in range(0,len(occupancy_details)-1):
+for x in range(0,len(occupancy_details)):
     print(occupancy_details[x])
 print("")
 print("full_details: ")
-for x in range(0, len(full_details) -1):
+for x in range(0, len(full_details)):
     print(full_details[x])
 print("")
 print ("day: ", day)
 print("campus: ", campus)
 print("building: ", building)    
+
+
+
 #     wb = openpyxl.load_workbook(file)
 #     sheet = wb.get_sheet_by_name("JustData")
 #          
