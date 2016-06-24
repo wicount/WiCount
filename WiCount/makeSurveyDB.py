@@ -1,10 +1,8 @@
 import sqlite3 as lite
 from sqlite3 import OperationalError
 import glob, os
-#import numpy as np
 import pandas as pd
 from dateutil.parser import parse
-#from _nsis import err
 
 def UpdateCollegeTable(occupancy_details):
     #-------------------------------------------------------
@@ -43,7 +41,7 @@ def UpdateCollegeTable(occupancy_details):
 def UpdateSurveyTable(all_details):
     print(all_details)
     try:
-        c.executemany('INSERT INTO survey VALUES (?,?,?,?)', all_details)
+        c.executemany('INSERT OR IGNORE INTO survey VALUES (?,?,?,?)', all_details)
     except OperationalError:
         print ("Command skipped: ", all_details)
     con.commit()

@@ -97,7 +97,7 @@ for file in glob.glob("*.xlsx"):
                     sqlvalues.append(db_values)
                 try:
                     print(sqlvalues)
-                    c.executemany('INSERT INTO timetable VALUES (?,?,?,?,?)', sqlvalues)
+                    c.executemany('INSERT OR IGNORE INTO timetable VALUES (?,?,?,?,?)', sqlvalues)
                     print("done: ", sqlvalues) 
                 except OperationalError:
                     print ("Command skipped: ", sqlvalues)
