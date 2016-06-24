@@ -14,9 +14,7 @@ def GetRoomID(details):
     
     Details need to passed in in the format [campus, building, room number]. 
     Will return the room ID as an integer'''
-    
-    campus = "Belfield"
-    building = "Computer Science"
+
     #print(occupancy_details)
     #room_ID = ""
     try:
