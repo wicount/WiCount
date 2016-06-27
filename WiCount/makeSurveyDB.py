@@ -39,7 +39,7 @@ def UpdateCollegeTable(occupancy_details):
     return room_ids
 
 def UpdateSurveyTable(all_details):
-    print(all_details)
+    #print(all_details)
     try:
         c.executemany('INSERT OR IGNORE INTO survey VALUES (?,?,?,?)', all_details)
     except OperationalError:
@@ -131,22 +131,24 @@ for file in glob.glob("*.xlsx"):
                 details = []
                 for x in range(2, len(data),1):
                     details.append(data[x])
-                    #print("velda: ", details)
                 occupancy_details.append(details)
                 room_ids = UpdateCollegeTable(occupancy_details)
         elif data[0] in timeList:
             details = []
             date_str = date + " " + GetTime(data[0])
+            #print(room_ids)
             for x in range(2, len(data),1):
                 details = [room_ids[x-2], date_str, day, data[x]]
-            full_details.append(details)
+                #print ("details: ", details)
+                full_details.append(details)
         elif "OCCU" in data[0]:
             continue
         else:
             date = parse(data[0])
             date = date.strftime('%Y-%m-%d')
         #end if
-    UpdateSurveyTable(full_details)
+        #print("here: ", full_details)
+        UpdateSurveyTable(full_details)
     
 
 con.close()
