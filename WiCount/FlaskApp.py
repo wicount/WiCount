@@ -3,7 +3,7 @@ Created on 27 Jun 2016
 
 @author: Rakesh Lakshman
 '''
-from flask import Flask, g, render_template, request
+from flask import Flask, g, render_template
 import sqlite3 as sql
 app = Flask(__name__)
 
