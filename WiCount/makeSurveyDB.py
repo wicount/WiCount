@@ -43,18 +43,6 @@ def GetRoomNo(room):
         room_no = ""
     #print ("room ", room_no)
     return room_no
-    
-def GetTime(data):
-    # format the time for the database so it matches with other time formats
-    data = data.split("-")
-    time = data[0]
-    #print ("data: ", type(time))
-    if len(time) == 4:
-        time = str("0") + str(time[:1]) + ":" + str(time[2:]) + str(":00")
-    else:
-        time = str(time[:2]) + ":" + str(time[3:]) + ":00"
-    #print ("Time: ", time, " len: ", len(time))
-    return time
 
 con = db.get_connection()
 #con = lite.connect('wicount.sqlite3')
@@ -115,7 +103,7 @@ for file in glob.glob("*.xlsx"):
                 room_ids = UpdateRoomTable(occupancy_details)
         elif data[0] in timeList:
             details = []
-            date_str = date + " " + GetTime(data[0])
+            date_str = date + " " + wicount.GetTime(data[0])
             #print(room_ids)
             for x in range(2, len(data),1):
                 details = [room_ids[x-2], date_str, day, data[x]]

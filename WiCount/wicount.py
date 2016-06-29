@@ -51,4 +51,16 @@ def GetRoomID(details):
 
     return room_ID
 
-#GetRoomID("here")
+def GetTime(data):
+    ''' Get the time in the correct format.  
+    
+    This is for timetable type times is 9:00 - 10:00.  It will return 09:00:00'''
+    data = data.split("-")
+    time = data[0].strip()
+    #print ("data: ", type(time))
+    if len(time) == 4:
+        time = str("0") + str(time[:1]) + ":" + str(time[2:]) + str(":00")
+    else:
+        time = str(time[:2]) + ":" + str(time[3:]) + ":00"
+    #print ("Time: ", time, " len: ", len(time))
+    return time
