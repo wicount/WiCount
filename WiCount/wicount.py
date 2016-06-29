@@ -31,7 +31,6 @@ def GetRoomID(details):
         #print ("sql_String: ", sql_String)
         c.execute(sql_String)
         room_ID = c.fetchone()
-        print ("here: ", room_ID)
         if room_ID:
             room_ID =  room_ID[0]
             if details[3] > 0:
@@ -39,20 +38,29 @@ def GetRoomID(details):
                 sql_String = "UPDATE room SET capacity=" + str(details[3]) + \
                              " WHERE room_id=" + str(room_ID) + ";"
                 c.execute(sql_String)
-                con.commit()
-            print ("velda: ", room_ID)
+                #con.commit()
         else:
             room = [details[0],details[1],details[2],details[3]]
             c.execute('INSERT INTO room (campus, building, room, capacity) VALUES (?, ?, ?, ?)', room)
             c.execute(sql_String)
-            con.commit()
+            #con.commit()
             room_ID = c.fetchone()[0]
-        print("velda")
         con.commit()
-        print("velda2")
     except OperationalError:
         print ("Command skipped: ", sql_String)
 
     return room_ID
 
-#GetRoomID("here")
+def GetTime(data):
+    ''' Get the time in the correct format.  
+    
+    This is for timetable type times is 9:00 - 10:00.  It will return 09:00:00'''
+    data = data.split("-")
+    time = data[0].strip()
+    #print ("data: ", type(time))
+    if len(time) == 4:
+        time = str("0") + str(time[:1]) + ":" + str(time[2:]) + str(":00")
+    else:
+        time = str(time[:2]) + ":" + str(time[3:]) + ":00"
+    #print ("Time: ", time, " len: ", len(time))
+    return time

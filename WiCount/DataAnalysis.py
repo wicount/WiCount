@@ -20,7 +20,7 @@ full_data = []
 data_list = []
 
 for row in rows:
-    cur.execute("SELECT * FROM college WHERE room_id = '" + str(row[0]) + "'")
+    cur.execute("SELECT * FROM room WHERE room_id = '" + str(row[0]) + "'")
     college = cur.fetchall()[0]
     
     #get time and date fields.
@@ -63,7 +63,7 @@ for row in rows:
                  logData[0], timetable[3], timetable[4]]
     full_data.append(data_list)
     
-data = pd.DataFrame(full_data, columns=('Campus', 'Building', 'Room', 'Occupancy', \
+data = pd.DataFrame(full_data, columns=('Campus', 'Building', 'Room', 'Capacity', \
                           'Date', 'Day', 'SurveyPercentage', \
                             'MaxCount', 'Module', 'NoStudents'))
 data.head(2)
