@@ -2,19 +2,67 @@
 <html>
 <head> 
 <meta charset="UTF-8">
-<link rel = "stylesheet" type = "text/css" href="wicount.css">
+<link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
 <title>WiCount | App</title>    
 </head>   
        
 <body>
-<header>
-    <img src="logo.jpg" alt="logo"/><br><br> 
+<header class="header">
+    <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
 </header>
+<div>
 <form>
-    Click on the building:<br>
-    <img src="example1.jpg" alt="Buliding Map"/><br><br>
+    <div id="section1">
+    <div id="divhead">    
+    <span class="span">Click on the building to select a room</span>
+    <span class="span">Level:
+    <select name="level">
+    <option value="level0">Level 0</option>
+    <option value="level2">Level 1</option>
+    </select></span>
+    <span class="span">Day:
+    <select name="day">
+    <option value="mon">Monday</option>
+    <option value="tue">Tuesday</option>
+    <option value="wed">Wednesday</option>
+    <option value="thu">Thursday</option>
+    <option value="thu">Friday</option>
+    </select></span>
+        <span class="span">Time:
+    <select name="time">
+    <option value="nine">9:00</option>
+    <option value="ten">10:00</option>
+    <option value="eleven">11:00</option>
+    <option value="twelve">12:00</option>
+    <option value="thirteen">13:00</option>
+    <option value="fourteen">14:00</option>
+    <option value="fifteen">15:00</option>
+    <option value="sixteen">16:00</option>
+    <option value="seventeen">17:00</option>
+    </select></span>
+        <span class="span"><input type="submit" value="Submit"></span>
+    </div>
+    <div>   
+    <input id="image1" type="image" name="image" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building map" >
+    </div>
     
-    Select the day:<br>
+
+        
+    </div>
+</form>
+<form>
+    <div id="sections">
+    <p>Select the Building:</p>
+    <select name="building2">
+    <option value="CSI">CSI</option>
+    </select><br><br>
+    <p>Select the Room:</p>
+    <select name="building2">
+    <option value="B-02">B-02</option>
+    <option value="B-03">B-03</option>
+    <option value="B-04">B-04</option>
+    </select><br><br>
+    <p>Select the Day:</p>
     <select name="day">
     <option value="mon">Monday</option>
     <option value="tue">Tuesday</option>
@@ -22,23 +70,25 @@
     <option value="thu">Thursday</option>
     <option value="thu">Friday</option>
     </select><br><br>
-    
-    Select the time:<br>
+    <p>Select the Time:</p>
     <select name="time">
-    <option value="nine">9</option>
-    <option value="ten">10</option>
-    <option value="eleven">11</option>
-    <option value="twelve">12</option>
-    <option value="one">1</option>
-    <option value="two">2</option>
-    <option value="three">3</option>
-    <option value="four">4</option>
-    <option value="five">5</option>
-    </select><br><br>
-    
+    <option value="nine">9:00</option>
+    <option value="ten">10:00</option>
+    <option value="eleven">11:00</option>
+    <option value="twelve">12:00</option>
+    <option value="thirteen">13:00</option>
+    <option value="fourteen">14:00</option>
+    <option value="fifteen">15:00</option>
+    <option value="sixteen">16:00</option>
+    <option value="seventeen">17:00</option>
+    </select><br><br><br><br>
     <input type="submit" value="Submit">
-</form> 
+    </div> 
+</form>
+</div>
+<footer>
+    <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+</footer>
 </body>    
-<footer>   
-</footer>  
+  
 </html>
