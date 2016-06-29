@@ -1,40 +1,42 @@
+import db
 import sqlite3 as lite
 from sqlite3 import OperationalError
 import glob, os
 import openpyxl
 import numpy as np
+import wicount
 
 def GetRoomNo(room):
     room_no = room[:1] + "-"+ room[1:2] + room [3:]
     #print ("room ", room_no)
     return room_no
 
-def GetRoomID(details):
-    ''' Get the room ID from the database. 
-    
-    Details need to passed in in the format [campus, building, room number]. 
-    Will return the room ID as an integer'''
-
-    #print(occupancy_details)
-    #room_ID = ""
-    try:
-        sql_String = "SELECT room_id FROM college WHERE campus = '" + details[0] + \
-                    "' AND building = '" + details[1] + "' AND room = '" + details[2] + "';"
-        #print ("sql_String: ", sql_String)
-        c.execute(sql_String)
-        room_ID = c.fetchone()
-        if room_ID:
-            return room_ID
-        else:
-            room = [details[0],details[1],details[2],0]
-            c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
-            c.execute(sql_String)
-            room_ID = c.fetchone()[0]
-    except OperationalError:
-        print ("Command skipped: ", sql_String)
-    con.commit()
-    #print (room_ids)
-    return room_ID
+# def GetRoomID(details):
+#     ''' Get the room ID from the database. 
+#     
+#     Details need to passed in in the format [campus, building, room number]. 
+#     Will return the room ID as an integer'''
+# 
+#     #print(occupancy_details)
+#     #room_ID = ""
+#     try:
+#         sql_String = "SELECT room_id FROM college WHERE campus = '" + details[0] + \
+#                     "' AND building = '" + details[1] + "' AND room = '" + details[2] + "';"
+#         #print ("sql_String: ", sql_String)
+#         c.execute(sql_String)
+#         room_ID = c.fetchone()
+#         if room_ID:
+#             return room_ID
+#         else:
+#             room = [details[0],details[1],details[2],0]
+#             c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
+#             c.execute(sql_String)
+#             room_ID = c.fetchone()[0]
+#     except OperationalError:
+#         print ("Command skipped: ", sql_String)
+#     con.commit()
+#     #print (room_ids)
+#     return room_ID
 
 def GetTime(data):
     ''' Get the time in the correct format.  
@@ -58,8 +60,9 @@ def GetDay(i):
         7: "Thu",
         9: "Fri",
     }.get(i, 1)
-
-con = lite.connect('wicount.sqlite3')
+    
+con = db.get_connection()
+#con = lite.connect('wicount.sqlite3')
 c=con.cursor()
 # if the table doesn't exist create it.
 try:
@@ -81,14 +84,14 @@ for file in glob.glob("*.xlsx"):
     sqlvalues = []
     for sheet in sheetnames:
         #print(sheet)
-        room_details = [campus, building, GetRoomNo(sheet)]
-        room_id = GetRoomID(room_details)[0]
         if sheet != "All":
+            room_details = [campus, building, GetRoomNo(sheet),0] #0 on end as we don't know capacity.
+            room_id = wicount.GetRoomID(room_details)
             sheetData = wb.get_sheet_by_name(sheet)
             table = np.array([[cell.value for cell in col] for col in sheetData['A3':'K11']])
             #print(table)
             for line in table:
-                print(line)
+                #print(line)
                 sqlvalues = []
                 start_time = GetTime(line[0])
                 #build sql string
@@ -96,9 +99,9 @@ for file in glob.glob("*.xlsx"):
                     db_values = [room_id, GetDay(i), start_time, line[i], line[i+1]]
                     sqlvalues.append(db_values)
                 try:
-                    print(sqlvalues)
+                    #print(sqlvalues)
                     c.executemany('INSERT OR IGNORE INTO timetable VALUES (?,?,?,?,?)', sqlvalues)
-                    print("done: ", sqlvalues) 
+                    #print("done: ", sqlvalues) 
                 except OperationalError:
                     print ("Command skipped: ", sqlvalues)
                 con.commit()
