@@ -1,34 +1,10 @@
+import db
 import sqlite3 as lite
 from sqlite3 import OperationalError
 import glob, os
 from dateutil.parser import parse
+import wicount
 
-def GetRoomID(details):
-    ''' Get the room ID from the database. 
-    
-    Details need to passed in in the format [campus, building, room number]. 
-    Will return the room ID as an integer'''
-
-    #print(occupancy_details)
-    #room_ID = ""
-    try:
-        sql_String = "SELECT room_id FROM college WHERE campus = '" + details[0] + \
-                    "' AND building = '" + details[1] + "' AND room = '" + details[2] + "';"
-        #print ("sql_String: ", sql_String)
-        c.execute(sql_String)
-        room_ID = c.fetchone()
-        if room_ID:
-            return room_ID
-        else:
-            room = [details[0],details[1],details[2],0]
-            c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
-            c.execute(sql_String)
-            room_ID = c.fetchone()[0]
-    except OperationalError:
-        print ("Command skipped: ", sql_String)
-    con.commit()
-    #print (room_ids)
-    return room_ID
 
 def ExtractDataCSV(fileName):
     fileHandle = open(fileName)
@@ -52,9 +28,10 @@ def ExtractDataCSV(fileName):
                 continue
         
             date_time = date + " " + time
-            #print (date_time)
-            #build insert string.
-            room_ID = GetRoomID([data[0], data[1], data[2]])[0]
+            #[campus, building, room number, capacity]
+            room_details = [data[0], data[1], data[2],0]
+            room_ID = wicount.GetRoomID(room_details)
+        
             db_values = [room_ID, date_time, day, data[4]]
             full_db_values.append(db_values)
     if full_db_values == []:
@@ -62,7 +39,7 @@ def ExtractDataCSV(fileName):
     else:        
         return full_db_values
 
-con = lite.connect('wicount.sqlite3')
+con = db.get_connection()
 c=con.cursor()
 # if the table doesn't exist create it.
 try:

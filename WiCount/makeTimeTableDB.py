@@ -11,33 +11,6 @@ def GetRoomNo(room):
     #print ("room ", room_no)
     return room_no
 
-# def GetRoomID(details):
-#     ''' Get the room ID from the database. 
-#     
-#     Details need to passed in in the format [campus, building, room number]. 
-#     Will return the room ID as an integer'''
-# 
-#     #print(occupancy_details)
-#     #room_ID = ""
-#     try:
-#         sql_String = "SELECT room_id FROM college WHERE campus = '" + details[0] + \
-#                     "' AND building = '" + details[1] + "' AND room = '" + details[2] + "';"
-#         #print ("sql_String: ", sql_String)
-#         c.execute(sql_String)
-#         room_ID = c.fetchone()
-#         if room_ID:
-#             return room_ID
-#         else:
-#             room = [details[0],details[1],details[2],0]
-#             c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
-#             c.execute(sql_String)
-#             room_ID = c.fetchone()[0]
-#     except OperationalError:
-#         print ("Command skipped: ", sql_String)
-#     con.commit()
-#     #print (room_ids)
-#     return room_ID
-
 def GetTime(data):
     ''' Get the time in the correct format.  
     
