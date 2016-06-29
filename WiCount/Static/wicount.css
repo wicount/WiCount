@@ -1,1 +1,52 @@
 /* To Style HTML pags */
+body{
+    width: 99%;
+    clear: both;
+}
+.header{
+    width: 100%;
+    margin: auto;
+    height: 80px;
+    background-color: skyblue;
+    color:red;
+    border: 1px solid black;
+}
+.logo{
+    margin-top: 5px;
+    margin-left: 20px;
+    
+}
+#loginheader{
+    margin-left: 30px;
+    margin-top: 40px;
+    color: blue;
+}
+label{
+    font-family: sans-serif;
+    font-weight: 700;
+}
+
+.loginform{
+    width:50%;
+    border: 3px solid #194e6f;
+    margin: 50px 50px 50px 50px;
+}
+
+#login{
+    margin: 50px 50px 50px 50px;
+}
+
+footer {
+   position:absolute;
+   bottom:0;
+   width:99%;
+   height:40px;   
+   background-color: darkgray;
+   border: 1px solid black;
+   
+}
+#footer{
+    text-align: center;
+    margin-top: 10px;
+    font-family: cursive;
+}
