@@ -1,10 +1,12 @@
+import db
 import sqlite3 as lite
 from sqlite3 import OperationalError
 import glob, os
 import pandas as pd
 from dateutil.parser import parse
+import wicount
 
-def UpdateCollegeTable(occupancy_details):
+def UpdateRoomTable(occupancy_details):
     #-------------------------------------------------------
     #set up hard coding this will need to be passed in.
     #-------------------------------------------------------
@@ -13,29 +15,9 @@ def UpdateCollegeTable(occupancy_details):
     building = "Computer Science"
     #print(occupancy_details)
     for x in range (0, len(occupancy_details[0])):
-        #room_ID = ""
-        try:
-            sql_String = "SELECT room_id FROM college WHERE campus = '" + campus + \
-                            "' AND building = '" + building + "' AND room = '" + occupancy_details[0][x] + "';"
-            #print ("sql_String: ", sql_String)
-            c.execute(sql_String)
-            room_ID = c.fetchone()
-            #print("room_ID: ", room_ID)
-            if room_ID:
-                sql_String = "UPDATE college SET occupancy=" + str(occupancy_details[1][x]) + \
-                             " WHERE room_id=" + str(room_ID[0]) + ";" 
-                c.execute(sql_String)
-                room_ids.append(room_ID[0])
-            else:
-                room = [campus,building,occupancy_details[0][x],occupancy_details[1][x]]
-                c.execute('INSERT INTO college (campus, building, room, occupancy) VALUES (?, ?, ?, ?)', room)
-                c.execute(sql_String)
-                room_ID = c.fetchone()[0]
-                room_ids.append(room_ID)
-        except OperationalError:
-            print ("Command skipped: ", sql_String)
-        con.commit()
-    #print (room_ids)
+        #[campus, building, room number, capacity]
+        room_details = [campus, building, occupancy_details[0][x], occupancy_details[1][x]]
+        room_ids.append(wicount.GetRoomID(room_details))
     return room_ids
 
 def UpdateSurveyTable(all_details):
@@ -74,16 +56,14 @@ def GetTime(data):
     #print ("Time: ", time, " len: ", len(time))
     return time
 
-
-con = lite.connect('wicount.sqlite3')
+con = db.get_connection()
+#con = lite.connect('wicount.sqlite3')
 c=con.cursor()
 
 # if the table doesn't exist create it.
 try:
     c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
                 day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date));")
-    c.execute ("create table if not exists college(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
-                building VARCHAR(16), room VARCHAR(5), occupancy INTEGER);")
 except OperationalError:
     print("couldn't create the table")
 con.commit()
@@ -132,7 +112,7 @@ for file in glob.glob("*.xlsx"):
                 for x in range(2, len(data),1):
                     details.append(data[x])
                 occupancy_details.append(details)
-                room_ids = UpdateCollegeTable(occupancy_details)
+                room_ids = UpdateRoomTable(occupancy_details)
         elif data[0] in timeList:
             details = []
             date_str = date + " " + GetTime(data[0])
