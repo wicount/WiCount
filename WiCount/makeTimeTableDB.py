@@ -27,16 +27,21 @@ def GetWeekNo(week):
     date = parse(date)
     week1 = date.isocalendar()
     week_nos = [str(week1[1]) + "/" + str(week1[0]), str(week1[1] +1) + "/" + str(week1[0])]
-    print(week_nos)
+    #print(week_nos)
     return week_nos
    
-def AddDetailsToDB(line, weekNo):
+def AddDetailsToTimeTable(line, weekNo):
     ''' add the details to the database along with the week number '''
     sqlvalues = []
+    module_codes = []
     start_time = wicount.GetTime(line[0])
     #build sql string
     for i in range(1,len(line),2):
         db_values = [room_id, GetDay(i), start_time, weekNo, line[i], line[i+1]]
+        if line[i] and line[i+1] and line[i+1] != "N/A":
+            #print ("here")
+            module = [line[i], line[i+1]]
+            module_codes.append(module)
         sqlvalues.append(db_values)
     try:
         #print(sqlvalues)
@@ -45,7 +50,36 @@ def AddDetailsToDB(line, weekNo):
     except OperationalError:
         print ("Command skipped: ", sqlvalues)
     con.commit()
+    return module_codes
+
+def UpdateModuleTable(module_list, week_no):
+    try:
+        c.execute ("create table if not exists modules(module varchar(12), week_no varchar(7), \
+                no_students int, PRIMARY KEY (module, week_no));")
+    except OperationalError:
+        print("Modules table couldn't be created")
+    con.commit()
     
+    print (module_list)
+    # get unique values from the module list
+    #http://stackoverflow.com/questions/13464152/typeerror-unhashable-type-list-when-using-built-in-set-function
+    module_list = sorted(set(map(tuple, module_list)))
+    sqlvalues = []
+    
+    for x in range(0, len(module_list)):
+        if x != len(module_list)-1 and module_list[x][0] == module_list[x+1][0]:
+            continue
+        else:
+            values = [module_list[x][0], week_no, module_list[x][1]]
+            sqlvalues.append(values)
+            print(sqlvalues)
+    try:            
+        c.executemany('INSERT OR IGNORE INTO modules VALUES (?,?,?)', sqlvalues)
+        #print("done: ", sqlvalues) 
+    except OperationalError:
+        print ("Command skipped: ", sqlvalues)
+    con.commit()
+       
 con = db.get_connection()
 #con = lite.connect('wicount.sqlite3')
 c=con.cursor()
@@ -68,6 +102,7 @@ for file in glob.glob("*.xlsx"):
     wb = openpyxl.load_workbook(file)
     sheetnames = wb.get_sheet_names()
     sqlvalues = []
+    module_list = []
     for sheet in sheetnames:
         #print(sheet)
         if sheet != "All":
@@ -91,25 +126,13 @@ for file in glob.glob("*.xlsx"):
             table = np.array([[cell.value for cell in col] for col in sheetData['A3':'K11']])
             #print(table)
             for line in table:
-                AddDetailsToDB(line, week1)
+                module_list.extend(AddDetailsToTimeTable(line, week1))
             
             table = np.array([[cell.value for cell in col] for col in sheetData['M3':'W11']])
             #print(table)
             for line in table:
-                AddDetailsToDB(line, week2)
-            
-                #print(line)
-#                 sqlvalues = []
-#                 start_time = wicount.GetTime(line[0])
-#                 #build sql string
-#                 for i in range(1,len(line),2):
-#                     db_values = [room_id, GetDay(i), start_time, line[i], line[i+1]]
-#                     sqlvalues.append(db_values)
-#                 try:
-#                     print(sqlvalues)
-#                     c.executemany('INSERT OR IGNORE INTO timetable VALUES (?,?,?,?,?,?)', sqlvalues)
-#                     #print("done: ", sqlvalues) 
-#                 except OperationalError:
-#                     print ("Command skipped: ", sqlvalues)
-#                 con.commit()
+                module_list.extend(AddDetailsToTimeTable(line, week2))
+    
+    UpdateModuleTable(module_list, week1)
+    
 con.close() 
