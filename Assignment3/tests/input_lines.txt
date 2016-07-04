@@ -1,5 +1,0 @@
-occupy 20,20 through 30,30
-occupy 50,50 through 80,80
-occupy 29,21 through 75,76
-empty 40,40 through 66,65
-toggle 10,10 through 90,90
