@@ -89,9 +89,18 @@ for row in rows:
         continue
     timetable = timetable[0]
     
-    c.execute("SELECT MAX(count) FROM logdata WHERE room_id = '" + str(row[0]) + \
-                "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
-    logData = c.fetchall()[0]
+#     print("SELECT MAX(count) FROM logdata WHERE room_id = '" + str(row[0]) + \
+#                  "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
+#     c.execute("SELECT MAX(count) FROM logdata WHERE room_id = '" + str(row[0]) + \
+#                 "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
+#     logData = c.fetchall()[0]
+#Velda tryting to get all rows.
+    c.execute("SELECT count, date FROM logdata WHERE room_id = '" + str(row[0]) + \
+                 "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
+    logData = c.fetchall()
+    # Only use if we have all the data for all the days
+    if logData == []:
+        continue
     
     c.execute("SELECT percentage FROM survey WHERE room_id = '" + str(row[0]) + \
                 "' and date = '" + str(fromDate) + "'")
@@ -109,14 +118,16 @@ for row in rows:
     #print('Day: ',row[2], ' SurveyPercentage: ',survey[0],)
     #print('MaxCount: ',logData[0], ' Module: ',timetable[3], ' NoStudents: ',timetable[4])
     
-    data_list = [college[1], college[2], college[3], college[4], \
+    #for logData
+    for i in range(0, len(logData)):
+        data_list = [college[1], college[2], college[3], college[4], \
                  row[1], row[2], survey[0], \
-                 logData[0], timetable[4], timetable[5], timetable[3]]
-    full_data.append(data_list)
+                 logData[i][0], logData[i][1], timetable[4], timetable[5], timetable[3]]
+        full_data.append(data_list)
     
 data = pd.DataFrame(full_data, columns=('Campus', 'Building', 'Room', 'Capacity', \
                           'Date', 'Day', 'SurveyPercentage', \
-                            'MaxCount', 'Module', 'NoStudents', 'WeekNo'))
+                            'Count', 'LogDate', 'Module', 'NoStudents', 'WeekNo'))
 data.head(2)
 print(data)
 #output to a file
