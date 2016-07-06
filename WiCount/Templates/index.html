@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="UTF-8">
+<link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
+<title>WiCount | App</title>    
+</head>   
+        
+<body>
+<header class="header">
+    <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
+</header>
+<section class="loginform">
+    <h2 id="loginheader">Login</h2>
+<form id="login" >
+    <label for="username">User Name:</label><br>
+    <input type="text" name="username" placeholder="Username"><br><br>
+   
+    <label for="password">Password:</label><br>
+    <input type="password" name="password" placeholder="********"><br><br><br>
+    <input type="submit" value="Submit">
+</form>
+
+</section>
+<p></p>
+<footer>
+    <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+</footer>
+</body>    
+ 
+</html>
