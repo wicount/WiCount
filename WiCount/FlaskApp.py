@@ -58,6 +58,10 @@ def endUserPage():
 def adminPage():
     return render_template('adminPage.html')
 
+# To display Admin home page
+@app.route('/BuildingMap')
+def BuildingMap():
+    return render_template('BuildingMap.html')
 # To display the results for end user(Graphs and Charts)
 @app.route('/displayresults')
 def displayResults():
