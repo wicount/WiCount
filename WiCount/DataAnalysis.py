@@ -88,13 +88,7 @@ for row in rows:
     if timetable == []:
         continue
     timetable = timetable[0]
-    
-#     print("SELECT MAX(count) FROM logdata WHERE room_id = '" + str(row[0]) + \
-#                  "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
-#     c.execute("SELECT MAX(count) FROM logdata WHERE room_id = '" + str(row[0]) + \
-#                 "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
-#     logData = c.fetchall()[0]
-#Velda tryting to get all rows.
+
     c.execute("SELECT count, date FROM logdata WHERE room_id = '" + str(row[0]) + \
                  "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
     logData = c.fetchall()
@@ -118,7 +112,7 @@ for row in rows:
     #print('Day: ',row[2], ' SurveyPercentage: ',survey[0],)
     #print('MaxCount: ',logData[0], ' Module: ',timetable[3], ' NoStudents: ',timetable[4])
     
-    #for logData
+    #Change here for the output
     for i in range(0, len(logData)):
         data_list = [college[1], college[2], college[3], college[4], \
                  row[1], row[2], survey[0], \
