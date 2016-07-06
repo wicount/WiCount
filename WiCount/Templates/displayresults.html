@@ -2,17 +2,31 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<link rel = "stylesheet" type = "text/css" href="wicount.css">
+<link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
 <title>Insert title here</title>
 </head>
 <body>
 <header>
-    <img src="logo.jpg" alt="logo"/><br><br> 
+    <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br>
 </header>
+<table border=1>
+  <thead>
+     <td>Count</td>
+    
+     <td>Day</td>
+  </thead>
+  
+      {% for row in rows %}
+            <tr>
+               <td>{{row["count"]}}</td>
+               <td>{{row["day"]}}</td>
+            </tr>
+         {% endfor %}
+      </table>
 
-<!-- Display Results-->
 
-<footer>   
+<footer>
+<p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>   
 </footer>
 </body>
 </html>

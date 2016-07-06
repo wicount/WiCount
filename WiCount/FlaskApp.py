@@ -12,6 +12,7 @@ DATABASE = 'wicount.sqlite3'
 
 def get_db():
     db = getattr(g, '_database', None)
+    
     if db is None:
         db = g._database = sql.connect(DATABASE)
     return db
@@ -64,7 +65,7 @@ def displayResults():
     con.row_factory = sql.Row
    
     cur = con.cursor()
-    cur.execute("select * from ")
+    cur.execute("select count,day from logdata")
    
     rows = cur.fetchall();
     return render_template("displayresults.html",rows = rows)
