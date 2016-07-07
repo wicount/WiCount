@@ -10,6 +10,51 @@ import glob, os
 import openpyxl
 import numpy as np
 
+def SetUpDatabase():
+    ''' Create the database tables if they don't exist'''
+    con = db.get_connection()
+    c=con.cursor()
+    
+    try:
+        c.execute ("create table if not exists modules(module varchar(12), week_no varchar(7), \
+                no_students int, PRIMARY KEY (module, week_no));") 
+    except OperationalError:
+        print("Modules table couldn't be created")
+    con.commit()
+    
+    try:
+        c.execute ("create table if not exists room(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
+                    building VARCHAR(16), room VARCHAR(5), capacity INTEGER);")     
+    except OperationalError:
+        print("room table couldn't be created")
+    con.commit()    
+    
+    try:
+        c.execute ("create table if not exists timetable(room_id INTEGER NOT NULL, day varchar(3), \
+                time time, week_no varchar(7), module varchar(12), no_students int, \
+                PRIMARY KEY (room_id, day, time, week_no) \
+                FOREIGN KEY(module) REFERENCES modules(module) \
+                FOREIGN KEY(room_id) REFERENCES room(room_id));")
+    except OperationalError:
+        print("Timetable table couldn't be created")
+    con.commit()
+
+    try:
+        c.execute ("create table if not exists logdata(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
+                    day VARCHAR(3), count INTEGER, PRIMARY KEY (room_id, date) \
+                    FOREIGN KEY(room_id) REFERENCES room(room_id));")
+    except OperationalError:
+        print("logdata table couldn't be created")
+    con.commit()
+
+    try:
+        c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
+                    day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date) \
+                    FOREIGN KEY(room_id) REFERENCES room(room_id));")
+    except OperationalError:
+        print("survey table couldn't be created")
+    con.commit()
+    
 def GetRoomID(details):
     ''' Get the room ID from the database. 
     
@@ -17,13 +62,6 @@ def GetRoomID(details):
     where occupancy is the capacity of the room. Will return the room ID as an integer'''
     con = db.get_connection()
     c=con.cursor()
-    try:
-        c.execute ("create table if not exists room(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
-                    building VARCHAR(16), room VARCHAR(5), capacity INTEGER);")
-        con.commit()
-    except OperationalError:
-        print("Couldn't create the room table")
-    
     try:
         sql_String = "SELECT room_id FROM room WHERE campus = '" + details[0] + \
                     "' AND building = '" + details[1] + "' AND room = '" + details[2] + "';"

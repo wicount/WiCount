@@ -40,13 +40,9 @@ def ExtractDataCSV(fileName):
 
 con = db.get_connection()
 c=con.cursor()
-# if the table doesn't exist create it.
-try:
-    c.execute ("create table if not exists logdata(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
-                day VARCHAR(3), count INTEGER, PRIMARY KEY (room_id, date));")
-except OperationalError:
-    print("logdata table couldn't be created")
-con.commit()
+
+# Create all the database tables
+wicount.SetUpDatabase()
             
 # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
 os.chdir("CSILogs")

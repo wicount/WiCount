@@ -51,15 +51,8 @@ def AddDetailsToTimeTable(line, weekNo):
     con.commit()
     return module_codes
 
-def UpdateModuleTable(module_list, week_no):
+def UpdateModuleTable(module_list, week_no):    
     ''' update the modules table'''
-    try:
-        c.execute ("create table if not exists modules(module varchar(12), week_no varchar(7), \
-                no_students int, PRIMARY KEY (module, week_no));")
-    except OperationalError:
-        print("Modules table couldn't be created")
-    con.commit()
-    
     # get unique values from the module list
     #http://stackoverflow.com/questions/13464152/typeerror-unhashable-type-list-when-using-built-in-set-function
     module_list = sorted(set(map(tuple, module_list)))
@@ -80,15 +73,8 @@ def UpdateModuleTable(module_list, week_no):
        
 con = db.get_connection()
 c=con.cursor()
-
-# if the table doesn't exist create it.
-try:
-    c.execute ("create table if not exists timetable(room_id INTEGER NOT NULL, day varchar(3), \
-            time time, week_no varchar(7), module varchar(12), no_students int, \
-            PRIMARY KEY (room_id, day, time, week_no));")
-except OperationalError:
-    print("Timetable table couldn't be created")
-con.commit()
+# Create all the database tables
+wicount.SetUpDatabase()
       
 # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
 os.chdir("timetable")
