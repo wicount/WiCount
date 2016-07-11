@@ -10,18 +10,20 @@
 <header class="header">
     <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
 </header>
-<section class="loginform">
-    <h2 id="loginheader">Login</h2>
-<form id="login" >
-    <label for="username">User Name:</label><br>
-    <input type="text" name="username" placeholder="Username"><br><br>
-   
-    <label for="password">Password:</label><br>
-    <input type="password" name="password" placeholder="********"><br><br><br>
-    <input type="submit" value="Submit">
-</form>
-
-</section>
+<div class="container">
+      <h1>Please login</h1>
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+         <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+      {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
+    </div>
 <p></p>
 <footer>
     <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>

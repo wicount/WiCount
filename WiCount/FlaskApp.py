@@ -30,11 +30,11 @@ def login():
         if request.form['username'] == 'admin' or request.form['password'] == 'admin':
             session['logged_in'] = True
             flash('logged in')
-            return redirect(url_for('buildingmap'))
+            return redirect(url_for('campusMap'))
         elif request.form['username'] == 'user' or request.form['password'] == 'user':
             session['logged_in'] = True
             flash('logged in')
-            return redirect(url_for('buildingmap'))  
+            return redirect(url_for('campusMap'))  
         else:
             error = 'Invalid Credentials. Please try again.'    
     return render_template('login.html', error=error)
