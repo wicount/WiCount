@@ -3,86 +3,93 @@ Created on 28 Jun 2016
 
 @author: Rakesh Lakshman
 '''
-from flask import Flask, g, render_template
+from flask import Flask, render_template, request, url_for, redirect,session,flash
+from functools import wraps
 import sqlite3 as sql
+
 app = Flask(__name__)
 
-#Part 1 - Function to connect to the database.
-DATABASE = 'wicount.sqlite3'
+#Session Secret Key
+app.secret_key = "wicount"
+  
+#Login required decorator
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args,**kwargs)
+        else:
+            return redirect(url_for(login))
+    return wrap
 
-def get_db():
-    db = getattr(g, '_database', None)
-    
-    if db is None:
-        db = g._database = sql.connect(DATABASE)
-    return db
+# To display login page
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] == 'admin' or request.form['password'] == 'admin':
+            session['logged_in'] = True
+            flash('logged in')
+            return redirect(url_for('buildingmap'))
+        elif request.form['username'] == 'user' or request.form['password'] == 'user':
+            session['logged_in'] = True
+            flash('logged in')
+            return redirect(url_for('buildingmap'))  
+        else:
+            error = 'Invalid Credentials. Please try again.'    
+    return render_template('login.html', error=error)
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+# To display log out page
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop('logged_in',None)
+    return render_template('logout.html')
 
-        
-#Part 2 - To Query the database and get information for data analytics part     
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+#To display the map of buildings
+@app.route('/campusmap')
+#@login_required
+def campusMap():
+    return render_template('campusmap.html')
 
-#Part 3 - Data Analyics
-def data_analytics():
-    return 0
+#To display the floor plan of rooms
+@app.route('/floorplan')
+#@login_required
+def floorPlan():
+    return render_template('floorplan.html')
 
+#To display the statistics for each room
+@app.route('/statsforroom')
+#@login_required
+def statsForRoom():
+    return render_template('statsforroom.html')
 
-#Part 4 - Update the results from data analytics into database
-def update_db():
-    return 0
+#Page to add user
+@app.route('/adduser')
+#@login_required
+def addUser():
+    return render_template('adduser.html')
 
+#Page to upload files
+@app.route('/fileupload')
+#@login_required
+def fileUpload():
+    return render_template('fileupload.html')
 
-    
-#Part 5 -  Web Side functionalities     
-# To display Home Page
-@app.route('/')
-def homePage():
-    return render_template('index.html')
+#Page to display statistics
+@app.route('/statistics')
+#@login_required
+def statistics():
+    return render_template('statistics.html')
 
-# To display end user home page
-@app.route('/enduserpage')
-def endUserPage():
-    return render_template('endUserPage.html')
-
-# To display Admin home page
-@app.route('/adminpage')
-def adminPage():
-    return render_template('adminPage.html')
-
-# To display Building Map page
-@app.route('/BuildingMap')
-def BuildingMap():
-    return render_template('BuildingMap.html')
-
-# To display Admin home page
-@app.route('/lecturerApp')
+#To display lecturer app page
+@app.route('/lecturerapp')
+#@login_required
 def lecturerApp():
-    return render_template('lecturerApp.html')
-
-# To display the results for end user(Graphs and Charts)
-@app.route('/displayresults')
-def displayResults():
-    con = sql.connect("wicount.sqlite3")
-    con.row_factory = sql.Row
-   
-    cur = con.cursor()
-    cur.execute("select count,day from logdata")
-   
-    rows = cur.fetchall();
-    return render_template("displayresults.html",rows = rows)
-
-#To display results for admin page
-def displayResultsAdmin():
     return 0
+    #json_data = DataRetrieval.getAllcampusdetails()
+   # return render_template('lecturerapp.html', CampusDetails = json_data)
+
 
 if __name__ == '__main__':
     app.run(debug = True)
