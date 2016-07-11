@@ -6,6 +6,7 @@ Created on 28 Jun 2016
 from flask import Flask, render_template, request, url_for, redirect,session,flash
 from functools import wraps
 import sqlite3 as sql
+import DataRetrieval
 
 app = Flask(__name__)
 
@@ -86,9 +87,9 @@ def statistics():
 @app.route('/lecturerapp')
 #@login_required
 def lecturerApp():
-    return 0
-    #json_data = DataRetrieval.getAllcampusdetails()
-   # return render_template('lecturerapp.html', CampusDetails = json_data)
+    #return 0
+    json_data = DataRetrieval.getAllCampusDetails()
+    return render_template('lecturerapp.html', CampusDetails = json_data)
 
 
 if __name__ == '__main__':
