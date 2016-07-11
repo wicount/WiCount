@@ -1,10 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+    <meta charset="ISO-8859-1">
+    <link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicountVelda.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Secular+One" rel="stylesheet"> 
+    <title>CSI Building</title>
+    <style type="text/css">
+        #building{visibility: hidden;}
+        #room{visibility: hidden;}
+    </style>
 </head>
 <body>
+<header class="header">
+        <nav>
+        <ul>
+            <li><a href="#">Map</a></li>
+            <li><a href="#">Statistics</a></li>
+            <li><a href="lecturerApp.html">Lecturer</a></li>
+            <li><a href="#">Admin</a></li>
+            <li><a href="#">Login</a></li>
+        </ul>
+    </nav>
+    <img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
+</header>
+   <form class="LecturerApp">
+     <img class="count" src="{{url_for('static',filename='count.png')}}" alt="count"/>
+    
+        <label>Campus:</label>
+        <select id="campus" onchange="BuildingDDL()"></select>
+        <br>
+        <label>Building:</label>
+        <select id="building" onchange="roomDDL()"></select>
+        <br>
+        <label>Room:</label>
+        <select id="room"></select>
+        <br>
 
+        <label>Occupancy:</label>
+        <br>
+        <input type="radio" class="percent" name="percent" value="0" checked> 0%
+        <input type="radio" name="percent" value=".25"> 25%
+        <input type="radio" name="percent" value=".50" checked> 50%
+        <input type="radio" name="percent" value=".75"> 75%
+        <input type="radio" name="percent" value="1"> 100%
+        <br>
+        <input type="submit" class="lectBtn"value="Submit">
+    </form> 
+<script type="text/javascript" language="javascript">
+    function CampusDDL() {
+        // Build up array of the campuses in the database
+        var campus = []
+        document.getElementById("room").style.visibility= 'hidden';
+        document.getElementById("building").style.visibility= 'hidden';
+        for (var i = 0; i < CampusDetails.length; ++i) {
+            campus.push(CampusDetails[i].campus);     // Append the element to the end of Array list
+        }
+        // get just the unque values from the array.
+        var uniqueCampuses = campus.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+        
+        // add the campuses to the drop down list
+        var dropdown = document.getElementById("campus");
+        for (var i = 0; i < uniqueCampuses.length; ++i) {
+            dropdown[dropdown.length] = new Option(uniqueCampuses[i], uniqueCampuses[i]);
+        }
+        // If only one campus on the system fill the building drop down list
+//        if (uniqueCampuses.length ==1){
+            BuildingDDL();
+            document.getElementById("building").style.visibility= 'visible';
+//        }
+    }
+
+    //Help gotten from here:
+    //http://stackoverflow.com/questions/30316285/populate-dropdown-list-based-on-selection-in-another-dropdown
+    function BuildingDDL() {
+        
+        document.getElementById("room").style.visibility= 'hidden';
+        campus=document.getElementById("campus").value;
+        
+        // Build up array of the building in the campus in the database
+        var building = []
+        for (var i = 0; i < CampusDetails.length; ++i) {
+            if (CampusDetails[i].campus == campus)
+                building.push(CampusDetails[i].building);     // Append the element to the end of Array list
+        }
+        // get just the unque values from the array.
+        var uniquebuildings = building.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+        
+        // add the campuses to the drop down list
+        var dropdown = document.getElementById("building");
+        for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
+            dropdown.remove(i);
+        } //clear out the drop down box
+        for (var i = 0; i < uniquebuildings.length; ++i) {
+            dropdown[dropdown.length] = new Option(uniquebuildings[i], uniquebuildings[i]);
+        }
+        document.getElementById("building").style.visibility= 'visible';
+        // If only one building on the system fill the building drop down list
+//        if (uniquebuildings.length ==1){
+            roomDDL();
+//        }
+    }
+    
+    function roomDDL() {
+        building=document.getElementById("building").value;
+        
+        // Build up array of the building in the campus in the database
+        var rooms = []
+        var ids = []
+        for (var i = 0; i < CampusDetails.length; ++i) {
+             if (CampusDetails[i].building == building){
+                rooms.push(CampusDetails[i].room);     // Append the element to the end of Array list
+                ids.push(CampusDetails[i].room_id);     // Append the element to the end of Array list
+            }
+        }
+        
+        // add the campuses to the drop down list
+        var dropdown = document.getElementById("room");
+        for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
+            dropdown.remove(i);
+        } //clear out the drop down box
+        for (var i = 0; i < rooms.length; ++i) {
+            dropdown[dropdown.length] = new Option(rooms[i], ids[i]);
+        }
+        document.getElementById("room").style.visibility= 'visible';
+    }
+    var CampusDetails = {{CampusDetails|tojson}};
+    CampusDetails = JSON.parse(CampusDetails);
+    window.onload = CampusDDL();
+</script>
+<footer>   
+</footer>
 </body>
 </html>
