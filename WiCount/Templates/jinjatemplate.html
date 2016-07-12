@@ -1,7 +1,31 @@
-{% extends "formtemplate.html" %}
-    {% block title %}{% endblock %}
-  {% block body %}
-<!--        Put your code in here don't forget to change the title of the page -->
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>{% block title %}{% endblock %}</title>
+</head>
+<body>
 
+</body>
+</html>
+<title>Flaskr</title>
+<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
+<div class=page>
+    <header class="header">
+        <nav>
+        <ul>
+            <li><a href="#">Map</a></li>
+            <li><a href="#">Statistics</a></li>
+            <li><a href="lecturerApp.html">Lecturer</a></li>
+            <li><a href="#">Admin</a></li>
+            <li><a href="#">Login</a></li>
+        </ul>
+    </nav>
+    <img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
+</header>
+  {% block body %}{% endblock %}
+    <footer>
+    <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+</footer>
     
+</div>
