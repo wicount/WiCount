@@ -1,48 +1,55 @@
-'''
-Created on 28 Jun 2016
-
-@author: Rakesh Lakshman
-'''
 from flask import Flask, render_template, request, url_for, redirect,session,flash
 from functools import wraps
 import sqlite3 as sql
 import DataRetrieval
+from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+from sqlalchemy.orm import sessionmaker
+from CreateUserDb import *
 
 app = Flask(__name__)
+Debug = True
+app.config.from_object(__name__)
+app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a' 
+ 
+# #Login required decorator
+# def login_required(f):
+#     @wraps(f)
+#     def wrap(*args, **kwargs):
+#         if 'logged_in' in session:
+#             return f(*args,**kwargs)
+#         else:
+#             return redirect(url_for(home))
+#     return wrap
 
-#Session Secret Key
-app.secret_key = "wicount"
-  
-#Login required decorator
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args,**kwargs)
-        else:
-            return redirect(url_for(login))
-    return wrap
 
-# To display login page
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] == 'admin' or request.form['password'] == 'admin':
-            session['logged_in'] = True
-            flash('logged in')
-            return redirect(url_for('campusMap'))
-        elif request.form['username'] == 'user' or request.form['password'] == 'user':
-            session['logged_in'] = True
-            flash('logged in')
-            return redirect(url_for('campusMap'))  
-        else:
-            error = 'Invalid Credentials. Please try again.'    
-    return render_template('login.html', error=error)
+@app.route('/')
+def home():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        return "Hello Boss!  <a href='/logout'>Logout</a>"
+ 
+
+@app.route('/login', methods=['POST'])
+def do_admin_login():
+ 
+    POST_USERNAME = str(request.form['username'])
+    POST_PASSWORD = str(request.form['password'])
+ 
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    query = s.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]) )
+    result = query.first()
+    if result:
+        session['logged_in'] = True
+    else:
+        flash('wrong password!')
+    return home()
+
 
 # To display log out page
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
     session.pop('logged_in',None)
     return render_template('logout.html')
@@ -87,10 +94,44 @@ def statistics():
 @app.route('/lecturerapp')
 #@login_required
 def lecturerApp():
-    #return 0
-    json_data = DataRetrieval.getAllCampusDetails()
-    return render_template('lecturerapp.html', CampusDetails = json_data)
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        return render_template('lecturerapp.html')
+#     #return 0
+#     json_data = DataRetrieval.getAllCampusDetails()
+#     return render_template('lecturerapp.html', CampusDetails = json_data)
 
+class ReusableForm(Form):
+    name = TextField('Name:', validators=[validators.required()])
+    email = TextField('Email:', validators=[validators.required(), validators.Length(min=6, max=35)])
+    password = TextField('Password:', validators=[validators.required(), validators.Length(min=3, max=35)])
+ 
+ 
+@app.route("/register", methods=['GET', 'POST'])
+def hello():
+    
+    form = ReusableForm(request.form)
+    
+    print (form.errors)
+    if request.method == 'POST':
+        name=request.form['name']
+        password=request.form['password']
+        email=request.form['email']
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        user = User(name,password,email)
+        session.add(user)
+        
+ 
+        if form.validate():
+            # Save the comment here.
+            flash('Thanks for registration ' + name)
+            session.commit()
+        else:
+            flash('Error: All the form fields are required. ')
+ 
+    return render_template('adduser.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug = True)

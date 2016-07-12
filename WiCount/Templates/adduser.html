@@ -9,14 +9,48 @@
 <header class="header">
     <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
 </header>
-<section class="loginform">
-
-<form id="fileupload">
-    <label for="username">Select file to upload: </label><br><br>
-    <input type="file" name="fileToUpload" id="fileToUpload"><br><br>
-    <input type="submit" value="Upload File" name="submit">
-</form>
-</section>
+<div class="container">
+ 
+ 
+  <h2>Flask Web Form</h2>
+  <form  action="" method="post" role="form">
+    {{ form.csrf }}
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="What's your name?">
+      <br>
+      <label for="email">Email:</label>
+      <input type="text" class="form-control" id="email" name="email" placeholder="Your email will be used to contact you.">
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password.">
+ 
+ 
+    </div>
+    <button type="submit" class="btn btn-success">Sign Up</button>
+  </form>
+ 
+  <br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+ 
+        {% for message in messages %}
+            {% if "Error" not in message[1]: %}
+                <div class="alert alert-info">
+                <strong>Success! </strong> {{ message[1] }}
+                </div>
+            {% endif %}
+ 
+            {% if "Error" in message[1]: %}
+                <div class="alert alert-warning">
+                {{ message[1] }}
+                </div>
+            {% endif %}
+        {% endfor %}
+            {% endif %}
+        {% endwith %}
+ 
+</div>
 <footer>
 <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>   
 </footer>
