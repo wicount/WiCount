@@ -56,8 +56,8 @@ def campusMap():
 #To display the floor plan of rooms
 @app.route('/floorplan')
 #@login_required
-def floorPlan():
-    return render_template('floorplan.html')
+def floorPlanCsi():
+    return render_template('floorplancsi.html')
 
 #To display the statistics for each room
 @app.route('/statsforroom')
