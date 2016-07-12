@@ -11,21 +11,9 @@
     </style>
 </head>
 <body>
-<header class="header">
-        <nav>
-        <ul>
-            <li><a href="#">Map</a></li>
-            <li><a href="#">Statistics</a></li>
-            <li><a href="lecturerApp.html">Lecturer</a></li>
-            <li><a href="#">Admin</a></li>
-            <li><a href="#">Login</a></li>
-        </ul>
-    </nav>
-    <img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
-</header>
-   <form class="LecturerApp">
-     <img class="count" src="{{url_for('static',filename='count.png')}}" alt="count"/>
-    
+    {% extends "formtemplate.html" %}
+{% block form %}
+
         <label>Campus:</label>
         <select id="campus" onchange="BuildingDDL()"></select>
         <br>
@@ -45,7 +33,8 @@
         <input type="radio" name="percent" value="1"> 100%
         <br>
         <input type="submit" class="lectBtn"value="Submit">
-    </form> 
+    {% endblock %}
+    
 <script type="text/javascript" language="javascript">
     function CampusDDL() {
         // Build up array of the campuses in the database
