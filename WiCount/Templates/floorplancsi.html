@@ -13,9 +13,8 @@
 	});</script>
 </head>
 <body>
-<header class="header">
-    <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
-</header>
+    {% extends "jinjatemplate.html" %}
+{% block body %}
 
 <h1>CSI Building</h1>
 <h3> Level 0</h3>
@@ -36,8 +35,6 @@
     <area shape="rect" coords="675,232,856,359" href="#B106" alt="B106">
 </map>
 <!-- Display Results-->
-
-<footer>   
-</footer>
+{% endblock %}
 </body>
 </html>
