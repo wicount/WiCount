@@ -118,9 +118,10 @@ def hello():
         name=request.form['name']
         password=request.form['password']
         email=request.form['email']
+        role=request.form['role']
         Session = sessionmaker(bind=engine)
         session = Session()
-        user = User(name,password,email)
+        user = User(name,password,email,role)
         session.add(user)
         
  
