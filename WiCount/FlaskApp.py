@@ -97,7 +97,9 @@ def lecturerApp():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return render_template('lecturerapp.html')
+        json_data = DataRetrieval.getAllCampusDetails()
+        return render_template('lecturerapp.html', CampusDetails = json_data)
+#        return render_template('lecturerapp.html')
 #     #return 0
 #     json_data = DataRetrieval.getAllCampusDetails()
 #     return render_template('lecturerapp.html', CampusDetails = json_data)
