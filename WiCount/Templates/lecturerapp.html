@@ -1,8 +1,9 @@
+<!--
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="ISO-8859-1">
-    <link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicountVelda.css')}}">
+    <link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
     <link href="https://fonts.googleapis.com/css?family=Secular+One" rel="stylesheet"> 
     <title>CSI Building</title>
     <style type="text/css">
@@ -10,9 +11,12 @@
         #room{visibility: hidden;}
     </style>
 </head>
+-->
 <body>
     {% extends "formtemplate.html" %}
-{% block form %}
+    {% block title %}Lecturer App{% endblock %}
+
+    {% block form %}
 
         <label>Campus:</label>
         <select id="campus" onchange="BuildingDDL()"></select>
@@ -32,9 +36,9 @@
         <input type="radio" name="percent" value=".75"> 75%
         <input type="radio" name="percent" value="1"> 100%
         <br>
-        <input type="submit" class="lectBtn"value="Submit">
-    {% endblock %}
-    
+        <input type="submit" class="lectBtn" value="Submit">
+
+ 
 <script type="text/javascript" language="javascript">
     function CampusDDL() {
         // Build up array of the campuses in the database
@@ -52,11 +56,8 @@
         for (var i = 0; i < uniqueCampuses.length; ++i) {
             dropdown[dropdown.length] = new Option(uniqueCampuses[i], uniqueCampuses[i]);
         }
-        // If only one campus on the system fill the building drop down list
-//        if (uniqueCampuses.length ==1){
-            BuildingDDL();
-            document.getElementById("building").style.visibility= 'visible';
-//        }
+        BuildingDDL();
+        document.getElementById("building").style.visibility= 'visible';
     }
 
     //Help gotten from here:
@@ -84,10 +85,7 @@
             dropdown[dropdown.length] = new Option(uniquebuildings[i], uniquebuildings[i]);
         }
         document.getElementById("building").style.visibility= 'visible';
-        // If only one building on the system fill the building drop down list
-//        if (uniquebuildings.length ==1){
-            roomDDL();
-//        }
+        roomDDL();
     }
     
     function roomDDL() {
@@ -113,11 +111,16 @@
         }
         document.getElementById("room").style.visibility= 'visible';
     }
+    
+    function addLecturerData(){
+        document.getElementById("lecturer").innerHTML = "<h2>Thank you for making a submission</h2>"
+    }
     var CampusDetails = {{CampusDetails|tojson}};
     CampusDetails = JSON.parse(CampusDetails);
+    console.log(CampusDetails)
     window.onload = CampusDDL();
 </script>
-<footer>   
-</footer>
+    
+        {% endblock %}
 </body>
-</html>
+<!--</html>-->
