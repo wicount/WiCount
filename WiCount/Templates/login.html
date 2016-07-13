@@ -6,7 +6,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+{% extends "formtemplate.html" %}
 {% block body %}
 {% if session['logged_in'] %}
 <p>You're logged in already!</p>

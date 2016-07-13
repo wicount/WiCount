@@ -27,7 +27,7 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return "Hello Boss!  <a href='/logout'>Logout</a>"
+        return render_template('lecturerapp.html')
  
 
 @app.route('/login', methods=['POST'])
