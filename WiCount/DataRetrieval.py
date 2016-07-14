@@ -56,7 +56,9 @@ def createSurveyFile(room_id, percent, day,time):
     try:
         cur.execute('INSERT OR REPLACE INTO survey VALUES (?,?,?,?)', details)
         con.commit()
+        con.close()
         return ("Thank you for your participation")
     except OperationalError:
+        con.close()
         return ("There was an error adding the details please try again")
 
