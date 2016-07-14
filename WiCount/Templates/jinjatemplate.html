@@ -14,11 +14,12 @@
     <header class="header">
         <nav>
         <ul>
-            <li><a href="#">Map</a></li>
-            <li><a href="#">Statistics</a></li>
-            <li><a href="lecturerApp.html">Lecturer</a></li>
-            <li><a href="#">Admin</a></li>
-            <li><a href="#">Login</a></li>
+            <li><a href="{{url_for('campusMap')}}">Home</a></li>
+            <li><a href="{{url_for('statistics')}}">Statistics</a></li>
+            <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
+            <li><a href="{{url_for('fileUpload')}}">Upload</a></li>
+            <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+            <li><a href="{{url_for('logout')}}">Logout</a></li>
         </ul>
     </nav>
     <img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
