@@ -5,6 +5,7 @@ import DataRetrieval
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from sqlalchemy.orm import sessionmaker
 from CreateUserDb import *
+import json #used to build json strings
 
 app = Flask(__name__)
 Debug = True
@@ -27,8 +28,7 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        json_data = DataRetrieval.getAllCampusDetails()
-        return render_template('lecturerapp.html', CampusDetails = json_data)
+        return render_template('lecturerapp.html')
  
 
 @app.route('/login', methods=['POST'])
@@ -92,14 +92,22 @@ def statistics():
     return render_template('statistics.html')
 
 #To display lecturer app page
-@app.route('/lecturerapp')
+@app.route('/lecturerapp', methods=['GET', 'POST'])
 #@login_required
 def lecturerApp():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
+        if request.method == 'POST':
+            room_id=request.form['room']
+            percent=request.form['percent']
+            day=request.form['day']
+            time=request.form['time']
+            message = DataRetrieval.createSurveyFile(room_id, percent, day, time)
+        else:
+            message = ""
         json_data = DataRetrieval.getAllCampusDetails()
-        return render_template('lecturerapp.html', CampusDetails = json_data)
+        return render_template('lecturerapp.html', CampusDetails = json_data, message = message)
 #        return render_template('lecturerapp.html')
 #     #return 0
 #     json_data = DataRetrieval.getAllCampusDetails()
@@ -136,6 +144,9 @@ def hello():
             flash('Error: All the form fields are required. ')
  
     return render_template('adduser.html', form=form)
+
+ 
+
 
 if __name__ == '__main__':
     app.run(debug = True)

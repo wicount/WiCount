@@ -15,16 +15,40 @@
 <body>
     {% extends "formtemplate.html" %}
     {% block title %}Lecturer App{% endblock %}
+    {% block action %} action="" method="post" {% endblock %}
     {% block form %}
-
+    <div id="message"></div>
         <label>Campus:</label>
-        <select id="campus" onchange="BuildingDDL()"></select>
+        <select id="campus" name="campus" onchange="BuildingDDL()"></select>
         <br>
         <label>Building:</label>
-        <select id="building" onchange="roomDDL()"></select>
+        <select id="building" name="building" onchange="roomDDL()"></select>
         <br>
         <label>Room:</label>
-        <select id="room"></select>
+        <select id="room" name="room" ></select>
+        <br>
+    
+        <label>Day:</label>
+        <select id="day" name="day" >
+            <option value="0" id = "mon">Monday</option>
+            <option value="1" id = "tue">Tuesday</option>
+            <option value="2" id = "wed">Wednesday</option>
+            <option value="3" id = "thu">Thrusday</option>            
+            <option value="4" id = "fri">Friday</option>
+        </select>
+        <br>
+    
+        <label>Time:</label>
+        <select id="time" name="time" >
+            <option value="09:00:00" id = "9">09:00 - 10:00</option>
+            <option value="10:00:00" id = "10">10:00 - 11:00</option>
+            <option value="11:00:00" id = "11">11:00 - 12:00</option>
+            <option value="12:00:00" id = "12">12:00 - 13:00</option>            
+            <option value="13:00:00" id = "13">13:00 - 14:00</option>
+            <option value="14:00:00" id = "14">14:00 - 15:00</option>            
+            <option value="15:00:00" id = "15">15:00 - 16:00</option>           
+            <option value="16:00:00" id = "16">16:00 - 17:00</option>
+        </select>
         <br>
 
         <label>Occupancy:</label>
@@ -36,10 +60,14 @@
         <input type="radio" name="percent" value="1"> 100%
         <br>
         <input type="submit" class="lectBtn" value="Submit">
-
- 
+<div id="outout"></div>
+    
+    
 <script type="text/javascript" language="javascript">
     function CampusDDL() {
+            // show the thank you message
+            document.getElementById("message").innerHTML= '<h2>'+message+'</h2>';
+
         // Build up array of the campuses in the database
         var campus = []
         document.getElementById("room").style.visibility= 'hidden';
@@ -49,14 +77,14 @@
         }
         // get just the unque values from the array.
         var uniqueCampuses = campus.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-        
+
         // add the campuses to the drop down list
         var dropdown = document.getElementById("campus");
         for (var i = 0; i < uniqueCampuses.length; ++i) {
             dropdown[dropdown.length] = new Option(uniqueCampuses[i], uniqueCampuses[i]);
         }
         BuildingDDL();
-        document.getElementById("building").style.visibility= 'visible';
+        document.getElementById("building").style.visibility= 'visible';   
     }
 
     //Help gotten from here:
@@ -109,14 +137,47 @@
             dropdown[dropdown.length] = new Option(rooms[i], ids[i]);
         }
         document.getElementById("room").style.visibility= 'visible';
+        setDateTime();
     }
     
-    function addLecturerData(){
-        document.getElementById("lecturer").innerHTML = "<h2>Thank you for making a submission</h2>"
+    function setDateTime(){
+        //set the default values for the day and time drop down boxes
+        var curTime = new Date();
+        
+        // set the current day
+        var curDay = curTime.getDay();
+        switch (curDay){
+            case 0:
+                document.getElementById("fri").selected = "true";
+                break;
+            case 1:
+                document.getElementById("mon").selected = "true";
+                break;
+            case 2:
+                document.getElementById("tue").selected = "true";
+                break;
+            case 3:
+                document.getElementById("wed").selected = "true";
+                break;
+            case 4:
+                document.getElementById("thu").selected = "true";
+                break;
+            case 5:
+                document.getElementById("fri").selected = "true";
+                break;
+            case 6:
+                document.getElementById("fri").selected = "true";
+                break;
+        }
+        // set the current time slot
+        var curHour = curTime.getHours();
+        document.getElementById(curHour).selected = "true";
     }
+    
     var CampusDetails = {{CampusDetails|tojson}};
+    var message = {{message|tojson}};
     CampusDetails = JSON.parse(CampusDetails);
-    console.log(CampusDetails)
+    console.log(CampusDetails);
     window.onload = CampusDDL();
 </script>
     
