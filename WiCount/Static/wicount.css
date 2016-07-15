@@ -218,3 +218,13 @@ select.firstchild{
     font-size: 1.25em;
     margin: auto;
 }
+
+.floorplan{
+    width:600px;
+    text-align: center;
+    margin: auto;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+/*    box-shadow: 3px 3px #008AC9;*/
+    box-shadow: 3px 3px #ecd900;
+}

@@ -3,12 +3,10 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>{% block title %}{% endblock %}</title>
+{% block scripts %}{% endblock %}
 </head>
 <body>
 
-</body>
-</html>
-<title>Flaskr</title>
 <link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
 <div class=page>
     <header class="header">
@@ -22,7 +20,7 @@
             <li><a href="{{url_for('logout')}}">Logout</a></li>
         </ul>
     </nav>
-    <img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
+    <img class="logo" src="{{url_for('static',filename='longLogo2.png')}}" alt="logo"/>
 </header>
   {% block body %}{% endblock %}
     <footer>
