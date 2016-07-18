@@ -31,6 +31,7 @@ def home():
         json_data = DataRetrieval.getAllCampusDetails()
         message = ""
         return render_template('lecturerapp.html', CampusDetails = json_data, message = message)
+
  
 
 @app.route('/login', methods=['POST'])
@@ -72,8 +73,20 @@ def floorPlanCsi():
 #To display the statistics for each room
 @app.route('/statsforroom')
 #@login_required
-def statsForRoom():
-    return render_template('statsforroom.html')
+def statsForRoom(room_id=None):
+#     return render_template('statsforroom.html')
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        print(request.method)
+        print(request.args.get('room_id'))
+        if request.method == 'GET':
+            room_id=request.args.get('room_id')
+        else:
+            room_id=request.form['room'] 
+        roomsInBuilding = DataRetrieval.GetBuildingDetails(room_id)
+        surveyData = DataRetrieval.StatsForRoom(room_id)
+        return render_template('statsforroom.html', BuildingDetails = roomsInBuilding, room_id = room_id, surveyData = surveyData)
 
 #Page to add user
 @app.route('/adduser')
@@ -137,7 +150,6 @@ def hello():
         user = User(name,password,email,role)
         session.add(user)
         
- 
         if form.validate():
             # Save the comment here.
             flash('Thanks for registration ' + name)

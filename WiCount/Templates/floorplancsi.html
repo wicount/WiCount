@@ -19,9 +19,9 @@
     <img class="floorplan" src="{{url_for('static',filename='level0Map1.jpg')}}" alt="CSI Level 0" usemap="#groundFloor">
 
     <map name="groundFloor">
-        <area shape="poly" coords="333,148,404,148,405,229,335,229" href="#B002" alt="B002">
-        <area shape="poly" coords="404,148,479,147,479,230,405,229" href="#B003" alt="B003">
-        <area shape="poly" coords="479,147,585,145,580,230,479,230" href="#B004" alt="B004">
+        <area shape="poly" coords="333,148,404,148,405,229,335,229" href="{{url_for('statsForRoom',room_id=1)}}" alt="B002">
+        <area shape="poly" coords="404,148,479,147,479,230,405,229" href="{{url_for('statsForRoom',room_id=2)}}" alt="B003">
+        <area shape="poly" coords="479,147,585,145,580,230,479,230" href="{{url_for('statsForRoom',room_id=3)}}" alt="B004">
     </map> 
      
     <br>
@@ -29,14 +29,9 @@
     <img class="floorplan" src="{{url_for('static',filename='level1Map1.jpg')}}" alt="CSI Level 0" usemap="#firstFloor">
     
     <map name="firstFloor">
-        <area shape="poly" coords="263,120,334,120,334,171,325,172,325,177,264,177" href="#B108" alt="B108">
-        <area shape="poly" coords="334,120,
-                                   422,120,
-                                   423,177,
-                                   344,177,
-                                   344,171,
-                                   335,171" href="#B107" alt="B107">
-        <area shape="poly" coords="423,120,504,120,504,105,542,105,534,229,423,230" href="#B106" alt="B106">
+        <area shape="poly" coords="263,120,334,120,334,171,325,172,325,177,264,177" href="{{url_for('statsForRoom',room_id=4)}}" alt="B108">
+        <area shape="poly" coords="334,120,422,120,423,177,344,177,344,171,335,171" href="{{url_for('statsForRoom',room_id=5)}}" alt="B107">
+        <area shape="poly" coords="423,120,504,120,504,105,542,105,534,229,423,230" href="{{url_for('statsForRoom',room_id=6)}}" alt="B106">
     </map>
     </td>
         </tr>

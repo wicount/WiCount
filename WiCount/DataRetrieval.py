@@ -62,3 +62,44 @@ def createSurveyFile(room_id, percent, day,time):
         con.close()
         return ("There was an error adding the details please try again")
 
+def GetBuildingDetails(room_id):
+    ''' Get the details for all the rooms in the building. '''
+    con = sql.connect("wicount.sqlite3")
+    con.row_factory = sql.Row # This enables column access by name: row['column_name'] 
+    cur = con.cursor()
+    sqlString = "SELECT * FROM room WHERE room_id = '" + str(room_id) + "';"
+    print("velda,", sqlString)
+    try:
+        thisRoom = cur.execute(sqlString).fetchall()[0]
+        con.commit()
+    except OperationalError:
+        return ("There was an error adding the details please try again")
+    sqlString = "SELECT * FROM room WHERE campus = '" + thisRoom[1] + "' AND building = '" + thisRoom[2] + "';"
+    allRooms = cur.execute(sqlString).fetchall()
+    con.commit()
+    return json.dumps( [dict(ix) for ix in allRooms] ) #CREATE JSON
+
+def StatsForRoom(room_id):
+    con = sql.connect('wicount.sqlite3')
+    with con:    
+        c = con.cursor()    
+        c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "';")
+        rows = c.fetchall()
+        json_data = []
+        even = rows[0][1]
+        for row in rows:
+            data = {}
+            date = row[1]
+            if date[:9] == even:
+                data['week'] = 1
+            else:
+                data['week'] = 2
+            data['day'] = row[2]
+            data['hour'] = date[11:16]
+            data['percent'] = row[3]
+            json_data.append(data)
+#             print(data)
+        print(json_data)
+        return(json.dumps(json_data))
+    
+#print(GetBuildingDetails(2))

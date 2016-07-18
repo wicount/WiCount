@@ -1,94 +1,182 @@
-<!DOCTYPE html>
-<html>
-<head> 
-<meta charset="UTF-8">
-<link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
-<title>WiCount | App</title>    
-</head>   
-       
-<body>
-<header class="header">
-    <img class="logo" src="{{url_for('static',filename='logo.jpg')}}" alt="logo"/><br><br> 
-</header>
-<div>
-<form>
-    <div id="section1">
-    <div id="divhead">    
-    <span class="span">Click on the building to select a room</span>
-    <span class="span">Level:
-    <select name="level">
-    <option value="level0">Level 0</option>
-    <option value="level2">Level 1</option>
-    </select></span>
-    <span class="span">Day:
-    <select name="day">
-    <option value="mon">Monday</option>
-    <option value="tue">Tuesday</option>
-    <option value="wed">Wednesday</option>
-    <option value="thu">Thursday</option>
-    <option value="thu">Friday</option>
-    </select></span>
-        <span class="span">Time:
-    <select name="time">
-    <option value="nine">9:00</option>
-    <option value="ten">10:00</option>
-    <option value="eleven">11:00</option>
-    <option value="twelve">12:00</option>
-    <option value="thirteen">13:00</option>
-    <option value="fourteen">14:00</option>
-    <option value="fifteen">15:00</option>
-    <option value="sixteen">16:00</option>
-    <option value="seventeen">17:00</option>
-    </select></span>
-        <span class="span"><input type="submit" value="Submit"></span>
-    </div>
-    <div>   
-    <input id="image1" type="image" name="image" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building map" >
-    </div>
-    
+{% extends "jinjatemplate.html" %}
+{% block title %}Room Stats{% endblock %}
+{% block scripts %}
+    <script src="http://d3js.org/d3.v3.js"></script>
+{% endblock %}
+{% block body %}
+<table>
+    <tr>
+        <td>
+            <div id="chart"></div>
+            <div id="dataset-picker"></div>
+        </td>
+        <td>
+            <form action="{{url_for('statsForRoom')}}" method="post">
+                <div id="message"></div>
+                <label>Room:</label>
+                <select id="room" name="room"></select>
 
+                <input type="submit" class="lectBtn" value="Go">
+            </form>
+            <label>Ledgend</label>
+            <table>
+                <tr>
+                    <td></td><td>0%</td>
+                    <td></td><td>25%</td>
+                    <td></td><td>50%</td>
+                    <td></td><td>75%</td>
+                    <td></td><td>100%</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript" language="javascript">
+    
+    function roomDDL() {
+        var rooms = []
+        var ids = []
+        for (var i = 0; i < BuildingDetails.length; ++i) {
+            rooms.push(BuildingDetails[i].room);     // Append the element to the end of Array list
+            ids.push(BuildingDetails[i].room_id);     // Append the element to the end of Array list
+        }
         
-    </div>
-</form>
-<form>
-    <div id="sections">
-    <p>Select the Building:</p>
-    <select name="building2">
-    <option value="CSI">CSI</option>
-    </select><br><br>
-    <p>Select the Room:</p>
-    <select name="building2">
-    <option value="B-02">B-02</option>
-    <option value="B-03">B-03</option>
-    <option value="B-04">B-04</option>
-    </select><br><br>
-    <p>Select the Day:</p>
-    <select name="day">
-    <option value="mon">Monday</option>
-    <option value="tue">Tuesday</option>
-    <option value="wed">Wednesday</option>
-    <option value="thu">Thursday</option>
-    <option value="fri">Friday</option>
-    </select><br><br>
-    <p>Select the Time:</p>
-    <select name="time">
-    <option value="nine">9:00</option>
-    <option value="ten">10:00</option>
-    <option value="eleven">11:00</option>
-    <option value="twelve">12:00</option>
-    <option value="thirteen">13:00</option>
-    <option value="fourteen">14:00</option>
-    <option value="fifteen">15:00</option>
-    <option value="sixteen">16:00</option>
-    <option value="seventeen">17:00</option>
-    </select><br><br><br><br>
-    <input type="submit" value="Submit">
-    </div> 
-</form>
-</div>
-<footer>
-    <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
-</footer>
-</body>    
-  
-</html>
+        // add the campuses to the drop down list
+        var dropdown = document.getElementById("room");
+        for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
+            dropdown.remove(i);
+        } //clear out the drop down box
+        for (var i = 0; i < rooms.length; ++i) {
+            dropdown[dropdown.length] = new Option(rooms[i], ids[i])
+            if (ids[i] == room_id){
+                dropdown.selectedIndex = i
+            }
+        }
+    }
+    
+    
+    var BuildingDetails = {{BuildingDetails|tojson}};
+    var room_id = {{room_id|tojson}};
+    var surveyData = {{surveyData|tojson}};
+    BuildingDetails = JSON.parse(BuildingDetails);
+//    document.getElementById("message").innerHTML= '<h2>'+BuildingDetails+'</h2><h2>' +room_id+'</h2>';
+    console.log(BuildingDetails);
+    window.onload = roomDDL();
+    
+//    -------------------------------------------------------------
+//    |                   code for data visualisation             |
+//    -------------------------------------------------------------
+//    used code from http://bl.ocks.org/tjdecke/5558084 as a template
+    var margin = { top: 50, right: 0, bottom: 100, left: 30 },
+          width = 960 - margin.left - margin.right,
+          height = 430 - margin.top - margin.bottom,
+          gridSize = Math.floor(width / 8), //was 24
+          legendElementWidth = gridSize*2,
+          buckets = 9,
+          colors = ["#ffffd9",,"#c7e9b4",,"#41b6c4",,"#225ea8",,"#081d58"], // alternatively colorbrewer.YlGnBu[9]
+          days = ["Mo", "Tu", "We", "Th", "Fr"],
+          times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
+          datasets = ["week1", "week2"];
+
+      var svg = d3.select("#chart").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      var dayLabels = svg.selectAll(".dayLabel")
+          .data(days)
+          .enter().append("text")
+            .text(function (d) { return d; })
+            .attr("x", 0)
+            .attr("y", function (d, i) { return i * gridSize; })
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+            .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+
+      var timeLabels = svg.selectAll(".timeLabel")
+          .data(times)
+          .enter().append("text")
+            .text(function(d) { return d; })
+            .attr("x", function(d, i) { return i * gridSize; })
+            .attr("y", 0)
+            .style("text-anchor", "middle")
+            .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+            .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+
+      var heatmapChart = function(tsvFile) {
+        d3.tsv(tsvFile,
+        function(d) {
+          return {
+            day: +d.day,
+            hour: +d.hour,
+            value: +d.value
+          };
+        },
+        function(error, data) {
+          var colorScale = d3.scale.quantile()
+              .domain([0, buckets - 1, d3.max(data, function (d) { return d.value; })])
+              .range(colors);
+
+          var cards = svg.selectAll(".hour")
+              .data(data, function(d) {return d.day+':'+d.hour;});
+
+          cards.append("title");
+
+          cards.enter().append("rect")
+              .attr("x", function(d) { return (d.hour - 1) * gridSize; })
+              .attr("y", function(d) { return (d.day - 1) * gridSize; })
+              .attr("rx", 4)
+              .attr("ry", 4)
+              .attr("class", "hour bordered")
+              .attr("width", gridSize)
+              .attr("height", gridSize)
+              .style("fill", colors[0]);
+
+          cards.transition().duration(1000)
+              .style("fill", function(d) { return colorScale(d.value); });
+
+          cards.select("title").text(function(d) { return d.value; });
+          
+          cards.exit().remove();
+
+          var legend = svg.selectAll(".legend")
+              .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+
+          legend.enter().append("g")
+              .attr("class", "legend");
+
+          legend.append("rect")
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height)
+            .attr("width", legendElementWidth)
+            .attr("height", gridSize / 2)
+            .style("fill", function(d, i) { return colors[i]; });
+
+          legend.append("text")
+            .attr("class", "mono")
+            .text(function(d) { return "≥ " + Math.round(d); })
+            .attr("x", function(d, i) { return legendElementWidth * i; })
+            .attr("y", height + gridSize);
+
+          legend.exit().remove();
+
+        });  
+      };
+
+      heatmapChart(datasets[0]);
+      
+      var datasetpicker = d3.select("#dataset-picker").selectAll(".dataset-button")
+        .data(datasets);
+
+      datasetpicker.enter()
+        .append("input")
+        .attr("value", function(d){ return "Dataset " + d })
+        .attr("type", "button")
+        .attr("class", "dataset-button")
+        .on("click", function(d) {
+          heatmapChart(d);
+        });
+</script>
+{% endblock %}

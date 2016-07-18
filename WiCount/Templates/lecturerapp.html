@@ -1,66 +1,52 @@
-<!--
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="ISO-8859-1">
-    <link rel = "stylesheet" type = "text/css" href="{{url_for('static',filename='wicount.css')}}">
-    <link href="https://fonts.googleapis.com/css?family=Secular+One" rel="stylesheet"> 
-    <title>CSI Building</title>
-    <style type="text/css">
-        #building{visibility: hidden;}
-        #room{visibility: hidden;}
-    </style>
-</head>
--->
-<body>
-    {% extends "formtemplate.html" %}
-    {% block title %}Lecturer App{% endblock %}
-    {% block action %} action="" method="post" {% endblock %}
-    {% block form %}
-    <div id="message"></div>
-        <label>Campus:</label>
-        <select id="campus" name="campus" onchange="BuildingDDL()"></select>
-        <br>
-        <label>Building:</label>
-        <select id="building" name="building" onchange="roomDDL()"></select>
-        <br>
-        <label>Room:</label>
-        <select id="room" name="room" ></select>
-        <br>
-    
-        <label>Day:</label>
-        <select id="day" name="day" >
-            <option value="0" id = "mon">Monday</option>
-            <option value="1" id = "tue">Tuesday</option>
-            <option value="2" id = "wed">Wednesday</option>
-            <option value="3" id = "thu">Thrusday</option>            
-            <option value="4" id = "fri">Friday</option>
-        </select>
-        <br>
-    
-        <label>Time:</label>
-        <select id="time" name="time" >
-            <option value="09:00:00" id = "9">09:00 - 10:00</option>
-            <option value="10:00:00" id = "10">10:00 - 11:00</option>
-            <option value="11:00:00" id = "11">11:00 - 12:00</option>
-            <option value="12:00:00" id = "12">12:00 - 13:00</option>            
-            <option value="13:00:00" id = "13">13:00 - 14:00</option>
-            <option value="14:00:00" id = "14">14:00 - 15:00</option>            
-            <option value="15:00:00" id = "15">15:00 - 16:00</option>           
-            <option value="16:00:00" id = "16">16:00 - 17:00</option>
-        </select>
-        <br>
 
-        <label>Occupancy:</label>
-        <br>
-        <input type="radio" class="percent" name="percent" value="0" checked> 0%
-        <input type="radio" name="percent" value=".25"> 25%
-        <input type="radio" name="percent" value=".50" checked> 50%
-        <input type="radio" name="percent" value=".75"> 75%
-        <input type="radio" name="percent" value="1"> 100%
-        <br>
-        <input type="submit" class="lectBtn" value="Submit">
-<div id="outout"></div>
+{% extends "formtemplate.html" %}
+{% block title %}Lecturer App{% endblock %}
+{% block action %} action="" method="post" {% endblock %}
+{% block form %}
+    <div id="message"></div>
+    <label>Campus:</label>
+    <select id="campus" name="campus" onchange="BuildingDDL()"></select>
+    <br>
+    <label>Building:</label>
+    <select id="building" name="building" onchange="roomDDL()"></select>
+    <br>
+    <label>Room:</label>
+    <select id="room" name="room" ></select>
+    <br>
+
+    <label>Day:</label>
+    <select id="day" name="day" >
+        <option value="0" id = "mon">Monday</option>
+        <option value="1" id = "tue">Tuesday</option>
+        <option value="2" id = "wed">Wednesday</option>
+        <option value="3" id = "thu">Thrusday</option>            
+        <option value="4" id = "fri">Friday</option>
+    </select>
+    <br>
+
+    <label>Time:</label>
+    <select id="time" name="time" >
+        <option value="09:00:00" id = "9">09:00 - 10:00</option>
+        <option value="10:00:00" id = "10">10:00 - 11:00</option>
+        <option value="11:00:00" id = "11">11:00 - 12:00</option>
+        <option value="12:00:00" id = "12">12:00 - 13:00</option>            
+        <option value="13:00:00" id = "13">13:00 - 14:00</option>
+        <option value="14:00:00" id = "14">14:00 - 15:00</option>            
+        <option value="15:00:00" id = "15">15:00 - 16:00</option>           
+        <option value="16:00:00" id = "16">16:00 - 17:00</option>
+    </select>
+    <br>
+
+    <label>Occupancy:</label>
+    <br>
+    <input type="radio" class="percent" name="percent" value="0" checked> 0%
+    <input type="radio" name="percent" value=".25"> 25%
+    <input type="radio" name="percent" value=".50" checked> 50%
+    <input type="radio" name="percent" value=".75"> 75%
+    <input type="radio" name="percent" value="1"> 100%
+    <br>
+    <input type="submit" class="lectBtn" value="Submit">
+
     
     
 <script type="text/javascript" language="javascript">
@@ -181,6 +167,4 @@
     window.onload = CampusDDL();
 </script>
     
-        {% endblock %}
-</body>
-<!--</html>-->
+{% endblock %}
