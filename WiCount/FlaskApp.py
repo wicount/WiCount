@@ -115,7 +115,7 @@ def addUser():
             #Commit user data to database
             session.commit()
             #Send email to the user
-            return sendEmail(user)
+            return sendEmailAdmin(user)
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -156,6 +156,12 @@ def sendEmail(user):
    mail.send(msg)
    return render_template('email.html')
 
+@app.route("/sendemailadmin")
+def sendEmailAdmin(user):
+   msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [user.email])
+   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (user.username,user.password )
+   mail.send(msg)
+   return render_template('emailadmin.html')
 #Initial file upload template
 @app.route('/fileupload')
 #@login_required

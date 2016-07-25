@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
+	<meta charset="UTF-8">
+	<title>Logged Out</title>
+</head>
+<body>
+	<div class=page>
+	<header class="header">
+	<nav>
+        <ul>
+            <li><a href="{{url_for('campusMap')}}">Home</a></li>
+            <li><a href="{{url_for('statistics')}}">Statistics</a></li>
+            <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
+            <li><a href="{{url_for('fileupload')}}">Upload</a></li>
+            <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+            <li><a href="{{url_for('logout')}}">Logout</a></li>
+        </ul>
+    </nav>
+    	<img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
+	</header> 
+	{% block body %}  
+	{% if session['logged_in'] %}
+		<div class="LecturerApp">
+		<strong>Thank you for registration. User name and Password has been sent to your email. </strong><br><br>
+		<strong><a href="/">Click here to login</a></strong>
+	</div>	
+	{% else %}
+		<p>Unauthorized</p>
+	{% endif %}
+	{% endblock %}
+	<footer>
+    	<p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+	</footer>
+	</div>
+</body>
+</html>
