@@ -7,18 +7,27 @@
 <table>
     <tr>
         <td>
+<!--
+            <div id="option">
+                <input name="updateButton" 
+                       type="button" 
+                       value="Update" 
+                       onclick="updateData()" 
+                />
+            </div>
+-->
             <div id="chart"></div>
             <div id="dataset-picker"></div>
         </td>
         <td>
-            <form action="{{url_for('statsForRoom')}}" method="post">
+            <form action="{{url_for('statsForRoom')}}" method="GET">
                 <div id="message"></div>
                 <label>Room:</label>
-                <select id="room" name="room"></select>
+                <select id="room" name="room_id"></select>
 
                 <input type="submit" class="lectBtn" value="Go">
             </form>
-            <label>Ledgend</label>
+            <label>Legend</label>
             <table>
                 <tr>
                     <td></td><td>0%</td>
@@ -40,7 +49,7 @@
         for (var i = 0; i < BuildingDetails.length; ++i) {
             rooms.push(BuildingDetails[i].room);     // Append the element to the end of Array list
             ids.push(BuildingDetails[i].room_id);     // Append the element to the end of Array list
-        }
+        }//end for
         
         // add the campuses to the drop down list
         var dropdown = document.getElementById("room");
@@ -51,17 +60,20 @@
             dropdown[dropdown.length] = new Option(rooms[i], ids[i])
             if (ids[i] == room_id){
                 dropdown.selectedIndex = i
-            }
-        }
-    }
-    
-    
+            }// end if
+        }// end for
+    };// end function
+
     var BuildingDetails = {{BuildingDetails|tojson}};
     var room_id = {{room_id|tojson}};
     var surveyData = {{surveyData|tojson}};
+
     BuildingDetails = JSON.parse(BuildingDetails);
-//    document.getElementById("message").innerHTML= '<h2>'+BuildingDetails+'</h2><h2>' +room_id+'</h2>';
-    console.log(BuildingDetails);
+    surveyData = JSON.parse(surveyData);
+
+    var week1 = surveyData[0];
+    var week2 = surveyData[1];
+    
     window.onload = roomDDL();
     
 //    -------------------------------------------------------------
@@ -69,22 +81,30 @@
 //    -------------------------------------------------------------
 //    used code from http://bl.ocks.org/tjdecke/5558084 as a template
     var margin = { top: 50, right: 0, bottom: 100, left: 30 },
-          width = 960 - margin.left - margin.right,
-          height = 430 - margin.top - margin.bottom,
+          width = 600 - margin.left - margin.right,
+          height = 400 - margin.top - margin.bottom,
           gridSize = Math.floor(width / 8), //was 24
-          legendElementWidth = gridSize*2,
-          buckets = 9,
-          colors = ["#ffffd9",,"#c7e9b4",,"#41b6c4",,"#225ea8",,"#081d58"], // alternatively colorbrewer.YlGnBu[9]
-          days = ["Mo", "Tu", "We", "Th", "Fr"],
+          legendElementWidth = gridSize*1.5,
+          buckets = 5,
+          colors = ["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+          days = ["Mon", "Tue", "Wed", "Thu", "Fri"],
           times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
-          datasets = ["week1", "week2"];
-
+          datasets = [week1, week2],
+          datasetName = ["Week 1", "Week 2"]
+          colorLow = '#ffffd9', 
+          colorMed = '#41b6c4', 
+          colorHigh = '#081d58';
+         
+console.log("margin: ",margin)
+    
       var svg = d3.select("#chart").append("svg")
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+console.log("svg: ",svg[0])
 
+// This sets up the labels for the days
       var dayLabels = svg.selectAll(".dayLabel")
           .data(days)
           .enter().append("text")
@@ -94,7 +114,9 @@
             .style("text-anchor", "end")
             .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
             .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+console.log("dayLabels: ",dayLabels[0])
 
+// This sets up the lables for the times across the top
       var timeLabels = svg.selectAll(".timeLabel")
           .data(times)
           .enter().append("text")
@@ -104,29 +126,52 @@
             .style("text-anchor", "middle")
             .attr("transform", "translate(" + gridSize / 2 + ", -6)")
             .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
-
-      var heatmapChart = function(tsvFile) {
-        d3.tsv(tsvFile,
+console.log("timeLabels: ",timeLabels)
+           
+        var heatmapChart = function(Weekdata) {
+       // d3.tsv(tsvFile,
+            console.log(Weekdata)
         function(d) {
           return {
             day: +d.day,
             hour: +d.hour,
-            value: +d.value
+            value: +d.percent
           };
         },
-        function(error, data) {
+       // function(error, data) {
           var colorScale = d3.scale.quantile()
-              .domain([0, buckets - 1, d3.max(data, function (d) { return d.value; })])
+              .domain([0, buckets - 1, d3.max(data, function (d) { return d.percent; })])
               .range(colors);
 
           var cards = svg.selectAll(".hour")
-              .data(data, function(d) {return d.day+':'+d.hour;});
+              //.data(data, function(d) {return d.day+':'+d.hour;}
+              .data(data, function(d) {
+                   for (var i = 0; i<times.length; i++){
+                        if (d.hour == times[i]){
+                            var thisHour = i; }
+                        }
+                    for (var i = 0; i<days.length; i++){
+                        if (d.day == days[i]){
+                            var thisDay = i; 
+                            return thisHour + ':' + i;  }
+                        }
+              });
 
           cards.append("title");
 
           cards.enter().append("rect")
-              .attr("x", function(d) { return (d.hour - 1) * gridSize; })
-              .attr("y", function(d) { return (d.day - 1) * gridSize; })
+//              .attr("x", function(d) { return (d.hour - 1) * gridSize; })
+//              .attr("y", function(d) { return (d.day - 1) * gridSize; })
+              .attr("x", function(d) { 
+                        if (d.hour == times[i]){
+                            return i * gridSize;; }
+                        })
+              .attr("y", function(d) { 
+                        for (var i = 0; i<days.length; i++){
+                            if (d.day == days[i]){
+                                return i * gridSize;}
+                            }
+                        })
               .attr("rx", 4)
               .attr("ry", 4)
               .attr("class", "hour bordered")
@@ -135,9 +180,9 @@
               .style("fill", colors[0]);
 
           cards.transition().duration(1000)
-              .style("fill", function(d) { return colorScale(d.value); });
+              .style("fill", function(d) { return colorScale(d.percent); });
 
-          cards.select("title").text(function(d) { return d.value; });
+          cards.select("title").text(function(d) { return d.percent; });
           
           cards.exit().remove();
 
@@ -162,7 +207,7 @@
 
           legend.exit().remove();
 
-        });  
+        //});  
       };
 
       heatmapChart(datasets[0]);
@@ -172,11 +217,13 @@
 
       datasetpicker.enter()
         .append("input")
-        .attr("value", function(d){ return "Dataset " + d })
+        .attr("value", function(d){ return "Week " + d[0].week })
         .attr("type", "button")
         .attr("class", "dataset-button")
         .on("click", function(d) {
           heatmapChart(d);
         });
+console.log("datasetName: ",datasetName);
+console.log("datasetpicker: ",datasetpicker);
 </script>
 {% endblock %}

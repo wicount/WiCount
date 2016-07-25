@@ -228,3 +228,8 @@ select.firstchild{
 /*    box-shadow: 3px 3px #008AC9;*/
     box-shadow: 3px 3px #ecd900;
 }
+
+rect.bordered {
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}

@@ -79,26 +79,38 @@ def GetBuildingDetails(room_id):
     con.commit()
     return json.dumps( [dict(ix) for ix in allRooms] ) #CREATE JSON
 
+def WeekNo(date):
+    weekno = date.isocalendar()
+    return weekno[1]
+
 def StatsForRoom(room_id):
     con = sql.connect('wicount.sqlite3')
     with con:    
         c = con.cursor()    
         c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "';")
+    
         rows = c.fetchall()
+        week1_data = []
+        week2_data = []
         json_data = []
-        even = rows[0][1]
+        even = WeekNo(parse(rows[0][1]))
+#         print(even)
         for row in rows:
             data = {}
             date = row[1]
-            if date[:9] == even:
-                data['week'] = 1
-            else:
-                data['week'] = 2
             data['day'] = row[2]
             data['hour'] = date[11:16]
             data['percent'] = row[3]
-            json_data.append(data)
+#             print(WeekNo(parse(date)), ", ", even, ", ")
+#             print(WeekNo(parse(date)) == even)
+            if WeekNo(parse(date)) == even:
+                data['week'] = 2
+                week2_data.append(data)
+            else:
+                data['week'] = 1
+                week1_data.append(data)
 #             print(data)
+        json_data = [week1_data, week2_data]
         print(json_data)
         return(json.dumps(json_data))
     
