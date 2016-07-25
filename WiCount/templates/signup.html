@@ -5,16 +5,27 @@
 {% block body %}
 	<form class="LecturerApp" action="" method="post" role="form">
     	<img class="count" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
-		<label>Username: &nbsp;</label>
-			<input type="text" id="name" name="name" placeholder="Enter your Username"><br><br>
-		<label>Email: &nbsp;</label>
-    		<input type="text" id="email" name="email" placeholder="Email address"><br><br>
-    	<label>Password: &nbsp;</label>
-    		<input type="password" id="password" name="password" placeholder="Set your password"><br><br>
-    	<label>Role: &nbsp;</label>
-    	<select id="role" name="role">
-        	<option value="enduser">End User</option>
- 		</select><br><br>
+		<table align="center">
+		<tr>
+			<td class="dispalyLeft"><label>Username: &nbsp;&nbsp;&nbsp;</label></td>
+			<td class="dispalyRight"><input type="text" id="name" name="name" placeholder="Enter your Username"></td>
+		</tr>
+		<tr>
+			<td class="dispalyLeft"><label>Email: &nbsp;&nbsp;&nbsp;</label></td>
+    		<td class="dispalyRight"><input type="text" id="email" name="email" placeholder="Email address"></td>
+    	</tr>
+    	<tr>
+    		<td class="dispalyLeft"><label>Password: &nbsp;&nbsp;&nbsp;</label></td>
+    		<td class="dispalyRight"><input type="password" id="password" name="password" placeholder="Set your password"></td>
+    	</tr>
+   	    <tr>
+    		<td class="dispalyLeft"><label>Role: &nbsp;&nbsp;&nbsp;</label></td>
+    		<td><select id="role" name="role">
+        		<option value="enduser">End User</option>
+ 				</select>
+ 			</td>
+ 		</tr>
+ 		</table><br><br>
     	<button type="submit" class="lectBtn">Register</button>
 
 		{% with messages = get_flashed_messages(with_categories=true) %}

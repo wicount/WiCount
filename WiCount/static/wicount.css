@@ -274,3 +274,14 @@ input[type=text],input[type=password],select {
     background-color: #d9dee0;
     color: black;
 }
+
+.dispalyLeft{
+    text-align: right;
+    vertical-align: middle;
+    height: 50px;
+}
+.dispalyRight{
+    text-align: left;
+    vertical-align: middle;
+    height: 50px;
+}
