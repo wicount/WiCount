@@ -1,24 +1,22 @@
 {% extends "formtemplate.html" %}
 
-{% block title %}Upload Files{% endblock %}
+{% block title %}Wicount | File Upload{% endblock %}
 
-
- 
 {% block action %} action="upload" method="post" enctype="multipart/form-data" {% endblock %}
-	{% block form %}
-    	
-    	<br><br><label>Survey: &nbsp;</label>
+
+{% block form %}
+	<br><br><label>Survey: &nbsp;</label>
         <input type="file" multiple="" name="survey"/><br><br>
-        <label>Time Table: &nbsp;</label>
+    <label>Time Table: &nbsp;</label>
         <input type="file" multiple="" name="timetable"/><br><br>
-        <label>Log Data: &nbsp;</label>
+	<label>Log Data: &nbsp;</label>
         <input type="file" multiple="" name="log"/><br><br>
         <input type="submit" value="Submit" class="lectBtn"><br><br>
-		{% with messages = get_flashed_messages() %}
-        	{% if messages %}
-               {% for message in messages %}
-               		<strong>{{ message }}</strong>
-               {% endfor %}
-         	{% endif %}
-      	{% endwith %}
+	{% with messages = get_flashed_messages() %}
+        {% if messages %}
+        	{% for message in messages %}
+               	<strong>{{ message }}</strong>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 {% endblock %}

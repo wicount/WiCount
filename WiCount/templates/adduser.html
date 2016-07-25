@@ -1,25 +1,25 @@
 {% extends "formtemplate.html" %}
 
-{% block title %}Registration Page{% endblock %}
+{% block title %}Wicount | Add User{% endblock %}
 
 {% block action %} action="" method="post" role="form" {% endblock %}
 
 {% block form %}
 	<label>Username: &nbsp;</label>
-	<input type="text" id="name" name="name" placeholder="Enter your Username"><br><br>
+		<input type="text" id="name" name="name" placeholder="Enter your Username"><br><br>
 	<label>Email: &nbsp;</label>
-    <input type="text" id="email" name="email" placeholder="Email address"><br><br>
+    	<input type="text" id="email" name="email" placeholder="Email address"><br><br>
     <label>Password: &nbsp;</label>
-    <input type="password" id="password" name="password" placeholder="Set your password"><br><br>
+    	<input type="password" id="password" name="password" placeholder="Set your password"><br><br>
     <label>Role: &nbsp;</label>
-    <select id="role" name="role">
-		<option value="lecturer">Lecturer</option>
-        <option value="admin">Admin</option>
-        <option value="enduser">End User</option>
- 	</select><br><br>
-    <button type="submit" class="lectBtn">Register</button>
+    	<select id="role" name="role">
+			<option value="lecturer">Lecturer</option>
+        	<option value="admin">Admin</option>
+        	<option value="enduser">End User</option>
+ 		</select><br><br>
+    	<button type="submit" class="lectBtn">Register</button>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+	{% with messages = get_flashed_messages(with_categories=true) %}
 	{% if messages %}
 		{% for message in messages %}
             {% if "Error" not in message[1]: %}
@@ -33,8 +33,7 @@
                 </div>
             {% endif %}
         {% endfor %}
-{% endif %}
-{% endwith %}
-
+	{% endif %}
+	{% endwith %}
 {% endblock %}
 
