@@ -5,7 +5,6 @@ body{
     margin: auto;
 }
 .header{
-    width: 100%;
     margin: auto;
     height: 60px;
     border-bottom: solid 5px #16396f;
@@ -15,6 +14,11 @@ body{
     color:red;
     border: 1px solid black;
 */
+}
+.heading2{
+	font-weight: 800;
+	margin-top: 40px;
+    font-size: 25px;
 }
 .logo{
     width: 20%;
@@ -179,13 +183,36 @@ nav a.active {
     position: absolute;
     margin: auto;
     margin-top: 100px;
-    width: 50%;
+    width: 80%;
 	padding: 20px;
     padding-top: 0px;
     border: solid 5px #16396f;
     border-radius: 20px;
     box-shadow: 3px 3px #008AC9;
 }
+.buildingplan1{
+    
+    text-align: center;
+ 
+    float:left;
+    margin: auto;
+    margin-top: 50px;
+    width: 25%;
+	padding-top: 30px;
+    padding-bottom: 30px;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+    box-shadow: 3px 3px #008AC9;
+}
+
+#mapcam{
+    position: relative;
+    float: left;
+}
+#mapcam2{
+    float: left;
+}
+
 
 select{
     border: 2px solid #16396f;
@@ -228,8 +255,22 @@ select.firstchild{
 /*    box-shadow: 3px 3px #008AC9;*/
     box-shadow: 3px 3px #ecd900;
 }
-
-rect.bordered {
-    stroke: #E6E6E6;
-    stroke-width: 2px;
+.buildingplan{
+    float: left;
+    width:750px;
+    text-align: center;
+    margin-top:45px;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+    box-shadow: 3px 3px #ecd900;
+    margin-right: 30px;
+}
+input[type=text],input[type=password],select {
+    padding: 6px 10px;
+    font-weight: 600;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: 1px solid blue;
+    background-color: #d9dee0;
+    color: black;
 }
