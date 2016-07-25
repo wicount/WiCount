@@ -1,28 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
-	<meta charset="UTF-8">
-	<title>Logged Out</title>
-</head>
-<body>
-	<div class=page>
-	<header class="header">
-    	<img class="logo" src="{{url_for('static',filename='longLogo.png')}}" alt="logo"/>
-	</header> 
-	{% block body %}  
+{% extends "nomenutemplate.html" %}
+
+{% block title %}Wicount | Registration Success{% endblock %}
+	
+{% block body %}  
 	{% if session['logged_in'] %}
 		<p>You're logged in already!</p>
 	{% else %}
 	<div class="LecturerApp">
+		<img class="count" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
 		<strong>Thank you for registration. Email and Password has been sent to the user</strong><br><br>
 		<strong><a href="/">Click here to login</a></strong>
 	</div>	
 	{% endif %}
-	{% endblock %}
-	<footer>
-    	<p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
-	</footer>
-	</div>
-</body>
-</html> 
+{% endblock %} 
