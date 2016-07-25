@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
+	<meta charset="UTF-8">
+	<title>Login</title>
+</head>
+<body>
+	{% block body %}
+	{% if session['logged_in'] %}
+		<p>You're logged in already!</p>
+	{% else %}
+	<div class=page>
+	<header class="header">
+    	<img class="logo" src="{{url_for('static',filename='longlogo.png')}}" alt="logo"/>
+    	<nav>
+        <ul>
+            <li><a href="{{url_for('signup')}}">Sign Up</a></li>   
+        </ul>
+    </nav>
+	</header>
+	
+	<form class="LecturerApp" action="/login" method="POST">
+    	<img class="count" src="{{url_for('static',filename='count.png')}}" alt="count"/><br>
+        <label>UserName: &nbsp;</label>
+        <input type="text" class="login-field" value="" placeholder="Enter User Name" name="username"><br><br>
+		<label>Password: &nbsp;</label>		
+        <input type="password" class="login-field" value="" placeholder="*********" name="password"><br><br>
+        <label>Role: &nbsp;</label>
+    	<select id="role" name="role">
+			<option value="lecturer">Lecturer</option>
+        	<option value="admin">Admin</option>
+        	<option value="enduser">End User</option>
+ 		</select><br><br>	
+        <input type="submit" value="Log in" class="lectBtn" ><br><br>
+        <strong>
+        {% with messages = get_flashed_messages() %}
+        	{% if messages %}
+               {% for message in messages %}
+               		{{ message }}
+               {% endfor %}
+         	{% endif %}
+      	{% endwith %}
+      	</strong>
+	</form>
+	{% endif %}
+	{% endblock %}
+	<footer>
+    	<p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+	</footer>
+	</div>
+</body>
+</html>
