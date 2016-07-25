@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-<title>{% block title %}{% endblock %}</title>
-{% block scripts %}{% endblock %}
-</head>
-<body>
 
-<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
-<div class=page>
+<head>
+<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %}</title>
+	{% block scripts %}{% endblock %}
+	<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
+</head>
+
+<body>
     <header class="header">
-        <nav>
+    <nav>
         <ul>
             <li><a href="{{url_for('campusMap')}}">Home</a></li>
             <li><a href="{{url_for('statistics')}}">Statistics</a></li>
@@ -21,12 +21,10 @@
         </ul>
     </nav>
     <img class="logo" src="{{url_for('static',filename='longlogo2.png')}}" alt="logo"/>
-</header>
-  {% block body %}{% endblock %}
+	</header>
+  	{% block body %}{% endblock %}
     <footer>
-    <p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
-</footer>
-    
-</div>
-    </body>
+    	<p id="footer">WiCount | Team 9 | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+	</footer>
+</body>
 </html>
