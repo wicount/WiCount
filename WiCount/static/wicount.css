@@ -259,7 +259,7 @@ select.firstchild{
     float: left;
     width:750px;
     text-align: center;
-    margin-top:45px;
+    
     border: solid 5px #16396f;
     border-radius: 20px;
     box-shadow: 3px 3px #ecd900;
@@ -273,6 +273,9 @@ input[type=text],input[type=password],select {
     border: 1px solid blue;
     background-color: #d9dee0;
     color: black;
+}
+#mapmargin{
+	margin-top:35px;
 }
 
 .dispalyLeft{
