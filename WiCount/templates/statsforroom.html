@@ -6,42 +6,34 @@
     <script src="http://d3js.org/d3.v3.js"></script>
 {% endblock %}
 {% block body %}
-<table>
-    <tr>
-        <td>
-<!--
-            <div id="option">
-                <input name="updateButton" 
-                       type="button" 
-                       value="Update" 
-                       onclick="updateData()" 
-                />
-            </div>
--->
+    <div id="mapmargin">
+        <div class="statsmargin" >
             <div id="chart"></div>
-            <div id="dataset-picker"></div>
-        </td>
-        <td>
+            <div id="legend">
+<!--                <p>LEGEND:</p>-->
+                <table class="legendTable">
+                    <tr>
+                        <td style="text-align: left;">0%</td>
+                        <td style="text-align: center;">50%</td>
+                        <td style="text-align: right;">100%</td>
+                    </tr>
+                </table>
+            </div>
+<!--            <div id="dataset-picker"></div>-->
+        </div>
+        <div class="buildingplan1" >
+
             <form action="{{url_for('statsForRoom')}}" method="GET">
                 <div id="message"></div>
                 <label>Room:</label>
                 <select id="room" name="room_id"></select>
-
+                <br>
                 <input type="submit" class="lectBtn" value="Go">
             </form>
-            <label>Legend</label>
-            <table>
-                <tr>
-                    <td></td><td>0%</td>
-                    <td></td><td>25%</td>
-                    <td></td><td>50%</td>
-                    <td></td><td>75%</td>
-                    <td></td><td>100%</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+            <div id="dataset-picker"></div>
+            <br>
+        </div>
+    </div>
 
 <script type="text/javascript" language="javascript">
     
@@ -82,11 +74,12 @@
 //    |                   code for data visualisation             |
 //    -------------------------------------------------------------
 //    used code from http://bl.ocks.org/tjdecke/5558084 as a template
-    var margin = { top: 50, right: 0, bottom: 100, left: 30 },
+    //var margin = { top: 50, right: 0, bottom: 100, left: 30 },
+    var margin = { top: 25, right: 0, bottom: 100, left: 40 },
           width = 600 - margin.left - margin.right,
-          height = 400 - margin.top - margin.bottom,
+          height = 380 - margin.top - margin.bottom,
           gridSize = Math.floor(width / 8), //was 24
-          legendElementWidth = gridSize*1.5,
+         // legendElementWidth = gridSize*1.5,
           buckets = 5,
           colors = ["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"], // alternatively colorbrewer.YlGnBu[9]
           days = ["Mon", "Tue", "Wed", "Thu", "Fri"],
@@ -106,6 +99,7 @@ console.log("margin: ",margin)
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 console.log("svg: ",svg[0])
 
+    
 // This sets up the labels for the days
       var dayLabels = svg.selectAll(".dayLabel")
           .data(days)
@@ -167,7 +161,7 @@ console.log("timeLabels: ",timeLabels)
                         })
               .attr("rx", 4)
               .attr("ry", 4)
-              .attr("class", "hour bordered")
+              .attr("class", "bordered")
               .attr("width", gridSize)
               .attr("height", gridSize)
               .style("fill", colors[0]);
@@ -179,26 +173,42 @@ console.log("timeLabels: ",timeLabels)
           
           cards.exit().remove();
 
-//          var legend = svg.selectAll(".legend")
-//              .data([0].concat(colorScale.quantiles()), function(d) { return d; });
-//
-//          legend.enter().append("g")
-//              .attr("class", "legend");
-//
-//          legend.append("rect")
-//            .attr("x", function(d, i) { return legendElementWidth * i; })
-//            .attr("y", height)
-//            .attr("width", legendElementWidth)
-//            .attr("height", gridSize / 2)
-//            .style("fill", function(d, i) { return colors[i]; });
-//
-//          legend.append("text")
-//            .attr("class", "mono")
-//            .text(function(d) { return d; })
-//            .attr("x", function(d, i) { return legendElementWidth * i; })
-//            .attr("y", height + gridSize);
-//
-//          legend.exit().remove();
+    
+// create a ledgend
+
+var svg2 = d3.select("#legend").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", 30)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+
+//Append a defs (for definition) element to your SVG
+var defs = svg2.append("defs");
+
+//Append a linearGradient element to the defs and give it a unique id
+var linearGradient = defs.append("linearGradient")
+    .attr("id", "linear-gradient");
+
+linearGradient
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "100%")
+    .attr("y2", "0%");
+            
+//Append multiple color stops by using D3's data/enter step
+linearGradient.selectAll("stop") 
+    .data( colorScale.range() )                  
+    .enter().append("stop")
+    .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
+    .attr("stop-color", function(d) { return d; });
+
+//Draw the rectangle and fill with gradient
+svg2.append("rect")
+	.attr("width", width-50)
+	.attr("height", 20)
+	.style("fill", "url(#linear-gradient)");
+
         }; 
 
       heatmapChart(datasets[0]);
@@ -210,10 +220,11 @@ console.log("timeLabels: ",timeLabels)
         .append("input")
         .attr("value", function(d){ return "Week " + d[0].week })
         .attr("type", "button")
-        .attr("class", "dataset-button")
+        .attr("class", "statsButtons")
         .on("click", function(d) {
           heatmapChart(d);
         });
+
 console.log("datasetName: ",datasetName);
 console.log("datasetpicker: ",datasetpicker);
 </script>
