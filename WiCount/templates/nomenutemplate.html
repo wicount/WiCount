@@ -12,7 +12,8 @@
 	<header class="header">
     <nav>
         <ul>
-            <li><a href="{{url_for('signup')}}">Sign Up</a></li>   
+            <li><a href="{{url_for('signup')}}">Sign Up</a></li>
+            {% block menu %} {% endblock %}   
         </ul>
     </nav>
     <img class="logo" src="{{url_for('static',filename='longlogo.png')}}" alt="logo"/>

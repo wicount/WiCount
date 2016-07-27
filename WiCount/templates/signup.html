@@ -2,6 +2,9 @@
 
 {% block title %}Wicount | Sign Up{% endblock %}
 
+{% block menu %}
+<li><a href="{{url_for('index')}}">Login</a></li>
+{% endblock %}
 {% block body %}
 	<form class="LecturerApp" action="" method="post" role="form">
     	<img class="count" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>

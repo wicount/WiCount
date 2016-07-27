@@ -67,15 +67,17 @@ def login():
     Session = sessionmaker(bind=engine)
     s = Session()
     #Make the query with database against the form data
-    query = s.query(User).filter(User.username.in_([POST_USERNAME]),User.role.in_([POST_ROLE]))
-    result = query.first()
-    if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
+    try:
+        query = s.query(User).filter(User.username.in_([POST_USERNAME]),User.role.in_([POST_ROLE]))
+        result = query.first()
+        if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
         #Set session to true if login is successful
-        session['logged_in'] = True      
-    else:
-        flash('Invalid Credentials or Invalid role. Please try again')
+            session['logged_in'] = True      
+        else:
+            flash('Invalid Credentials or Invalid role. Please try again')
         #Display error message if login is unsuccessful
-        
+    except:
+        flash('Invalid Credentials or Invalid role. Please try again')    
     #Return to home page
     return index()
 
