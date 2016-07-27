@@ -86,6 +86,7 @@
           times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
           datasets = [week1, week2],
           datasetName = ["Week 1", "Week 2"]
+          showlegend = 0;
           colorLow = '#ffffd9', 
           colorMed = '#41b6c4', 
           colorHigh = '#081d58';
@@ -98,7 +99,12 @@ console.log("margin: ",margin)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 console.log("svg: ",svg[0])
-
+//velda
+var svg2 = d3.select("#legend").append("svg")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", 30)
+                      .append("g")
+                      .attr("transform", "translate(" + margin.left + "," + 0 + ")");
     
 // This sets up the labels for the days
       var dayLabels = svg.selectAll(".dayLabel")
@@ -172,47 +178,40 @@ console.log("timeLabels: ",timeLabels)
           cards.select("title").text(function(d) { return d.percent; });
           
           cards.exit().remove();
-
     
-// create a ledgend
+            // create a legend
+            //Append a defs (for definition) element to your SVG
+            var defs = svg2.append("defs");
 
-var svg2 = d3.select("#legend").append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", 30)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+            //Append a linearGradient element to the defs and give it a unique id
+            var linearGradient = defs.append("linearGradient")
+                .attr("id", "linear-gradient");
 
+            linearGradient
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%");
 
-//Append a defs (for definition) element to your SVG
-var defs = svg2.append("defs");
+            //Append multiple color stops by using D3's data/enter step
+            linearGradient.selectAll("stop") 
+                .data( colorScale.range() )                  
+                .enter().append("stop")
+                .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
+                .attr("stop-color", function(d) { return d; });
+            //end create the legend
 
-//Append a linearGradient element to the defs and give it a unique id
-var linearGradient = defs.append("linearGradient")
-    .attr("id", "linear-gradient");
-
-linearGradient
-    .attr("x1", "0%")
-    .attr("y1", "0%")
-    .attr("x2", "100%")
-    .attr("y2", "0%");
-            
-//Append multiple color stops by using D3's data/enter step
-linearGradient.selectAll("stop") 
-    .data( colorScale.range() )                  
-    .enter().append("stop")
-    .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
-    .attr("stop-color", function(d) { return d; });
-
-//Draw the rectangle and fill with gradient
-svg2.append("rect")
-	.attr("width", width-50)
-	.attr("height", 20)
-	.style("fill", "url(#linear-gradient)");
-
-        }; 
+        }; // end hearmapChart Funciont
 
       heatmapChart(datasets[0]);
-      
+          
+            //Draw the legend rectangle and fill with gradient
+            svg2.append("rect")
+                .attr("width", width-50)
+                .attr("height", 20)
+                .style("fill", "url(#linear-gradient)");
+
+    //insert the buttons.
       var datasetpicker = d3.select("#dataset-picker").selectAll(".dataset-button")
         .data(datasets);
 
@@ -225,7 +224,5 @@ svg2.append("rect")
           heatmapChart(d);
         });
 
-console.log("datasetName: ",datasetName);
-console.log("datasetpicker: ",datasetpicker);
 </script>
 {% endblock %}
