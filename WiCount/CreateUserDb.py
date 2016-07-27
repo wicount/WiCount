@@ -13,7 +13,7 @@ class User(Base):
     __tablename__ = "users"
   
     id = Column(Integer, primary_key=True)
-    username = Column(String)
+    username = Column(String,unique=True)
     password = Column(String)
     email = Column(String)
     role = Column(String)
@@ -26,7 +26,6 @@ class User(Base):
         
     def verify(self, password):
         return sha256_crypt.verify(password, self.password)  
-
   
 # create tables
 Base.metadata.create_all(engine)
