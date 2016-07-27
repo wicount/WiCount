@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from sqlalchemy.orm import sessionmaker
+from passlib.hash import sha256_crypt
 from werkzeug import secure_filename
 from flask_mail import Mail, Message
 from functools import wraps
@@ -66,15 +67,15 @@ def login():
     Session = sessionmaker(bind=engine)
     s = Session()
     #Make the query with database against the form data
-    query = s.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]),User.role.in_([POST_ROLE]))
-    
+    query = s.query(User).filter(User.username.in_([POST_USERNAME]),User.role.in_([POST_ROLE]))
     result = query.first()
-    if result:
+    if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
         #Set session to true if login is successful
-        session['logged_in'] = True       
+        session['logged_in'] = True      
     else:
-        #Display error message if login is unsuccessful
         flash('Invalid Credentials or Invalid role. Please try again')
+        #Display error message if login is unsuccessful
+        
     #Return to home page
     return index()
 
@@ -106,6 +107,7 @@ def addUser():
         password=request.form['password']
         email=request.form['email']
         role=request.form['role']
+        
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
@@ -115,7 +117,7 @@ def addUser():
             #Commit user data to database
             session.commit()
             #Send email to the user
-            return sendEmailAdmin(user)
+            return sendEmailAdmin(name,password,email)
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -126,23 +128,26 @@ def addUser():
 def signup():
     form = ReusableForm(request.form)
     if request.method == 'POST':
+        #Creating session for user registration to send form data to database
+        Session = sessionmaker(bind=engine)
+        session = Session()
         name=request.form['name']
         password=request.form['password']
         email=request.form['email']
         role=request.form['role']
-        #Creating session for user registration to send form data to database
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        
+
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
+       
         session.add(user)
         if form.validate():
             flash('Thanks for registration ' + name)
             #Commit user data to database
             session.commit()
             #Send email to the user
-            return sendEmail(user)
+            return sendEmail(name,password,email)
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -150,16 +155,16 @@ def signup():
 
 #To send email for the registered users
 @app.route("/sendemail")
-def sendEmail(user):
-   msg = Message('WiCount - Username and Password', sender = 'rakesh.bt1990@gmail.com', recipients = [user.email])
-   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (user.username,user.password )
+def sendEmail(name,password,email):
+   msg = Message('WiCount - Username and Password', sender = 'rakesh.bt1990@gmail.com', recipients = [email])
+   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (name,password )
    mail.send(msg)
    return render_template('email.html')
 
 @app.route("/sendemailadmin")
-def sendEmailAdmin(user):
-   msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [user.email])
-   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (user.username,user.password )
+def sendEmailAdmin(name,password,email):
+   msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [email])
+   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (name,password )
    mail.send(msg)
    return render_template('emailadmin.html')
 #Initial file upload template
