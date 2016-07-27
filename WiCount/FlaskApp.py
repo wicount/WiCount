@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory
+from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory,g
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from sqlalchemy.orm import sessionmaker
 from passlib.hash import sha256_crypt
@@ -7,7 +7,8 @@ from flask_mail import Mail, Message
 from functools import wraps
 from CreateUserDb import *
 import sqlite3 as sql
-import DataRetrieval
+import CreateUserDb
+import DataRetrieval    
 import os
 from werkzeug.security import check_password_hash
 
@@ -36,6 +37,8 @@ app.config['TIMETABLE'] = 'timetable/'
 app.config['CSILogs'] = 'CSILogs/'
 app.config['ALLOWED_EXTENSIONS'] = set(['txt','csv','xlsx']) 
 
+
+    
 # Decorator to make the web pages required login - @login_required
 def login_required(f):
     @wraps(f)
@@ -55,14 +58,15 @@ def index():
         #Go to Campus Map page if login is successful
         json_data = DataRetrieval.getAllCampusDetails()
         return render_template('campusmap.html', CampusDetails = json_data)
-
+    
 #Login request        
 @app.route('/login', methods=['POST'])
 def login():
     #Fetch login form data and store it in a variable
     POST_USERNAME = str(request.form['username'])
     POST_PASSWORD = str(request.form['password'])
-    POST_ROLE = str(request.form['role']) 
+    POST_ROLE = str(request.form['role'])
+    
     #Create a session
     Session = sessionmaker(bind=engine)
     s = Session()
@@ -115,11 +119,13 @@ def addUser():
         #Add user to the session
         session.add(user)
         if form.validate():
-            flash('Thanks for registration ' + name)
-            #Commit user data to database
-            session.commit()
+            try:
+                session.commit()
             #Send email to the user
-            return sendEmailAdmin(name,password,email)
+                return sendEmail(name,password,email)
+                flash('Thanks for registration ' + name)
+            except:
+                flash(name + ' - Username already exists')
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -142,14 +148,18 @@ def signup():
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
-       
+        
         session.add(user)
         if form.validate():
-            flash('Thanks for registration ' + name)
+            
             #Commit user data to database
-            session.commit()
-            #Send email to the user
-            return sendEmail(name,password,email)
+            try:
+                session.commit()
+                #Send email to the user
+                return sendEmail(name,password,email)
+                flash('Thanks for registration ' + name)
+            except:
+                flash(name + ' - Username already exists')
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
