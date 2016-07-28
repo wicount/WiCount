@@ -4,6 +4,8 @@ from sqlite3 import OperationalError
 import glob, os
 from dateutil.parser import parse
 import wicount
+import zipfile
+
 
 
 def ExtractDataCSV(fileName):
@@ -23,7 +25,7 @@ def ExtractDataCSV(fileName):
             if day == "Sat" or day == "Sun":
                 return ""   #skip weekends
             time = data[3].split(' ')[3]
-            if time < "09:00:00" or time > "17:00;00":
+            if time < "09:00:00" or time > "18:00;00":
                 continue
         
             date_time = date + " " + time
@@ -46,6 +48,20 @@ wicount.SetUpDatabase()
             
 # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
 os.chdir("CSILogs")
+
+#unzip the original file
+for file in glob.glob("*.zip"):
+    with zipfile.ZipFile(file, "r") as z:
+        z.extractall()
+    os.remove(file)
+    
+#ensure that all the file are unzipped and there isn't zip files within zip files
+for file in glob.glob("*.zip"):
+    with zipfile.ZipFile(file, "r") as z:
+        z.extractall()
+    os.remove(file)
+
+#process each file    
 for file in glob.glob("*.csv"):
     sqlvalues = ExtractDataCSV(file)
     # Execute every command from the input file
@@ -55,5 +71,6 @@ for file in glob.glob("*.csv"):
         except OperationalError:
             print ("Command skipped: ", sqlvalues)
         con.commit()
+    os.remove(file)
 con.close() 
-print("finished")
+print("finished MakeLogData")

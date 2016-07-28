@@ -113,7 +113,9 @@ for file in glob.glob("*.xlsx"):
                 module_list.extend(AddDetailsToTimeTable(line, week2))
         #end if
     #end for
+    os.remove(file)
                 
     UpdateModuleTable(module_list, week1)
 #end for loop 
 con.close() 
+print("finished MakeTimeTable") 

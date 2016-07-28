@@ -82,11 +82,12 @@ for file in glob.glob("*.xlsx"):
     dataArray = sheet.as_matrix()   # create a matrix from the data
     
     for data in dataArray:
+        print (data)
         if data[0] in dayList:  
             #if the first cell is the day format the day
             day = data[0]
             day = day[:3]
-        elif data[1] == "Room No.":
+        elif data[1] == "Room No." or data[0] == "Room No.":
             # if the second cell is "Room No." get the list of the room numbers
             #     Room No.    B004    B002    B003    B1.06    B1.08    B1.09
             details = []
@@ -102,8 +103,10 @@ for file in glob.glob("*.xlsx"):
             if len(occupancyDetails) == 1:
                 details = []
                 for x in range(2, len(data),1):
-                    details.append(data[x])
+                    #details.append(data[x]) this is wrong.
+                    details.append(0)
                 occupancyDetails.append(details)
+                print(details)
                 roomIDs = UpdateRoomTable(occupancyDetails)
         elif data[0] in timeList:
             # If the first cell is a time then set up the date
@@ -125,5 +128,8 @@ for file in glob.glob("*.xlsx"):
         #end if
         #update the survey table with the list created above
         UpdateSurveyTable(fullDetails)
+    os.remove(file)
+    os.remove("survey.csv")
     # end for
-con.close()
+con.close() 
+print("finished MakeSurvey")

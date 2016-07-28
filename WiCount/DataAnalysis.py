@@ -78,6 +78,7 @@ for row in rows:
     #get time and date fields.
     fromDate = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S")
     toDate = fromDate + timedelta(hours=1)
+    #toDate = fromDate + timedelta(minutes=50)
     time = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S").time()
     week_no = GetWeek(fromDate)
     
@@ -125,4 +126,4 @@ data = pd.DataFrame(full_data, columns=('Campus', 'Building', 'Room', 'Capacity'
 data.head(2)
 print(data)
 #output to a file
-data.to_csv("full_dataset.csv")
+data.to_csv("full_dataset_hour.csv")
