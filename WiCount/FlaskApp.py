@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory,g
+from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from sqlalchemy.orm import sessionmaker
 from passlib.hash import sha256_crypt
@@ -7,11 +7,9 @@ from flask_mail import Mail, Message
 from functools import wraps
 from CreateUserDb import *
 import sqlite3 as sql
-import CreateUserDb
 import DataRetrieval    
 import os
 from werkzeug.security import check_password_hash
-
 
 app = Flask(__name__)
 
@@ -35,9 +33,7 @@ app.config.from_object(__name__)
 app.config['SURVEY'] = 'Survey/'
 app.config['TIMETABLE'] = 'timetable/'
 app.config['CSILogs'] = 'CSILogs/'
-app.config['ALLOWED_EXTENSIONS'] = set(['txt','csv','xlsx']) 
-
-
+app.config['ALLOWED_EXTENSIONS'] = set(['csv','xlsx']) 
     
 # Decorator to make the web pages required login - @login_required
 def login_required(f):
@@ -46,7 +42,7 @@ def login_required(f):
         if 'logged_in' in session:
             return f(*args,**kwargs)
         else:
-            return redirect(url_for(index))
+            return index()
     return wrap
 
 #Render login page
@@ -70,26 +66,24 @@ def login():
     #Create a session
     Session = sessionmaker(bind=engine)
     s = Session()
-    #Make the query with database against the form data
     try:
-
+        #Make the query with database against the form data
         query = s.query(User).filter(User.username.in_([POST_USERNAME]),User.role.in_([POST_ROLE]))
         result = query.first()
         if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
-        #Set session to true if login is successful
+            #Set session to true if login is successful
             session['logged_in'] = True
-  
         else:
-            flash('Invalid Credentials or Invalid role. Please try again')
-        #Display error message if login is unsuccessful
+            flash('Invalid Credentials or Invalid role. Please try again')    
     except:
+        #Display error message if login is unsuccessful
         flash('Invalid Credentials or Invalid role. Please try again')    
     #Return to home page
     return index()
 
 #To logout from all pages
 @app.route('/logout')
-# @login_required
+@login_required
 def logout():
     #Terminate the session
     session.pop('logged_in',None)
@@ -104,10 +98,10 @@ class ReusableForm(Form):
 
 #User registration by admin 
 @app.route("/adduser", methods=['GET', 'POST'])
+@login_required
 def addUser():
     form = ReusableForm(request.form)
     if request.method == 'POST':
-
         #Creating session for user registration to send form data to database
         Session = sessionmaker(bind=engine)
         session = Session()
@@ -115,7 +109,6 @@ def addUser():
         password=request.form['password']
         email=request.form['email']
         role=request.form['role']
-        
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
@@ -123,11 +116,10 @@ def addUser():
         if form.validate():
             try:
                 session.commit()
-            #Send email to the user
-                return sendEmail(name,password,email)
-                flash('Thanks for registration ' + name)
             except:
-                flash(name + ' - Username already exists')
+                flash('Username already exists')
+            finally:
+                return sendEmailAdmin(name, password, email)
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -145,23 +137,18 @@ def signup():
         password=request.form['password']
         email=request.form['email']
         role=request.form['role']
-        
-
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
-        
         session.add(user)
         if form.validate():
-            
             #Commit user data to database
             try:
-                session.commit()
-                #Send email to the user
-                return sendEmail(name,password,email)
-                flash('Thanks for registration ' + name)
+                session.commit()                
             except:
-                flash(name + ' - Username already exists')
+                flash('Username already exists')
+            finally:
+                return sendEmail(name,password,email)
         else:
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
@@ -170,20 +157,22 @@ def signup():
 #To send email for the registered users
 @app.route("/sendemail")
 def sendEmail(name,password,email):
-   msg = Message('WiCount - Username and Password', sender = 'rakesh.bt1990@gmail.com', recipients = [email])
-   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (name,password )
-   mail.send(msg)
-   return render_template('email.html')
+    msg = Message('WiCount - Username and Password', sender = 'rakesh.bt1990@gmail.com', recipients = [email])
+    msg.body = "Please use following credentials to login \n\n username: %s\nPassword: %s  " % (name,password )
+    mail.send(msg)
+    return render_template('email.html')
+
 
 @app.route("/sendemailadmin")
+@login_required
 def sendEmailAdmin(name,password,email):
    msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [email])
-   msg.body = "Please use following \n\n username: %s \nPassword: %s  " % (name,password )
+   msg.body = "Please use following credentials to login \n\n username: %s\nPassword: %s  " % (name,password )
    mail.send(msg)
    return render_template('emailadmin.html')
 #Initial file upload template
 @app.route('/fileupload')
-#@login_required
+@login_required
 def fileupload():
     return render_template('fileupload.html')
 
@@ -193,6 +182,7 @@ def allowed_file(filename):
 
 #Route that will process the file upload
 @app.route('/upload', methods=['POST'])
+@login_required
 def upload():
     # Get the name of the uploaded files
     uploaded_files1 = request.files.getlist("survey")
@@ -221,19 +211,19 @@ def upload():
 
 #To display the map of buildings
 @app.route('/campusmap')
-#@login_required
+@login_required
 def campusMap():
     return render_template('campusmap.html')
 
 #To display the floor plan of rooms
 @app.route('/floorplancsi')
-#@login_required
+@login_required
 def floorPlanCsi():
     return render_template('floorplancsi.html')
 
 #To display the statistics for each room
 @app.route('/statsforroom')
-#@login_required
+@login_required
 def statsForRoom(room_id=None):
 #     return render_template('statsforroom.html')
     if not session.get('logged_in'):
@@ -251,7 +241,7 @@ def statsForRoom(room_id=None):
 
 #To display lecturer app page
 @app.route('/lecturerapp', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def lecturerApp():
     if not session.get('logged_in'):
         return render_template('login.html')
