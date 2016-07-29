@@ -1,3 +1,6 @@
+#import sys
+#sys.path.insert(0, "/home/student/anaconda3/lib/python3.5/site-packages")
+
 from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from sqlalchemy.orm import sessionmaker
@@ -169,7 +172,8 @@ def sendEmailAdmin(name,password,email):
    msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [email])
    msg.body = "Please use following credentials to login \n\n username: %s\nPassword: %s  " % (name,password )
    mail.send(msg)
-   return render_template('emailadmin.html')
+   return render_template('emailadmin.html')
+
 #Initial file upload template
 @app.route('/fileupload')
 @login_required
