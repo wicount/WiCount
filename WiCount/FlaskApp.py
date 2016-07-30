@@ -76,6 +76,8 @@ def login():
         if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
             #Set session to true if login is successful
             session['logged_in'] = True
+            #velda add user type
+            session['role'] = POST_ROLE
         else:
             flash('Invalid Credentials or Invalid role. Please try again')    
     except:

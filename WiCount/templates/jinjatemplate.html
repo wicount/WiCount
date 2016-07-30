@@ -15,10 +15,13 @@
         	
             <li><a href="{{url_for('campusMap')}}">Home</a></li>
             <li><a href="{{url_for('statistics')}}">Statistics</a></li>
-            <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
-
-            <li><a href="{{url_for('fileupload')}}">Upload</a></li>
-            <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+            {% if session['role'] != "enduser" %}
+                <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
+         	{% endif %}
+            {% if session['role'] == "admin" %}
+                <li><a href="{{url_for('fileupload')}}">Upload</a></li>
+                <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+            {% endif %}
             <li><a href="{{url_for('logout')}}">Logout</a></li>
 
         </ul>
