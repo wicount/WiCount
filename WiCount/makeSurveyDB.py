@@ -50,86 +50,84 @@ def GetRoomNo(room):
 con = db.get_connection()
 c=con.cursor()
 
-# Create all the database tables
-wicount.SetUpDatabase()
-
-     
-#-------------------------------------------------------
-#set up variables.
-#-------------------------------------------------------
-dayList = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-timeList = ["9.00-10.00", "10.00-11.00", "11.00-12.00", "12.00-13.00", \
-            "13.00-14.00", "14.00-15.00", "15.00-16.00", "16.00-17.00"]
-fullDetails = []
-roomIDs = []
-occupancyDetails = []
-day = "Mon"    #initialise variable
-dateTime = ""
-date = ""
-
-
-# Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
-# go to the survey directory
-os.chdir("Survey")
-
-# for each file in the directory
-for file in glob.glob("*.xlsx"):
-    # Get the details from the spreadsheet
-    sheet = pd.read_excel(file, 'JustData')
-    sheet = sheet.dropna(how='all') #drop all rows that contain nothing
-    sheet = sheet.dropna(axis='columns', how='all') # drop all columns that containg nothing
-    sheet.to_csv('survey.csv', encoding='utf-8') #save it as a csv
-    dataArray = sheet.as_matrix()   # create a matrix from the data
+def main():         
+    #-------------------------------------------------------
+    #set up variables.
+    #-------------------------------------------------------
+    dayList = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    timeList = ["9.00-10.00", "10.00-11.00", "11.00-12.00", "12.00-13.00", \
+                "13.00-14.00", "14.00-15.00", "15.00-16.00", "16.00-17.00"]
+    fullDetails = []
+    roomIDs = []
+    occupancyDetails = []
+    day = "Mon"    #initialise variable
+    date = ""
     
-    for data in dataArray:
-        print (data)
-        if data[0] in dayList:  
-            #if the first cell is the day format the day
-            day = data[0]
-            day = day[:3]
-        elif data[1] == "Room No." or data[0] == "Room No.":
-            # if the second cell is "Room No." get the list of the room numbers
-            #     Room No.    B004    B002    B003    B1.06    B1.08    B1.09
-            details = []
-            if fullDetails == []:
-                for x in range(2, len(data),1):
-                    roomNo = GetRoomNo(data[x])
-                    details.append(roomNo)
-                occupancyDetails.append(details) # occupancyDetails:  [['B-004', 'B-002', 'B-003', 'B-106', 'B-108', 'B-109']]
-                #print("occupancyDetails: ", occupancyDetails)
-        elif data[0] == "Time":
-            # if the first cell is Time this row contains the capacity of the room
-            # Update the room table with these details and get the room ID from the room table
-            if len(occupancyDetails) == 1:
+    
+    # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
+    # go to the survey directory
+    os.chdir("Survey")
+    
+    # for each file in the directory
+    for file in glob.glob("*.xlsx"):
+        # Get the details from the spreadsheet
+        sheet = pd.read_excel(file, 'JustData')
+        sheet = sheet.dropna(how='all') #drop all rows that contain nothing
+        sheet = sheet.dropna(axis='columns', how='all') # drop all columns that containg nothing
+        sheet.to_csv('survey.csv', encoding='utf-8') #save it as a csv
+        dataArray = sheet.as_matrix()   # create a matrix from the data
+        
+        for data in dataArray:
+            #print (data)
+            if data[0] in dayList:  
+                #if the first cell is the day format the day
+                day = data[0]
+                day = day[:3]
+            elif data[1] == "Room No." or data[0] == "Room No.":
+                # if the second cell is "Room No." get the list of the room numbers
+                #     Room No.    B004    B002    B003    B1.06    B1.08    B1.09
                 details = []
+                if fullDetails == []:
+                    for x in range(2, len(data),1):
+                        roomNo = GetRoomNo(data[x])
+                        details.append(roomNo)
+                    occupancyDetails.append(details) # occupancyDetails:  [['B-004', 'B-002', 'B-003', 'B-106', 'B-108', 'B-109']]
+                    #print("occupancyDetails: ", occupancyDetails)
+            elif data[0] == "Time":
+                # if the first cell is Time this row contains the capacity of the room
+                # Update the room table with these details and get the room ID from the room table
+                if len(occupancyDetails) == 1:
+                    details = []
+                    for x in range(2, len(data),1):
+                        #details.append(data[x]) this is wrong.
+                        details.append(0)
+                    occupancyDetails.append(details)
+                    print(details)
+                    roomIDs = UpdateRoomTable(occupancyDetails)
+            elif data[0] in timeList:
+                # If the first cell is a time then set up the date
+                # 9.00-10.00        0.25    0.25    0.25    1    0    0
+                details = []
+                dateStr = date + " " + wicount.GetTime(data[0])
+                # for each percentage build up the list of sql string. [1, '2015-11-13 16:00:00', 'Fri', 0.25]
                 for x in range(2, len(data),1):
-                    #details.append(data[x]) this is wrong.
-                    details.append(0)
-                occupancyDetails.append(details)
-                print(details)
-                roomIDs = UpdateRoomTable(occupancyDetails)
-        elif data[0] in timeList:
-            # If the first cell is a time then set up the date
-            # 9.00-10.00        0.25    0.25    0.25    1    0    0
-            details = []
-            dateStr = date + " " + wicount.GetTime(data[0])
-            # for each percentage build up the list of sql string. [1, '2015-11-13 16:00:00', 'Fri', 0.25]
-            for x in range(2, len(data),1):
-                details = [roomIDs[x-2], dateStr, day, data[x]]
-                fullDetails.append(details)
-        elif "OCCU" in data[0]:
-            # if the first cell is CSI Classroom OCCUPANCY skip and continue to next loop
-            # Chose OCCUPANCY for when the building changes
-            continue
-        else:
-            # otherwise it is the date field so parse the date into the format 2015-Nov-11
-            date = parse(data[0])
-            date = date.strftime('%Y-%m-%d')
-        #end if
-        #update the survey table with the list created above
-        UpdateSurveyTable(fullDetails)
-    os.remove(file)
-    os.remove("survey.csv")
-    # end for
-con.close() 
-print("finished MakeSurvey")
+                    details = [roomIDs[x-2], dateStr, day, data[x]]
+                    fullDetails.append(details)
+            elif "OCCU" in data[0]:
+                # if the first cell is CSI Classroom OCCUPANCY skip and continue to next loop
+                # Chose OCCUPANCY for when the building changes
+                continue
+            else:
+                # otherwise it is the date field so parse the date into the format 2015-Nov-11
+                date = parse(data[0])
+                date = date.strftime('%Y-%m-%d')
+            #end if
+            #update the survey table with the list created above
+            UpdateSurveyTable(fullDetails)
+        os.remove(file)
+        if os.path.isfile("survey.csv"): 
+            os.remove("survey.csv")
+        # end for
+    os.chdir("../") #Return to original directory
+    # con.close() 
+    print("finished MakeSurvey")

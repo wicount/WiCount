@@ -40,37 +40,37 @@ def ExtractDataCSV(fileName):
     else:        
         return full_db_values
 
+
 con = db.get_connection()
 c=con.cursor()
 
-# Create all the database tables
-wicount.SetUpDatabase()
-            
-# Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
-os.chdir("CSILogs")
-
-#unzip the original file
-for file in glob.glob("*.zip"):
-    with zipfile.ZipFile(file, "r") as z:
-        z.extractall()
-    os.remove(file)
+def main():               
+    # Got help from http://stackoverflow.com/questions/3964681/find-all-files-in-directory-with-extension-txt-in-python
+    os.chdir("CSILogs")
     
-#ensure that all the file are unzipped and there isn't zip files within zip files
-for file in glob.glob("*.zip"):
-    with zipfile.ZipFile(file, "r") as z:
-        z.extractall()
-    os.remove(file)
-
-#process each file    
-for file in glob.glob("*.csv"):
-    sqlvalues = ExtractDataCSV(file)
-    # Execute every command from the input file
-    if sqlvalues != "":
-        try:
-            c.executemany('INSERT OR REPLACE INTO logdata VALUES (?,?,?,?)', sqlvalues)
-        except OperationalError:
-            print ("Command skipped: ", sqlvalues)
-        con.commit()
-    os.remove(file)
-con.close() 
-print("finished MakeLogData")
+    #unzip the original file
+    for file in glob.glob("*.zip"):
+        with zipfile.ZipFile(file, "r") as z:
+            z.extractall()
+        os.remove(file)
+        
+    #ensure that all the file are unzipped and there isn't zip files within zip files
+    for file in glob.glob("*.zip"):
+        with zipfile.ZipFile(file, "r") as z:
+            z.extractall()
+        os.remove(file)
+    
+    #process each file    
+    for file in glob.glob("*.csv"):
+        sqlvalues = ExtractDataCSV(file)
+        # Execute every command from the input file
+        if sqlvalues != "":
+            try:
+                c.executemany('INSERT OR REPLACE INTO logdata VALUES (?,?,?,?)', sqlvalues)
+            except OperationalError:
+                print ("Command skipped: ", sqlvalues)
+            con.commit()
+        os.remove(file)
+    os.chdir("../") #Return to original directory
+    # con.close() 
+    print("finished MakeLogData")
