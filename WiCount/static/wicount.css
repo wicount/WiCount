@@ -52,21 +52,18 @@ label{
 }
 
 footer {
-   position: fixed;
+/*   position: fixed;*/
+    clear: both;
    bottom:0;
-   width:80%;
    height:25px;   
-/*
-   background-color: darkgray;
-   border: 1px solid black;
-*/
-    border-top: solid 5px #16396f;
+    font-family: sans-serif;
+    padding-top: 10px;
    
 }
 #footer{
+    border-top: solid 5px #16396f;
     text-align: center;
-    margin-top: 5px;
-    font-family:monospace;
+    padding-top: 5px;
 }
 
 #divhead{
@@ -252,7 +249,7 @@ select.firstchild{
     border: solid 5px #16396f;
     border-radius: 20px;
 /*    box-shadow: 3px 3px #008AC9;*/
-    box-shadow: 3px 3px #ecd900;
+    box-shadow: 3px 3px #ecd900; 
 }
 .buildingplan{
     float: left;
@@ -261,7 +258,7 @@ select.firstchild{
     
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #ecd900;
+    box-shadow: 3px 3px #008AC9;
     margin-right: 30px;
 }
 input[type=text],input[type=password],select {
@@ -319,7 +316,7 @@ rect.bordered {
     padding: 10px;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #ecd900;
+    box-shadow: 3px 3px #008AC9;
     margin-right: 30px;
 }
 #legend{
