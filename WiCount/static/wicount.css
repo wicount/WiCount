@@ -4,6 +4,9 @@ body{
     clear: both;
     margin: auto;
 }
+.wrapper{
+    position: relative;
+}
 .header{
     margin: auto;
     height: 60px;
@@ -58,7 +61,7 @@ footer {
    height:25px;   
     font-family: sans-serif;
     padding-top: 10px;
-   
+/*    position: absolute;*/
 }
 #footer{
     border-top: solid 5px #16396f;
@@ -176,7 +179,7 @@ nav a.active {
     left: 0;
     right: 0;
     text-align: center;
-    position: absolute;
+/*    position: absolute;*/
     margin: auto;
     margin-top: 100px;
     width: 80%;
