@@ -56,7 +56,7 @@ def index():
     else:
         #Go to Campus Map page if login is successful
         json_data = DataRetrieval.getAllCampusDetails()
-        return render_template('campusmap.html', CampusDetails = json_data)
+        return render_template('campusmap.html',CampusDetails = json_data)
     
 #Login request        
 @app.route('/login', methods=['POST'])
@@ -219,7 +219,9 @@ def upload():
 @app.route('/campusmap')
 @login_required
 def campusMap():
-    return render_template('campusmap.html')
+    json_data = DataRetrieval.getAllCampusDetails()
+    return render_template('campusmap.html',CampusDetails = json_data)
+
 
 #To display the floor plan of rooms
 @app.route('/floorplancsi')
