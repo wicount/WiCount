@@ -64,20 +64,20 @@ def login():
     #Fetch login form data and store it in a variable
     POST_USERNAME = str(request.form['username'])
     POST_PASSWORD = str(request.form['password'])
-    POST_ROLE = str(request.form['role'])
+
 
     #Create a session
     Session = sessionmaker(bind=engine)
     s = Session()
     try:
         #Make the query with database against the form data
-        query = s.query(User).filter(User.username.in_([POST_USERNAME]),User.role.in_([POST_ROLE]))
+        query = s.query(User).filter(User.username.in_([POST_USERNAME]))
         result = query.first()
         if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
             #Set session to true if login is successful
             session['logged_in'] = True
             #velda add user type
-            session['role'] = POST_ROLE
+            session['role'] = result.role
         else:
             flash('Invalid Credentials or Invalid role. Please try again')    
     except:
@@ -141,7 +141,7 @@ def signup():
         name=request.form['name']
         password=request.form['password']
         email=request.form['email']
-        role=request.form['role']
+        role = 'enduser'
         #Pass the form data to user database
         user = User(name,password,email,role)
         #Add user to the session
