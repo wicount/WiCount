@@ -6,28 +6,32 @@
 
 {% block form %}
     <div id="message"></div>
-    <label>Campus:</label>
-    <select id="campus" name="campus" onchange="BuildingDDL()"></select>
-    <br>
-    <label>Building:</label>
-    <select id="building" name="building" onchange="roomDDL()"></select>
-    <br>
-    <label>Room:</label>
-    <select id="room" name="room" ></select>
-    <br>
-
-    <label>Day:</label>
-    <select id="day" name="day" >
+    <table align="center">
+    <tr>
+    	<td class="dispalyLeft"><label>Campus &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+    	<td class="dispalyRight"><select id="campus" name="campus" onchange="BuildingDDL()"></select></td>
+   	</tr>
+   	<tr>
+    	<td class="dispalyLeft"><label>Building &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+    	<td class="dispalyRight"><select id="building" name="building" onchange="roomDDL()"></select></td>
+    </tr>
+    <tr>
+    	<td class="dispalyLeft"><label>Room &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+    	<td class="dispalyRight"><select id="room" name="room" ></select></td>
+    </tr>
+	<tr>
+    <td class="dispalyLeft"><label>Day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+    <td class="dispalyRight"><select id="day" name="day" >
         <option value="0" id = "mon">Monday</option>
         <option value="1" id = "tue">Tuesday</option>
         <option value="2" id = "wed">Wednesday</option>
         <option value="3" id = "thu">Thursday</option>            
         <option value="4" id = "fri">Friday</option>
-    </select>
-    <br>
-
-    <label>Time:</label>
-    <select id="time" name="time" >
+    </select></td>
+    </tr>
+	<tr>
+    <td class="dispalyLeft"><label>Time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+    <td class="dispalyRight"><select id="time" name="time" >
         <option value="09:00:00" id = "9">09:00 - 10:00</option>
         <option value="10:00:00" id = "10">10:00 - 11:00</option>
         <option value="11:00:00" id = "11">11:00 - 12:00</option>
@@ -36,17 +40,20 @@
         <option value="14:00:00" id = "14">14:00 - 15:00</option>            
         <option value="15:00:00" id = "15">15:00 - 16:00</option>           
         <option value="16:00:00" id = "16">16:00 - 17:00</option>
-    </select>
-    <br>
-
-    <label>Occupancy:</label>
-    <br>
+    </select></td>
+    </tr>
+	</table>
+	<tr>
+   	<td class="dispalyLeft"><label>Occupancy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
     <input type="radio" class="percent" name="percent" value="0" checked> 0%
     <input type="radio" name="percent" value=".25"> 25%
     <input type="radio" name="percent" value=".50" checked> 50%
     <input type="radio" name="percent" value=".75"> 75%
     <input type="radio" name="percent" value="1"> 100%
-    <br>
+    </td>
+    </tr>
+	</table><br><br>
+    
     <input type="submit" class="lectBtn" value="Submit">
 
     
