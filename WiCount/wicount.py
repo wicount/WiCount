@@ -10,6 +10,7 @@ import glob, os
 import openpyxl
 import numpy as np
 
+
 def SetUpDatabase():
     ''' Create the database tables if they don't exist'''
     con = db.get_connection()
@@ -44,7 +45,7 @@ def SetUpDatabase():
                     day VARCHAR(3), count INTEGER, PRIMARY KEY (room_id, date) \
                     FOREIGN KEY(room_id) REFERENCES room(room_id));")
     except OperationalError:
-        print("logdata table couldn't be created")
+        print("Logdata table couldn't be created")
     con.commit()
 
     try:
@@ -52,7 +53,19 @@ def SetUpDatabase():
                     day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date) \
                     FOREIGN KEY(room_id) REFERENCES room(room_id));")
     except OperationalError:
-        print("survey table couldn't be created")
+        print("Survey table couldn't be created")
+    con.commit()
+
+    try:
+        c.execute("CREATE TABLE IF NOT EXISTS analytics(room_id INTEGER NOT NULL, date DATETIME NOT NULL, GroundTruth FLOAT, \
+                  SurveyPercentage INTEGER, Capacity INTEGER, Room VARCHAR(8), LogDate VARCHAR(10), MaxCount INTEGER, \
+                  AverageCount FLOAT, MedianCount FLOAT, ModeCount INTEGER, Predictions FLOAT, PredictedPercentage \
+                  Integer, \
+                  PRIMARY KEY (room_id, LogDate)\
+                  FOREIGN KEY(room_id) REFERENCES room(room_id));")
+
+    except OperationalError:
+        print("Analytics table couldn't be created")
     con.commit()
     
 def GetRoomID(details):
@@ -96,3 +109,6 @@ def GetTime(data):
     else:
         time = str(time[:2]) + ":" + str(time[3:]) + ":00"
     return time
+
+if __name__ == '__main__':
+    SetUpDatabase()

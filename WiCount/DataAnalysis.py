@@ -74,14 +74,14 @@ data_list = []
 for row in rows:
     c.execute("SELECT * FROM room WHERE room_id = '" + str(row[0]) + "'")
     college = c.fetchall()[0]
-    
+
     #get time and date fields.
     fromDate = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S")
     toDate = fromDate + timedelta(hours=1)
     #toDate = fromDate + timedelta(minutes=50)
     time = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S").time()
     week_no = GetWeek(fromDate)
-    
+
     #only continue if we have timetable data.
     c.execute("SELECT * FROM timetable WHERE room_id = '" + str(row[0]) + \
                 "' and day = '" + row[2] + "' AND  time = '" + str(time) + "' AND week_no = '" + week_no + "'")
@@ -93,10 +93,11 @@ for row in rows:
     c.execute("SELECT count, date FROM logdata WHERE room_id = '" + str(row[0]) + \
                  "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
     logData = c.fetchall()
+
     # Only use if we have all the data for all the days
     if logData == []:
         continue
-    
+
     c.execute("SELECT percentage FROM survey WHERE room_id = '" + str(row[0]) + \
                 "' and date = '" + str(fromDate) + "'")
     survey = c.fetchall()[0]
@@ -112,18 +113,20 @@ for row in rows:
     #print('Date: ',row[1])
     #print('Day: ',row[2], ' SurveyPercentage: ',survey[0],)
     #print('MaxCount: ',logData[0], ' Module: ',timetable[3], ' NoStudents: ',timetable[4])
-    
+
     #Change here for the output
+
     for i in range(0, len(logData)):
-        data_list = [college[1], college[2], college[3], college[4], \
+        data_list = [rows[i][0], college[1], college[2], college[3], college[4], \
                  row[1], row[2], survey[0], \
                  logData[i][0], logData[i][1], timetable[4], timetable[5], timetable[3]]
         full_data.append(data_list)
-    
-data = pd.DataFrame(full_data, columns=('Campus', 'Building', 'Room', 'Capacity', \
+
+data = pd.DataFrame(full_data, columns=('room_id', 'Campus', 'Building', 'Room', 'Capacity', \
                           'Date', 'Day', 'SurveyPercentage', \
                             'Count', 'LogDate', 'Module', 'NoStudents', 'WeekNo'))
 data.head(2)
 print(data)
 #output to a file
 data.to_csv("full_dataset_hour.csv")
+print("CSV created")
