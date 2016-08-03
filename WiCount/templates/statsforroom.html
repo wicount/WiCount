@@ -21,14 +21,20 @@
             </div>
 <!--            <div id="dataset-picker"></div>-->
         </div>
-        <div class="buildingplan1" >
+        <div class="twoBoxes">
+            <h2>Showing</h2>    
+            <div id="roomNum"></div>        
+            <div id="weekNum"></div>
+            <div id="date"></div>
+        </div>
+        <div class="twoBoxes" >
 
             <form action="{{url_for('statsForRoom')}}" method="GET">
                 <div id="message"></div>
-                <label>Room:</label>
+                <label>Room</label>
                 <select id="room" name="room_id"></select>
                 <br>
-                <input type="submit" class="lectBtn" value="Go">
+                <input type="submit" class="weekButtons" value="Go">
             </form>
             <div id="dataset-picker"></div>
             <br>
@@ -131,14 +137,15 @@ console.log("dayLabels: ",dayLabels[0])
 console.log("timeLabels: ",timeLabels)
            
         function heatmapChart(dataset) {
-
+//velda adding for display purposes
+            
           var colorScale = d3.scale.linear()
                  .domain([0, .5, 1])
                  .range([colorLow, colorMed, colorHigh]);
             
           var cards = svg.selectAll(".hour")
               .data(dataset, function(d) {
-                  console.log("times.lenght: ", times)
+//                  console.log("times.lenght: ", times)
                   for (var i = 0; i<times.length; i++){
                         if (d.hour == times[i]){
                             var thisHour = i; }
@@ -200,7 +207,12 @@ console.log("timeLabels: ",timeLabels)
                 .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
                 .attr("stop-color", function(d) { return d; });
             //end create the legend
+            
+            console.log("velda ", dataset[0])
 
+            document.getElementById("weekNum").innerHTML = "<p>" + dataset[0].week + " week</p>";
+            document.getElementById("date").innerHTML = "<p>" + dataset[0].date + "</p>";
+            document.getElementById("roomNum").innerHTML = "<p>" + dataset[0].room + "</p>";
         }; // end hearmapChart Funciont
 
       heatmapChart(datasets[0]);
@@ -217,9 +229,9 @@ console.log("timeLabels: ",timeLabels)
 
       datasetpicker.enter()
         .append("input")
-        .attr("value", function(d){ return "Week " + d[0].week })
+        .attr("value", function(d){ return d[0].week + " Week"})
         .attr("type", "button")
-        .attr("class", "statsButtons")
+        .attr("class", "weekButtons")
         .on("click", function(d) {
           heatmapChart(d);
         });

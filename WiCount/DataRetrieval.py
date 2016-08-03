@@ -68,7 +68,7 @@ def GetBuildingDetails(room_id):
     con.row_factory = sql.Row # This enables column access by name: row['column_name'] 
     cur = con.cursor()
     sqlString = "SELECT * FROM room WHERE room_id = '" + str(room_id) + "';"
-    print("velda,", sqlString)
+#     print("velda,", sqlString)
     try:
         thisRoom = cur.execute(sqlString).fetchall()[0]
         con.commit()
@@ -87,8 +87,17 @@ def StatsForRoom(room_id):
     con = sql.connect('wicount.sqlite3')
     with con:    
         c = con.cursor()    
-        c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "';")
-    
+#         velda adding to get latest two weeks of data
+        c.execute("SELECT MAX(date) FROM survey WHERE room_id = '" + str(room_id) + "';")
+        endDate = c.fetchall()[0]
+        endDate = datetime.strptime(endDate[0], "%Y-%m-%d %H:%M:%S")
+        startDate = endDate + timedelta(days=-14)
+        print ("endDate",endDate)
+        print("startdate", startDate)
+        c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "' \
+                            AND date BETWEEN '"+ str(startDate)+"' AND '"+str(endDate)+"';")
+#         c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "';")
+#         end change to get latest two weeks    
         rows = c.fetchall()
         week1_data = []
         week2_data = []
@@ -104,10 +113,18 @@ def StatsForRoom(room_id):
 #             print(WeekNo(parse(date)), ", ", even, ", ")
 #             print(WeekNo(parse(date)) == even)
             if WeekNo(parse(date)) == even:
-                data['week'] = 2
+                data['week'] = "Even"
+                data['date'] = str(parse(date).strftime('%d, %b %Y'))
+                c.execute("SELECT room FROM room WHERE room_id = '" + str(room_id) + "';")
+                room = c.fetchall()[0]
+                data['room'] = room
                 week2_data.append(data)
             else:
-                data['week'] = 1
+                data['week'] = "Odd"
+                data['date'] = str(parse(date).strftime('%d, %b %Y'))
+                c.execute("SELECT room FROM room WHERE room_id = '" + str(room_id) + "';")
+                room = c.fetchall()[0]
+                data['room'] = room
                 week1_data.append(data)
 #             print(data)
         json_data = [week1_data, week2_data]

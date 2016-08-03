@@ -189,10 +189,9 @@ nav a.active {
     border-radius: 20px;
     box-shadow: 3px 3px #008AC9;
 }
+
 .buildingplan1{
-    
     text-align: center;
- 
     float:left;
     margin: auto;
     margin-top: 50px;
@@ -203,6 +202,25 @@ nav a.active {
     border-radius: 20px;
     box-shadow: 3px 3px #008AC9;
 }
+
+.twoBoxes{
+    text-align: center;
+    float:left;
+    margin: auto;
+    margin-bottom: 10px;
+    width: 25%;
+	padding-top: 20px;
+    padding-bottom: 20px;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+    box-shadow: 3px 3px #008AC9;
+}
+.twoBoxes p{
+    margin: 5px;
+    font-family: sans-serif;
+    font-weight: 700;
+}
+
 
 #mapcam{
     position: relative;
@@ -293,19 +311,16 @@ rect.bordered {
     stroke-width: 2px;
 }
 
-.statsButtons{
+.weekButtons{
     border: 2px solid #16396f;
     text-align: center;
     font-weight: 600;
     border-radius: 20px;
     padding: 5px 10px;
     font-size: 1.25em;
-/*
-    margin: auto;
-    margin-top: 10px;
-*/
-    margin: 20px 10px 20px 0px;
+    margin: 10px 0px 0px 0px;
 }
+
 #chart{
     background-color: #E6E6E6; 
     width: 620px;
@@ -334,6 +349,7 @@ rect.bordered {
     font-family: sans-serif;
     font-weight: 700;
 }
+
 .legendTable{
     width: 550px;
     margin-left: 40px;
