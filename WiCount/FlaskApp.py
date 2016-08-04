@@ -79,10 +79,10 @@ def login():
             #velda add user type
             session['role'] = result.role
         else:
-            flash('Invalid Credentials or Invalid role. Please try again')    
+            flash('Invalid Credentials. Please try again')    
     except:
         #Display error message if login is unsuccessful
-        flash('Invalid Credentials or Invalid role. Please try again')    
+        flash('Invalid Credentials. Please try again')    
     #Return to home page
     return index()
 
