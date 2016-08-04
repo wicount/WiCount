@@ -121,8 +121,9 @@ def addUser():
         if form.validate():
             try:
                 session.commit()
-            except:
-                flash('Username already exists')
+            except Exception as e:
+                session.rollback()
+                print(e)
             finally:
                 return sendEmailAdmin(name, password, email)
         else:
@@ -150,8 +151,9 @@ def signup():
             #Commit user data to database
             try:
                 session.commit()                
-            except:
-                flash('Username already exists')
+            except Exception as e:
+                session.rollback()
+                print(e)
             finally:
                 return sendEmail(name,password,email)
         else:
