@@ -1,3 +1,5 @@
+<!-- This web page is used by lecturers to submit occupancy data of a room -->
+
 {% extends "formtemplate.html" %}
 
 {% block title %}Wicount | Lecturer App{% endblock %}
@@ -52,17 +54,12 @@
     <input type="radio" name="percent" value="1"> 100%
     </td>
     </tr>
-	</table><br><br>
-    
+	</table><br><br>  
     <input type="submit" class="submitButton" value="Submit">
-
-    
     
 <script type="text/javascript" language="javascript">
     function CampusDDL() {
-            // show the thank you message
-            document.getElementById("message").innerHTML= '<h2>'+message+'</h2>';
-
+    	document.getElementById("message").innerHTML= '<h2>'+message+'</h2>';
         // Build up array of the campuses in the database
         var campus = []
         document.getElementById("room").style.visibility= 'hidden';
@@ -72,7 +69,6 @@
         }
         // get just the unque values from the array.
         var uniqueCampuses = campus.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-
         // add the campuses to the drop down list
         var dropdown = document.getElementById("campus");
         for (var i = 0; i < uniqueCampuses.length; ++i) {
@@ -82,13 +78,10 @@
         document.getElementById("building").style.visibility= 'visible';   
     }
 
-    //Help gotten from here:
-    //http://stackoverflow.com/questions/30316285/populate-dropdown-list-based-on-selection-in-another-dropdown
+    /* To display dropdown menu based on value of other dropdown */
     function BuildingDDL() {
-        
         document.getElementById("room").style.visibility= 'hidden';
         campus=document.getElementById("campus").value;
-        
         // Build up array of the building in the campus in the database
         var building = []
         for (var i = 0; i < CampusDetails.length; ++i) {
@@ -97,7 +90,6 @@
         }
         // get just the unque values from the array.
         var uniquebuildings = building.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-        
         // add the campuses to the drop down list
         var dropdown = document.getElementById("building");
         for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
@@ -112,7 +104,6 @@
     
     function roomDDL() {
         building=document.getElementById("building").value;
-        
         // Build up array of the building in the campus in the database
         var rooms = []
         var ids = []
@@ -122,7 +113,6 @@
                 ids.push(CampusDetails[i].room_id);     // Append the element to the end of Array list
             }
         }
-        
         // add the campuses to the drop down list
         var dropdown = document.getElementById("room");
         for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){

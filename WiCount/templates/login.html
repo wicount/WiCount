@@ -1,3 +1,5 @@
+<!-- Login page to access the application -->
+
 {% extends "nomenutemplate.html" %}
 
 {% block title %}Wicount | Login{% endblock %}
@@ -17,18 +19,19 @@
 			<td class="dispalyLeft"><label>Password &nbsp;&nbsp;&nbsp;</label>	</td>	
         	<td class="dispalyRight"><input type="password" value="" placeholder="*********" name="password"></td>
         </tr>
-		
  		</table><br><br>	
         <input type="submit" value="Log in" class="submitButton" ><br><br>
-        <strong>
+        
+        <!-- To display error messages -->
+        
         {% with messages = get_flashed_messages() %}
         	{% if messages %}
                {% for message in messages %}
-               		{{ message }}
+               		<strong>{{ message }}</strong>
                {% endfor %}
          	{% endif %}
-      	{% endwith %}
-      	</strong>
+      	{% endwith %}	
 	</form>
 	{% endif %}
+	
 {% endblock %}

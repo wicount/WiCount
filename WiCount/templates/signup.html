@@ -1,3 +1,5 @@
+<!-- This page is used for any user who needs access to the application. -->
+
 {% extends "nomenutemplate.html" %}
 
 {% block title %}Wicount | Sign Up{% endblock %}
@@ -5,6 +7,7 @@
 {% block menu %}
 <li><a href="{{url_for('index')}}">Login</a></li>
 {% endblock %}
+
 {% block body %}
 	<form class="formStyle" action="" method="post" role="form">
     	<img class="logoForm" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
@@ -24,19 +27,13 @@
 
  		</table><br><br>
     	<button type="submit" class="submitButton">Register</button>
-
+		
+		<!-- To display error messages -->
 		{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
 				{% for message in messages %}
-            		{% if "Error" not in message[1]: %}
-                	<div>
-                		{{ message[1] }}
-                	</div>
-            		{% endif %}
             		{% if "Error" in message[1]: %}
-               		 <div>
-                		{{ message[1] }}
-                	</div>
+                		<strong>{{ message[1] }}</strong>
            			 {% endif %}
         		{% endfor %}
 			{% endif %}

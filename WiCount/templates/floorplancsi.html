@@ -1,3 +1,5 @@
+<!-- This web page displays the floor plan of any buliding selected during campus map page -->
+
 {% extends "jinjatemplate.html" %}
 
 {% block title %}Wicount | Floorplan{% endblock %}
@@ -5,9 +7,7 @@
 {% block scripts %}
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<script type="text/javascript" src="{{url_for('static',filename='jQuery-Plugin-For-Highlighting-Image-Map/jquery.maphilight.js')}}"></script>
-	<script type="text/javascript">$(function() {
-    	$('.floorplan').maphilight({fade: false});
-        });</script>
+	<script type="text/javascript">$(function() {$('.floorPlan').maphilight({fade: false}); });</script>
 {% endblock %}
 
 {% block body %}

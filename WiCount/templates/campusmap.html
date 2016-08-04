@@ -1,15 +1,18 @@
+<!-- Web page to display the map and form data. 
+User will be able to select the building from the map which will redirect to floor plan.
+User will be able to select campus, building, room which will directly redirect to results page. -->
+
 {% extends "jinjatemplate.html" %}
 
 {% block title %}Wicount | Campus Map{% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-        <script type="text/javascript" src="{{url_for('static',filename='jQuery-Plugin-For-Highlighting-Image-Map/jquery.maphilight.js')}}"></script>
-        <script type="text/javascript">$(function() {
-            $('.buildingplan').maphilight({fade: false});
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='jQuery-Plugin-For-Highlighting-Image-Map/jquery.maphilight.js')}}"></script>
+    <script type="text/javascript">$(function() {
+            $('.campusMap').maphilight({fade: false});
         });</script>
-{% endblock %}
-        
+{% endblock %}        
 
 {% block body %}
 <div id="mapMargin">
@@ -19,21 +22,22 @@
     </map>
 	<div class="campusFormData" >
 	<form action="statsforroom" method="get">
-		<label>Campus: &nbsp;</label><br>
+		<label>Campus &nbsp;</label><br>
     		<select id="campus" name="campus" onchange="BuildingDDL()">
     		</select><br><br>
-    	<label>Building: &nbsp;</label><br>
+    	<label>Building &nbsp;</label><br>
     		<select id="building" name="building" onchange="roomDDL()">
     		</select><br><br>
-    	<label>Room: &nbsp;</label><br>
+    	<label>Room &nbsp;</label><br>
     		<select id="room_id" name="room_id">
-
     		</select><br><br>
     	<input type="submit" class="submitButton" value="Submit">
     </form>
 	</div>
 </div>
-<script>
+
+<!-- Tooltip functionality - to display the tooltip when mouse is hovered around a map -->
+<script type="text/javascript">
 jQuery(document).ready(function (e) {
     jQuery('area').qtip({
         style: {
@@ -48,9 +52,10 @@ jQuery(document).ready(function (e) {
         }
     });
 });
-
 </script>
-<script type="text/javascript" language="javascript">
+
+<!-- Javascript functions to redirect to appropriate pages -->
+<script type="text/javascript">
     function CampusDDL() {
         // Build up array of the campuses in the database
         var campus = []
@@ -59,9 +64,8 @@ jQuery(document).ready(function (e) {
         for (var i = 0; i < CampusDetails.length; ++i) {
             campus.push(CampusDetails[i].campus);     // Append the element to the end of Array list
         }
-        // get just the unque values from the array.
+        // get just the unique values from the array.
         var uniqueCampuses = campus.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-
         // add the campuses to the drop down list
         var dropdown = document.getElementById("campus");
         for (var i = 0; i < uniqueCampuses.length; ++i) {
@@ -71,13 +75,10 @@ jQuery(document).ready(function (e) {
         document.getElementById("building").style.visibility= 'visible';   
     }
 
-    //Help gotten from here:
-    //http://stackoverflow.com/questions/30316285/populate-dropdown-list-based-on-selection-in-another-dropdown
+    /* Function to populate dropdown based on the value of other dropdown */
     function BuildingDDL() {
-        
         document.getElementById("room_id").style.visibility= 'hidden';
         campus=document.getElementById("campus").value;
-        
         // Build up array of the building in the campus in the database
         var building = []
         for (var i = 0; i < CampusDetails.length; ++i) {
@@ -86,7 +87,6 @@ jQuery(document).ready(function (e) {
         }
         // get just the unque values from the array.
         var uniquebuildings = building.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-        
         // add the campuses to the drop down list
         var dropdown = document.getElementById("building");
         for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
@@ -101,17 +101,15 @@ jQuery(document).ready(function (e) {
     
     function roomDDL() {
         building=document.getElementById("building").value;
-        
         // Build up array of the building in the campus in the database
         var rooms = []
         var ids = []
         for (var i = 0; i < CampusDetails.length; ++i) {
              if (CampusDetails[i].building == building){
-                rooms.push(CampusDetails[i].room);     // Append the element to the end of Array list
-                ids.push(CampusDetails[i].room_id);     // Append the element to the end of Array list
+             rooms.push(CampusDetails[i].room);     // Append the element to the end of Array list
+             ids.push(CampusDetails[i].room_id);     // Append the element to the end of Array list
             }
         }
-        
         // add the campuses to the drop down list
         var dropdown = document.getElementById("room_id");
         for(var i = dropdown.options.length - 1 ; i >= 0 ; i--){
@@ -121,12 +119,12 @@ jQuery(document).ready(function (e) {
             dropdown[dropdown.length] = new Option(rooms[i], ids[i]);
         }
         document.getElementById("room_id").style.visibility= 'visible';
-
     }
     var CampusDetails = {{CampusDetails|tojson}};
     CampusDetails = JSON.parse(CampusDetails);
     console.log(CampusDetails);
     window.onload = CampusDDL();
 </script>
+
 {% endblock %}
 	
