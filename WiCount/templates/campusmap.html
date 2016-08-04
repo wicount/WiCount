@@ -12,12 +12,12 @@
         
 
 {% block body %}
-<div id="mapmargin">
-    <img class="buildingplan" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building" usemap="#buildingmap">
+<div id="mapMargin">
+    <img class="campusMap" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building" usemap="#buildingmap">
     <map name="buildingmap">
         <area shape="poly" coords="304, 121, 335, 139, 300, 160, 285, 130" href="/floorplancsi" alt="building" title="CSI Building">   
     </map>
-	<div class="buildingplan1" >
+	<div class="campusFormData" >
 	<form action="statsforroom" method="get">
 		<label>Campus: &nbsp;</label><br>
     		<select id="campus" name="campus" onchange="BuildingDDL()">
@@ -29,7 +29,7 @@
     		<select id="room_id" name="room_id">
 
     		</select><br><br>
-    	<input type="submit" class="lectBtn" value="Submit">
+    	<input type="submit" class="submitButton" value="Submit">
     </form>
 	</div>
 </div>

@@ -1,3 +1,5 @@
+<!-- General jinja2 template for web pages that do not have form data. -->
+
 <!DOCTYPE html>
 <html>
 
@@ -16,11 +18,11 @@
             {% block menu %} {% endblock %}   
         </ul>
     </nav>
-    <img class="logo" src="{{url_for('static',filename='longlogo.png')}}" alt="logo"/>
+    <img class="logoHeader" src="{{url_for('static',filename='longlogo.png')}}" alt="logo"/>
 	</header>
 	{% block body %}{% endblock %}
 	<footer>
-    	<p id="footer">WiCount | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+    	<p class="footer">WiCount | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
 	</footer>
 </body>
 </html>

@@ -264,6 +264,7 @@ def lecturerApp():
             message = ""
         json_data = DataRetrieval.getAllCampusDetails()
         return render_template('lecturerapp.html', CampusDetails = json_data, message = message)
+    
 #Page to display statistics
 @app.route('/statistics')
 #@login_required

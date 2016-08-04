@@ -1,3 +1,5 @@
+<!-- General jinja2 template for web pages that do not have form data. -->
+
 <!DOCTYPE html>
 <html>
 
@@ -12,25 +14,27 @@
     <header class="header">
     <nav>
         <ul>
-        	
+        	<!-- To display menu based on role of the user. -->
             <li><a href="{{url_for('campusMap')}}">Home</a></li>
             <li><a href="{{url_for('statistics')}}">Statistics</a></li>
+            
             {% if session['role'] != "enduser" %}
                 <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
          	{% endif %}
+         	
             {% if session['role'] == "admin" %}
                 <li><a href="{{url_for('fileupload')}}">Upload</a></li>
                 <li><a href="{{url_for('addUser')}}"> Add User</a></li>
             {% endif %}
+            
             <li><a href="{{url_for('logout')}}">Logout</a></li>
-
         </ul>
     </nav>
-    <img class="logo" src="{{url_for('static',filename='longlogo2.png')}}" alt="logo"/>
+    <img class="logoHeader" src="{{url_for('static',filename='longlogo2.png')}}" alt="logo"/>
 	</header>
   	{% block body %}{% endblock %}
     <footer>
-    	<p id="footer">WiCount | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
+    	<p class="footer">WiCount | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney</p>
 	</footer>
 </body>
 </html>

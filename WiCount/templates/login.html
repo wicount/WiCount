@@ -6,20 +6,20 @@
 	{% if session['logged_in'] %}
 		<p>You're logged in already!</p>
 	{% else %}
-	<form class="LecturerApp" action="/login" method="POST">
-    	<img class="count" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
+	<form class="formStyle" action="/login" method="POST">
+    	<img class="logoForm" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
     	<table align="center">
     	<tr>
         	<td class="dispalyLeft"><label>UserName &nbsp;&nbsp;&nbsp;</label></td>
-        	<td class="dispalyRight"><input type="text" class="login-field" value="" placeholder="Enter User Name" name="username"></td>
+        	<td class="dispalyRight"><input type="text" value="" placeholder="Enter User Name" name="username"></td>
         </tr>
         <tr>
 			<td class="dispalyLeft"><label>Password &nbsp;&nbsp;&nbsp;</label>	</td>	
-        	<td class="dispalyRight"><input type="password" class="login-field" value="" placeholder="*********" name="password"></td>
+        	<td class="dispalyRight"><input type="password" value="" placeholder="*********" name="password"></td>
         </tr>
 		
  		</table><br><br>	
-        <input type="submit" value="Log in" class="lectBtn" ><br><br>
+        <input type="submit" value="Log in" class="submitButton" ><br><br>
         <strong>
         {% with messages = get_flashed_messages() %}
         	{% if messages %}
