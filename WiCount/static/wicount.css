@@ -79,14 +79,18 @@ nav a.active {
 
 /* To display the footer */
 footer{
-    clear: both;
+    position: fixed;
    	bottom:0;
+    width: 80%;
    	height:25px;   
+    border-top: solid 5px #16396f;
     font-family: sans-serif;
-    padding-top: 10px;
+    text-align: center;
+    background-color: white;
+    padding-top: 5px;
 }
 .footer{
-    border-top: solid 5px #16396f;
+    font-family: sans-serif;
     text-align: center;
     padding-top: 5px;
 }
@@ -103,7 +107,7 @@ footer{
     padding-top: 0px;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9;
+    box-shadow: 3px 3px #ECD900;
 }
 
 /* To display logo on form data box */
@@ -179,7 +183,7 @@ input[type=text],input[type=password],select {
     text-align: center;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9;
+    box-shadow: 3px 3px #ECD900;
     margin-right: 30px;
 }
 
@@ -194,7 +198,7 @@ input[type=text],input[type=password],select {
     padding-bottom: 30px;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9;
+    box-shadow: 3px 3px #ECD900;
 }
 
 /* Style floor plan */
@@ -204,7 +208,7 @@ input[type=text],input[type=password],select {
     margin: auto;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9; 
+    box-shadow: 3px 3px #ECD900; 
 }
 
 /* Styling of statsforroom page */
@@ -234,7 +238,7 @@ rect.bordered {
     padding: 10px;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9;
+    box-shadow: 3px 3px #ECD900;
     margin-right: 30px;
 }
 #legend{
