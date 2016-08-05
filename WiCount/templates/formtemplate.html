@@ -23,10 +23,17 @@
          	{% endif %}
          	
             {% if session['role'] == "admin" %}
-                <li><a href="{{url_for('fileupload')}}">Upload</a></li>
-                <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+                
+                <li><a href="#"> Admin</a>
+                    <ul>
+                        <li><a href="{{url_for('fileupload')}}">Upload</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Change User</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Delete User</a></li>
+                    </ul>
+                </li>
             {% endif %}
-            
+            <li><a href="{{url_for('campusMap')}}">Password</a></li>
             <li><a href="{{url_for('logout')}}">Logout</a></li>
         </ul>
     </nav>
