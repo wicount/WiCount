@@ -324,3 +324,25 @@ rect.bordered {
     padding: 5px 10px;
     font-size: 1.25em;
 }
+
+#category2 option{
+    display:none;
+}
+
+#category2 option.label{
+    display:block;
+}
+
+.formStyleStatistics{
+	left: 0;
+    right: 0;
+    text-align: center;
+    margin: auto;
+    margin-top: 25px;
+    width: 80%;
+	padding: 15px;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+    box-shadow: 3px 3px #ECD900;
+	
+}
