@@ -215,26 +215,32 @@ console.log("timeLabels: ",timeLabels)
             document.getElementById("roomNum").innerHTML = "<p>" + dataset[0].room + "</p>";
         }; // end hearmapChart Funciont
 
+    if (datasets[0] == ""){
+        document.getElementById("chart").innerHTML = "<h2>Sorry no information for that room. Please choose a different room</h2>"
+    }
+    else{
       heatmapChart(datasets[0]);
-          
+    }      
+    
+    if (datasets[0] != ""){
             //Draw the legend rectangle and fill with gradient
             svg2.append("rect")
                 .attr("width", width-50)
                 .attr("height", 20)
                 .style("fill", "url(#linear-gradient)");
 
-    //insert the buttons.
-      var datasetpicker = d3.select("#dataset-picker").selectAll(".dataset-button")
-        .data(datasets);
+        //insert the buttons.
+          var datasetpicker = d3.select("#dataset-picker").selectAll(".dataset-button")
+            .data(datasets);
 
-      datasetpicker.enter()
-        .append("input")
-        .attr("value", function(d){ return d[0].week + " Week"})
-        .attr("type", "button")
-        .attr("class", "weekButtons")
-        .on("click", function(d) {
-          heatmapChart(d);
-        });
-
+          datasetpicker.enter()
+            .append("input")
+            .attr("value", function(d){ return d[0].week + " Week"})
+            .attr("type", "button")
+            .attr("class", "weekButtons")
+            .on("click", function(d) {
+              heatmapChart(d);
+            });
+    }
 </script>
 {% endblock %}

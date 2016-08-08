@@ -250,6 +250,24 @@ input[type=text],input[type=password],select {
     box-shadow: 3px 3px #ECD900; 
 }
 
+.twoBoxes{
+    text-align: center;
+    float:left;
+    margin: auto;
+    margin-bottom: 10px;
+    margin-top:10px;
+    width: 25%;
+	padding-top: 20px;
+    padding-bottom: 20px;
+    border: solid 5px #16396f;
+    border-radius: 20px;
+    box-shadow: 3px 3px #008AC9;
+}
+.twoBoxes p{
+    margin: 5px;
+    font-family: sans-serif;
+    font-weight: 700;
+}
 /* Styling of statsforroom page */
 rect.bordered {
     stroke: #E6E6E6;
@@ -279,6 +297,7 @@ rect.bordered {
     border-radius: 20px;
     box-shadow: 3px 3px #ECD900;
     margin-right: 30px;
+    margin-top:10px;
 }
 #legend{
     background-color: #E6E6E6; 
