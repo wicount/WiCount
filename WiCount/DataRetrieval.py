@@ -86,22 +86,26 @@ def WeekNo(date):
 def StatsForRoom(room_id):
     con = sql.connect('wicount.sqlite3')
     with con:    
-        c = con.cursor()    
+        c = con.cursor()  
+        week1_data = []
+        week2_data = []
+        json_data = []  
 #         velda adding to get latest two weeks of data
-        c.execute("SELECT MAX(date) FROM survey WHERE room_id = '" + str(room_id) + "';")
+#         c.execute("SELECT MAX(date) FROM survey WHERE room_id = '" + str(room_id) + "';")
+        c.execute("SELECT MAX(date) FROM analytics WHERE room_id = '" + str(room_id) + "';")
         endDate = c.fetchall()[0]
+        print("enddate: ", endDate)
+        if endDate[0] == None:
+            json_data = [week1_data, week2_data]
+            print(json_data)
+            return(json.dumps(json_data))
         endDate = datetime.strptime(endDate[0], "%Y-%m-%d %H:%M:%S")
         startDate = endDate + timedelta(days=-14)
         print ("endDate",endDate)
         print("startdate", startDate)
-        c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "' \
+        c.execute("SELECT * FROM analytics WHERE room_id = '" + str(room_id) + "' \
                             AND date BETWEEN '"+ str(startDate)+"' AND '"+str(endDate)+"';")
-#         c.execute("SELECT * FROM survey WHERE room_id = '" + str(room_id) + "';")
-#         end change to get latest two weeks    
         rows = c.fetchall()
-        week1_data = []
-        week2_data = []
-        json_data = []
         even = WeekNo(parse(rows[0][1]))
 #         print(even)
         for row in rows:
@@ -109,7 +113,7 @@ def StatsForRoom(room_id):
             date = row[1]
             data['day'] = row[2]
             data['hour'] = date[11:16]
-            data['percent'] = row[3]
+            data['percent'] = (row[13]/100)
 #             print(WeekNo(parse(date)), ", ", even, ", ")
 #             print(WeekNo(parse(date)) == even)
             if WeekNo(parse(date)) == even:
