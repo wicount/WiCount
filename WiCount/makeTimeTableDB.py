@@ -1,3 +1,6 @@
+#import sys
+#sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
+
 import db
 import sqlite3 as lite
 from sqlite3 import OperationalError
