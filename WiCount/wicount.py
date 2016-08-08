@@ -57,7 +57,7 @@ def SetUpDatabase():
     con.commit()
 
     try:
-        c.execute("CREATE TABLE IF NOT EXISTS analytics(room_id INTEGER NOT NULL, date DATETIME NOT NULL, GroundTruth FLOAT, \
+        c.execute("CREATE TABLE IF NOT EXISTS analytics(room_id INTEGER NOT NULL, date DATETIME NOT NULL, day VARCHAR(3), GroundTruth FLOAT, \
                   SurveyPercentage INTEGER, Capacity INTEGER, Room VARCHAR(8), LogDate VARCHAR(10), MaxCount INTEGER, \
                   AverageCount FLOAT, MedianCount FLOAT, ModeCount INTEGER, Predictions FLOAT, PredictedPercentage \
                   Integer, \

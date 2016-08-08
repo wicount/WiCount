@@ -7,6 +7,7 @@ import makeTimeTableDB
 import glob, os
 import wicount
 import db
+import DataAnalysis
 
 con = db.get_connection()
 c=con.cursor()
@@ -17,5 +18,7 @@ wicount.SetUpDatabase()
 MakeLogDataDB.main()
 makeSurveyDB.main()
 makeTimeTableDB.main()
+
+DataAnalysis.main()
 
 con.close() 

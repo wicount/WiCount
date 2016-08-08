@@ -1,132 +1,192 @@
-import sqlite3 as lite
-import sys
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
-#from docutils.nodes import list_item
-from dateutil.parser import parse
+import matplotlib.pyplot as plt
+import statsmodels.formula.api as sm
+from sklearn.linear_model import LinearRegression
+from scipy import stats
+import sqlite3 as lite
+import db
+import BuildDataframes
 
-def GetAllWeekNos(start, end):
-    c.execute("SELECT DISTINCT week_no from timetable where week_no >= '" \
-              + start+ "' AND week_no <= '"+ end+ "'")
-    data = c.fetchall()
-    week_nos = []
-    for weeks in data:
-        #print(weeks)
-        list_item = weeks[0].split("/")
-        list_item = [ int(x) for x in list_item ]
-        list_item.append(weeks[0])
-        week_nos.append(list_item)
-        #print(week_nos)
-    return week_nos
 
-def WeekNo(date):
-    weekno = date.isocalendar()
-    return weekno
+def read_data():
+    # Read csv file into a dataframe.
+    # Ideally this should just import the dataframe from BuildDataframes.py but issue with PATH file.
+    try:
+#         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
+        df = BuildDataframes.CreateTainingSet()
+        # index_col parameter removes the 'unnamed column' which is added when reading from a csv
+    except OSError:
+        print("Filename not found!")
+    except Exception as e: print(e)
 
-def FormatWeekNo(week):
-    return str(week[1]) + "/" + str(week[0])
+    df['GroundTruth'] = df.Capacity * df.SurveyPercentage
+    df = df[['room_id', 'Count', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', 'Date']]
+    df['SurveyPercentage'] = df['SurveyPercentage'].apply(lambda x: x*100)
 
-def GetWeek(date):
-    ''' get the relevant week from the timetable table'''
+    return df
+
+
+def prepare_data(df):
+
+    df['UniqueClass'] = df['Date'] + ' ' + df['Room']
+    uniquedf = df['UniqueClass']
+
+    count = uniquedf.value_counts().sort_index()
+    # sorting to match the number of values for a given hour with
+
+    df = df.sort_values(['UniqueClass', 'LogDate']).reset_index(drop=True)
+    # Now indexes match the count values so we can use them for loop traversal in the list builder
+
+    maxlist = []
+    averagelist = []
+    medianlist = []
+    modelist = []
+
+    row = 0
+    for step in count:
+
+        max = 0
+        temp = []
+
+        for j in range(row, row+step):
+            temp.append(df.Count[j])
+            if df.Count[j] > max:
+                max = df.Count[j]
+
+        maxlist.append(max)
+        # make max list
+        average = float(format(np.average(temp), '.2f'))
+        # make average list
+        #formatting to 2 decimal places produces string so need to cast as float
+        median = np.median(temp)
+        # make median list
+        mode = stats.mode(temp[0])
+        # make mode list (index 0 selects the value rather than the whole array)
+        averagelist.append(average)
+        medianlist.append(median)
+        modelist.append((mode[0])[0])
+        # index 0 is the value, 1 is the number of occurrences
+        # second index 0 selects the value rather than an array containing the value + type
+        # the scipy-stats module returns the lowest of any equally frequently occurring values.
+
+        row += step
+
+    df2 = pd.DataFrame(columns=df.columns)
+
+    row = 0
+    for step in count:
+        df2 = df2.append(df.loc[row], ignore_index=True)
+        row+=step
+
+    df2['MaxCount'] = maxlist
+    df2['AverageCount'] = averagelist
+    df2['MedianCount'] = medianlist
+    df2['ModeCount'] = modelist
+
+    try:
+        df2 = df2.drop('Count', axis=1)
+    # no longer need count for specific time since we're using the average and maximum values for testing.
+    except ValueError:
+        pass
+    # ValueError exception raised if Count has already been dropped.
+
+    return df2
+
+
+def train_model(trainingdf):
+    wicountlm = sm.ols(formula="GroundTruth ~  MedianCount", data=trainingdf).fit()
+    return wicountlm
+
+
+def classify_prediction(df, i):
+
+    # passing in this: df2_test.Predictions[row], row
+    prediction = df.Predictions[i]
+
+    capacity = df.Capacity[i]
+    # selects the relevant capacity value for the room and assigns to a variable
+    percentile_0 = 0
+#     percentile_25 = capacity * 0.25
+    percentile_50 = capacity * 0.5
+#     percentile_75 = capacity * 0.75
+    percentile_100 = capacity
+
+# making ternary bins rather than original 0/25/50/75/100
+    if prediction <= (percentile_50 - ((percentile_50 - percentile_0)/2)):
+        return 0
+    elif prediction >= percentile_50 - ((percentile_50 - percentile_0)/2) and prediction <= percentile_100 - ((percentile_100 - percentile_50)/2):
+        return 50
+    # if prediction (43) is greater than 20 and less than 60
+    elif prediction >= percentile_100 - ((percentile_100 - percentile_50)/2):
+        return 100
+
+
+def make_predictions(df, wicountlm):
+
+    predictions = wicountlm.predict(df)
+
+    df['Predictions'] = predictions
+
+    df = df.reset_index(drop=True)
+    percentage = []
+
+
+    for row in range(df.shape[0]):
+        percentage.append(classify_prediction(df, row))
+
+    print(df.shape)
+
+    df['PredictedPercentage'] = percentage
+    return df
+
+
+def get_predicion_data():
+
+    # toDo: this needs the name of the file upload with count values. Currently using original dataset minus
+    # surveypercentage for testing
+    try:
+#         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
+        df = BuildDataframes.CreatePredictionSet()
+        df['GroundTruth'] = df.Capacity * df.SurveyPercentage
+        #df = df.drop('SurveyPercentage', axis=1)
+    except Exception as e:
+        print(e)
+    return df
+
+
+def update_analytics_table(df):
+    try:
+        con = db.get_connection()
+        c=con.cursor()  
+#         con = lite.connect('wicount.sqlite3')
+        df = df[['room_id', 'Date', 'Day', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', \
+                 'MaxCount' , 'AverageCount', 'MedianCount', 'ModeCount', 'Predictions', 'PredictedPercentage']]
+        numpyMatrix = df.as_matrix()
+        for row in numpyMatrix:
+            c.execute('INSERT OR REPLACE INTO analytics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', row)
+#         df.to_sql(con=con, name='analytics', if_exists='replace', flavor='sqlite', index=False)
+        # Set index to False because it's not a column but will be treated as one.
+        con.commit()
+        print("Success! Table created or updated.")
+    except Exception as e:
+        print(e)
+
+
+def main():
+
+    trainingdf = read_data()
+    # reads dataframe taken from the survey table (DataAnalytics.py)
+    trainingdf = prepare_data(trainingdf)
+    wicountlm = train_model(trainingdf)
+    # training the model
+
+    df = get_predicion_data() 
+    df = prepare_data(df)
+    # toDo: get dataframe from the count upload. Needs same columns to be present as the training data,
+    # can fix by dropping SurveyData etc.
     
-    week = date.isocalendar()
-    week_nos = FormatWeekNo(week)
-    
-    if week[1] >= WeekNo(parse("1 Sept" + str(week[0])))[1]:
-        semester_beg = WeekNo(parse("1 Sept" + str(week[0])))
-        semester_end = WeekNo(parse("31 Dec" + str(week[0]))) 
-    else:
-        semester_beg = WeekNo(parse("1 Jan" + str(week[0])))
-        semester_end = WeekNo(parse("30 May" + str(week[0])))
-    
-    semester_beg = FormatWeekNo(semester_beg)
-    semester_end = FormatWeekNo(semester_end)
-    week_nos = GetAllWeekNos(semester_beg, semester_end)
-    
-    if week_nos[0][1] % 2:
-        even = week_nos[0][2]
-        odd = week_nos[1][2]
-    else:
-        even = week_nos[1][2]
-        odd = week_nos[0][2]
-    
-    if week[1] % 2:
-        return even
-    else:
-        return odd
+    df = make_predictions(df, wicountlm)
+#     print(df)
+    update_analytics_table(df)
 
-
-con = lite.connect('wicount.sqlite3')
-c=con.cursor()
-with con:    
-    c = con.cursor()    
-    c.execute("SELECT * FROM survey")
-
-    rows = c.fetchall()
-
-    for row in rows:
-        print(row)
-
-full_data = []
-data_list = []
-
-for row in rows:
-    c.execute("SELECT * FROM room WHERE room_id = '" + str(row[0]) + "'")
-    college = c.fetchall()[0]
-
-    #get time and date fields.
-    fromDate = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S")
-    toDate = fromDate + timedelta(hours=1)
-    #toDate = fromDate + timedelta(minutes=50)
-    time = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S").time()
-    week_no = GetWeek(fromDate)
-
-    #only continue if we have timetable data.
-    c.execute("SELECT * FROM timetable WHERE room_id = '" + str(row[0]) + \
-                "' and day = '" + row[2] + "' AND  time = '" + str(time) + "' AND week_no = '" + week_no + "'")
-    timetable = c.fetchall()
-    if timetable == []:
-        continue
-    timetable = timetable[0]
-
-    c.execute("SELECT count, date FROM logdata WHERE room_id = '" + str(row[0]) + \
-                 "' and date BETWEEN '" + str(fromDate) + "' AND '" + str(toDate) + "'")
-    logData = c.fetchall()
-
-    # Only use if we have all the data for all the days
-    if logData == []:
-        continue
-
-    c.execute("SELECT percentage FROM survey WHERE room_id = '" + str(row[0]) + \
-                "' and date = '" + str(fromDate) + "'")
-    survey = c.fetchall()[0]
-    #print("row: ", row)
-    #print("college: ", college)
-    #print("timetable: ", timetable)
-    #print("logData: ", logData)
-    #print ("survey: ", survey)
-    #print('Campus: ',college[1])
-    #print('Building: ',college[2])
-    #print('Room: ',college[3])
-    #print('Occupancy: ',college[4])
-    #print('Date: ',row[1])
-    #print('Day: ',row[2], ' SurveyPercentage: ',survey[0],)
-    #print('MaxCount: ',logData[0], ' Module: ',timetable[3], ' NoStudents: ',timetable[4])
-
-    #Change here for the output
-
-    for i in range(0, len(logData)):
-        data_list = [rows[i][0], college[1], college[2], college[3], college[4], \
-                 row[1], row[2], survey[0], \
-                 logData[i][0], logData[i][1], timetable[4], timetable[5], timetable[3]]
-        full_data.append(data_list)
-
-data = pd.DataFrame(full_data, columns=('room_id', 'Campus', 'Building', 'Room', 'Capacity', \
-                          'Date', 'Day', 'SurveyPercentage', \
-                            'Count', 'LogDate', 'Module', 'NoStudents', 'WeekNo'))
-data.head(2)
-print(data)
-#output to a file
-data.to_csv("full_dataset_hour.csv")
-print("CSV created")
