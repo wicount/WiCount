@@ -1,3 +1,6 @@
+#import sys
+#sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
+
 from sqlalchemy import *
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
