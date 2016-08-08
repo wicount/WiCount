@@ -272,9 +272,9 @@ def lecturerApp():
 #@login_required
 def statistics():
     if not session.get('logged_in'):
-        return render_template('statistics.html')
+        return render_template('login.html')
     else:
-
+        return render_template('statistics.html')
 
 
 #     Stats for Room code
