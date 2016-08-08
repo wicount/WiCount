@@ -271,7 +271,25 @@ def lecturerApp():
 @app.route('/statistics')
 #@login_required
 def statistics():
-    return render_template('statistics.html')
+    if not session.get('logged_in'):
+        return render_template('statistics.html')
+    else:
+
+
+
+#     Stats for Room code
+    # if not session.get('logged_in'):
+    #     return render_template('login.html')
+    # else:
+    #     print(request.method)
+    #     print(request.args.get('room_id'))
+    #     if request.method == 'GET':
+    #         room_id=request.args.get('room_id')
+    #     else:
+    #         room_id=request.form['room']
+    #     roomsInBuilding = DataRetrieval.GetBuildingDetails(room_id)
+    #     surveyData = DataRetrieval.StatsForRoom(room_id)
+    #     return render_template('statsforroom.html', BuildingDetails = roomsInBuilding, room_id = room_id, surveyData = surveyData)
 
 if __name__ == '__main__':
     app.run(debug = True)
