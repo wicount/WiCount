@@ -1,5 +1,5 @@
 #import sys
-#sys.path.insert(0, "/home/student/anaconda3/lib/python3.5/site-packages")
+#sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
 from flask import Flask, render_template, request, url_for, redirect,session,flash,send_from_directory
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
