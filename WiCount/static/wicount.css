@@ -282,6 +282,16 @@ rect.bordered {
     font-size: 1.25em;
     margin: 20px 10px 20px 0px;
 }
+.weekButtons{
+    border: 2px solid #16396f;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 1.25em;
+    margin: 10px 0px 0px 0px;
+}
+
 #chart{
     background-color: #E6E6E6; 
     width: 620px;
