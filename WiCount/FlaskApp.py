@@ -12,6 +12,7 @@ from CreateUserDb import *
 import sqlite3 as sql
 import DataRetrieval    
 import os
+import statisticspy
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
