@@ -59,7 +59,7 @@ def list_occupancy_x(occupancy):
     try:
         roomlist = cur.execute(sqlstring, (occupancy,)).fetchall()
         con.commit()
-        return roomlist
+        return json.dumps([dict(ix) for ix in roomlist])
 
     except OperationalError:
         con.close()
@@ -69,8 +69,9 @@ def list_occupancy_x(occupancy):
         print(e)
 
 
-print(percentage_utilisation("B-004"))
-print(greater_lesser(10, '>='))
+# print(percentage_utilisation("B-004"))
+# print(greater_lesser(10, '>='))
+
 print('List occupancy:', list_occupancy_x("50"))
 
 
