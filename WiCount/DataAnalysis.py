@@ -14,7 +14,7 @@ def read_data():
     # Ideally this should just import the dataframe from BuildDataframes.py but issue with PATH file.
     try:
 #         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
-        df = BuildDataframes.CreateTainingSet()
+        df = BuildDataframes.CreateTrainingSet()
         # index_col parameter removes the 'unnamed column' which is added when reading from a csv
     except OSError:
         print("Filename not found!")
@@ -158,9 +158,9 @@ def get_predicion_data():
 def update_analytics_table(df):
     try:
         con = db.get_connection()
-        c=con.cursor()  
+        c=con.cursor()
 #         con = lite.connect('wicount.sqlite3')
-        df = df[['room_id', 'Date', 'Day', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', \
+        df = df[['room_id', 'Date', 'Day', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate',
                  'MaxCount' , 'AverageCount', 'MedianCount', 'ModeCount', 'Predictions', 'PredictedPercentage']]
         numpyMatrix = df.as_matrix()
         for row in numpyMatrix:
@@ -181,12 +181,13 @@ def main():
     wicountlm = train_model(trainingdf)
     # training the model
 
-    df = get_predicion_data() 
+    df = get_predicion_data()
     df = prepare_data(df)
     # toDo: get dataframe from the count upload. Needs same columns to be present as the training data,
     # can fix by dropping SurveyData etc.
-    
+
     df = make_predictions(df, wicountlm)
-#     print(df)
+#   print(df)
     update_analytics_table(df)
 
+main()

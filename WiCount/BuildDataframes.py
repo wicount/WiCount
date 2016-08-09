@@ -63,7 +63,8 @@ def GetWeek(date):
 con = db.get_connection()
 c=con.cursor()
 
-def CreateTainingSet():   
+
+def CreateTrainingSet():
     # create the dataset for the rows that have survey data
     c.execute("SELECT * FROM survey")
     rows = c.fetchall()
