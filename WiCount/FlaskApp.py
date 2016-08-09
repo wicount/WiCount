@@ -268,28 +268,20 @@ def lecturerApp():
         return render_template('lecturerapp.html', CampusDetails = json_data, message = message)
     
 #Page to display statistics
-@app.route('/statistics')
+@app.route('/statistics',methods=['GET', 'POST'])
 #@login_required
 def statistics():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return render_template('statistics.html')
-
-
-#     Stats for Room code
-    # if not session.get('logged_in'):
-    #     return render_template('login.html')
-    # else:
-    #     print(request.method)
-    #     print(request.args.get('room_id'))
-    #     if request.method == 'GET':
-    #         room_id=request.args.get('room_id')
-    #     else:
-    #         room_id=request.form['room']
-    #     roomsInBuilding = DataRetrieval.GetBuildingDetails(room_id)
-    #     surveyData = DataRetrieval.StatsForRoom(room_id)
-    #     return render_template('statsforroom.html', BuildingDetails = roomsInBuilding, room_id = room_id, surveyData = surveyData)
-
+        if request.method == 'GET':
+            room = request.args.get('category2')
+            occupancy = request.args.get('category2')
+            results = statisticspy.percentage_utilisation(room)
+            results2 = statisticspy.list_occupancy_x(occupancy)
+        else:
+            results = ""
+        
+        return render_template('statistics.html', results = results,results2 = results2)
 if __name__ == '__main__':
     app.run(debug = True)

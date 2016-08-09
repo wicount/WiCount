@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-<form class="formStyleStatistics" action="" method="post">
+<form class="formStyleStatistics" action="" method="GET">
     <select name="category1" id="category1">
     	<option value="">Select Question</option>
  		<option value="question1">Rate of occupation of rooms in the Computer Science building?</option>
@@ -19,13 +19,16 @@
 	</select>
 	<select disabled="disabled" id="category2" name="category2">
 		<option value="">Enter Value</option>
-		<option rel="question1" value="b001">B-001</option>
-		<option rel="question1" value="b002">B-002</option>
-		<option rel="question1" value="b003">B-003</option>
+		<option rel="question1" value="B-001">B-001</option>
+		<option rel="question1" value="B-002">B-002</option>
+		<option rel="question1" value="B-003">B-003</option>
 		<option rel="question2" value="twentyfive">25</option>
 		<option rel="question2" value="fifty">50</option>
 		<option rel="question3" value="fifty">50</option>
 		<option rel="question3" value="twentyfive">25</option>	
+		<option rel="question4" value="20">50</option>
+		<option rel="question4" value="50">50</option>
+		<option rel="question4" value="100">25</option>
 	</select><br><br>
 		
     <input type="submit" class="submitButton" value="Submit">
@@ -46,6 +49,11 @@
         });
         
     });
-    </script> 
+
+    </script>
+    <div>
+            {{ results }}
+            {{ results2 }}
+    </div>
 
 {% endblock %}
