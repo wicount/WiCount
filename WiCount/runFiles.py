@@ -9,12 +9,11 @@ import wicount
 import db
 import DataAnalysis
 
+
 con = db.get_connection()
 c=con.cursor()
-
 # Create all the database tables
 wicount.SetUpDatabase()
-
 MakeLogDataDB.main()
 makeSurveyDB.main()
 makeTimeTableDB.main()

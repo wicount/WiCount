@@ -12,18 +12,17 @@ import BuildDataframes
 def read_data():
     # Read csv file into a dataframe.
     # Ideally this should just import the dataframe from BuildDataframes.py but issue with PATH file.
+    df = []
     try:
 #         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
         df = BuildDataframes.CreateTrainingSet()
         # index_col parameter removes the 'unnamed column' which is added when reading from a csv
+        df['GroundTruth'] = df.Capacity * df.SurveyPercentage
+        df = df[['room_id', 'Count', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', 'Date']]
+        df['SurveyPercentage'] = df['SurveyPercentage'].apply(lambda x: x*100)
     except OSError:
         print("Filename not found!")
     except Exception as e: print(e)
-
-    df['GroundTruth'] = df.Capacity * df.SurveyPercentage
-    df = df[['room_id', 'Count', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', 'Date']]
-    df['SurveyPercentage'] = df['SurveyPercentage'].apply(lambda x: x*100)
-
     return df
 
 
@@ -190,4 +189,3 @@ def main():
 #   print(df)
     update_analytics_table(df)
 
-main()
