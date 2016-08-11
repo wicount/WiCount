@@ -1,0 +1,54 @@
+<!-- General jinja2 template for web pages that have form data -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %}</title>
+	{% block scripts %}{% endblock %}
+	<link rel=stylesheet type=text/css href="{{url_for('static',filename='wicount.css')}}">
+</head>
+
+<body>
+    <header class="header">
+    <nav>
+        <ul>
+        	<!-- To display menu based on role of the user. -->
+            <li><a href="{{url_for('campusMap')}}">Home</a></li>
+            <li><a href="{{url_for('statistics')}}">Statistics</a></li>
+            
+            {% if session['role'] != "enduser" %}
+                <li><a href="{{url_for('lecturerApp')}}">Lecturer</a></li>
+         	{% endif %}
+         	
+            {% if session['role'] == "admin" %}
+                
+                <li><a href="#"> Admin</a>
+                    <ul>
+                        <li><a href="{{url_for('fileupload')}}">Upload</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Add User</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Change User</a></li>
+                        <li><a href="{{url_for('addUser')}}"> Delete User</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            <li><a href="{{url_for('campusMap')}}">Password</a></li>
+            <li><a href="{{url_for('logout')}}">Logout</a></li>
+        </ul>
+    </nav>
+    <img class="logoHeader" src="{{url_for('static',filename='longlogo.png')}}" alt="logo"/>
+	</header>
+ 	<form class="formStyle"{% block action %}{% endblock %}>
+    	<img class="logoForm" src="{{url_for('static',filename='count2.png')}}" alt="count"/>
+        {% block form %}{% endblock %}
+    </form> 
+	<footer>
+    	WiCount | Brendan Dwyer | Rakesh Lakshman | Velda Conaty | Patrick Harney
+	</footer>
+</body>
+</html>
+	
+
+
+

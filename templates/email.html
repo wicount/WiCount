@@ -1,0 +1,13 @@
+<!-- This web page will be displayed after sending email to end user. -->
+
+{% extends "nomenutemplate.html" %}
+
+{% block title %}Wicount | Registration Success{% endblock %}
+	
+{% block body %}  
+	<div class="formStyle">
+		<img class="logoForm" src="{{url_for('static',filename='count2.png')}}" alt="count"/><br>
+		<strong>Thank you for registration.</strong><br><br>
+		<strong><a href="/">Click here to login</a></strong>
+	</div>	
+{% endblock %} 

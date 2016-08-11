@@ -1,0 +1,170 @@
+<!-- This page is used to display the statistics -->
+
+{% extends "jinjatemplate.html" %}
+
+{% block title %}Wicount | Statistics{% endblock %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+{% endblock %}
+
+{% block body %}
+<form class="formStyleStatistics" action="" method="post">
+    <select name="category1" id="category1">
+    	<option value="">Select Question</option>
+ 		<option value="question1">Rate of occupation of rooms in the Computer Science building?</option>
+  		<option value="question2">List rooms where occupancy is greater than x people.</option>
+  		<option value="question3">List rooms where occupancy is lesser than x people.</option>
+  		<option value="question4">List of full/empty rooms, times and class timetabled.</option>
+        <option value="question5">Percentage utalization by building</option>
+	</select>
+	<select disabled="disabled" id="category2" name="category2">
+		<option value="">Enter Value</option>
+		<option rel="question1" value="b001">B-001</option>
+		<option rel="question1" value="b002">B-002</option>
+		<option rel="question1" value="b003">B-003</option>
+		<option rel="question2" value="twentyfive">25</option>
+		<option rel="question2" value="fifty">50</option>
+		<option rel="question3" value="fifty">50</option>
+		<option rel="question3" value="twentyfive">25</option>	
+		<option rel="question4" value="compSci">Computer Science</option>	
+	</select><br><br>
+		
+    <input type="submit" class="submitButton" value="Submit">
+    <div id="query_results"></div>
+   <table class="columns">
+       <tr>
+           <td><div id="B002" style="border: 1px solid #ccc"></div></td>
+           <td><div id="B003" style="border: 1px solid #ccc"></div></td>
+           <td><div id="B004" style="border: 1px solid #ccc"></div></td>
+        </tr>
+    </table>
+    
+    <script type="text/javascript">
+    $(function(){
+        
+        var $cat = $("#category1"),
+            $subcat = $("#category2");
+        
+        $cat.on("change",function(){
+            var _rel = $(this).val();
+            $subcat.find("option").attr("style","");
+            $subcat.val("");
+            if(!_rel) return $subcat.prop("disabled",true);
+            $subcat.find("[rel="+_rel+"]").show();
+            $subcat.prop("disabled",false);
+        });
+        
+    });
+    var RoomUtal = {{roomStats|tojson}};
+    RoomUtal = JSON.parse(RoomUtal);
+    console.log(RoomUtal);
+        
+//    var room_ids = [];
+//    for(i = 0; i< RoomUtal.length; i++){    
+//        if(room_ids.indexOf(RoomUtal[i].room_id) === -1){
+//            room_ids.push(RoomUtal[i].room_id);        
+//        }
+//    }
+//    var divString = '<table class="columns"><tr>'
+//    for (var room, i=0; room = room_ids[i++];){
+//        // Draw the pie chart
+//        divString = divString + '<td><div id="room_' + room + '" style="border: 1px solid #ccc"></div></td>'
+//    }
+//    divString = divString + '</tr></table>'
+//    document.getElementById('query_results').innerHTML = divString
+
+    google.charts.load('current', {'packages':['corechart']});
+        
+      // Draw the pie chart for Sarah's pizza when Charts is loaded.
+      google.charts.setOnLoadCallback(drawB002Chart);
+
+      // Draw the pie chart for the Anthony's pizza when Charts is loaded.
+      google.charts.setOnLoadCallback(drawB003Chart);
+        
+      // Draw the pie chart for the Anthony's pizza when Charts is loaded.
+      google.charts.setOnLoadCallback(drawB004Chart);
+
+      // Callback that draws the pie chart for Sarah's pizza.
+      function drawB002Chart(room) {
+          var room = "B002";
+        // Create the data table for Sarah's pizza.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Occupancy');
+        data.addColumn('number', 'Count');
+//        for (var i = 0; i < RoomUtal.length; ++i) {
+//            if(RoomUtal[i].room_id == room){
+//                data.addRow(
+//                  [RoomUtal[i].PredictedPercentage, RoomUtal[i].count]
+//                 );
+//                room_name = RoomUtal[i].Room;
+//            }     // Append the element to the end of Array list
+//        }//end for
+        data.addRows([
+          ['Low', 57],
+          ['Medium', 37],
+          ['High', 0]
+        ]);
+          
+        // Set options for Sarah's pie chart.
+        var options = {title:room,
+                      legend: 'bottom',
+                      'width':290,
+                      'height':300};
+
+        // Instantiate and draw the chart for Sarah's pizza.
+        var chart = new google.visualization.PieChart(document.getElementById(room));
+        chart.draw(data, options);
+      }
+        
+        // Callback that draws the pie chart for Sarah's pizza.
+      function drawB003Chart(room) {
+          var room = "B003";
+        // Create the data table for Sarah's pizza.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Occupancy');
+        data.addColumn('number', 'Count');
+        data.addRows([
+          ['Low', 50],
+          ['Medium', 40],
+          ['High', 4]
+        ]);
+          
+        // Set options for Sarah's pie chart.
+        var options = {title:room,
+                      legend: 'bottom',
+                      'width':290,
+                      'height':300};
+
+        // Instantiate and draw the chart for Sarah's pizza.
+        var chart = new google.visualization.PieChart(document.getElementById(room));
+        chart.draw(data, options);
+      }
+
+    function drawB004Chart(room) {
+          var room = "B004";
+        // Create the data table for Sarah's pizza.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Occupancy');
+        data.addColumn('number', 'Count');
+        data.addRows([
+          ['Low', 61],
+          ['Medium', 32],
+          ['High', 1]
+        ]);
+          
+        // Set options for Sarah's pie chart.
+        var options = {title:room,
+                      legend: 'bottom',
+                      'width':290,
+                      'height':300};
+
+        // Instantiate and draw the chart for Sarah's pizza.
+        var chart = new google.visualization.PieChart(document.getElementById(room));
+        chart.draw(data, options);
+      }
+        
+    </script> 
+
+{% endblock %}
