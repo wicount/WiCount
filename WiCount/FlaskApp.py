@@ -115,6 +115,10 @@ class ReusableForm(Form):
 class SimpleForm(Form):
     name = TextField('Name:', validators=[validators.required(),validators.Length(min=4, max=35)])
 
+class AnotherForm(Form):
+    name = TextField('Name:', validators=[validators.required(),validators.Length(min=4, max=35)])
+    password = TextField('Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
+
 class SimplestForm(Form):
     oldpassword = TextField('Existing Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
     newpassword = TextField('New Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
@@ -181,6 +185,40 @@ def modUser():
             #display error message in case of incorrect form data
             flash('Error: All the form fields are required OR Enter correct email address ')
     return render_template('moduser.html', form=form)
+
+#User delete by admin
+@app.route("/deluser", methods=['GET', 'POST'])
+@admin_login_required
+def delUser():
+    form = AnotherForm(request.form)
+    if request.method == 'POST':
+        #Creating session for user registration to send form data to database
+        Session = sessionmaker(bind=engine)
+        sess = Session()
+        name=request.form['name']
+        password=request.form['password']
+        sessname = session['user']
+        #Query for user records
+        myuser = sess.query(User).filter_by(username=name).first()
+        #Add user to the session
+
+        adminuser = sess.query(User).filter_by(username=sessname).first()
+
+        if myuser is not None:
+            sess.delete(myuser)
+
+            if form.validate() and sha256_crypt.verify(password, adminuser.password):
+                try:
+                    sess.commit()
+                except Exception as e:
+                    sess.rollback()
+                    print(e)
+                finally:
+                    return render_template('delsuccess.html', form=form)
+        else:
+            #display error message in case of incorrect form data
+            flash('Error: All the form fields are required OR Enter correct email address ')
+    return render_template('deluser.html', form=form)
 
 #User modification by user
 @app.route("/chguser", methods=['GET', 'POST'])

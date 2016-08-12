@@ -1,0 +1,36 @@
+<!-- This page creates user. This is used whenever admin wants to create an user, set the password and role. -->
+
+{% extends "formtemplate.html" %}
+
+{% block title %}Wicount | Delete User{% endblock %}
+
+{% block action %} action="" method="post" role="form" {% endblock %}
+
+{% block form %}
+	<table align="center">
+	<tr>
+		<td class="dispalyLeft"><label>Username to Delete &nbsp;&nbsp;&nbsp;</label></td>
+		<td class="dispalyRight"><input type="text" id="name" name="name" placeholder="Enter the username to delete"></td>
+	</tr>
+    <tr>
+    	<td class="dispalyLeft"><label>Password &nbsp;&nbsp;&nbsp;</label></td>
+    	<td class="dispalyRight"><input type="password" id="password" name="password" placeholder="Enter your password"></td>
+    </tr>
+ 	</table><br>
+	<button type="submit" class="submitButton">Submit</button><br>
+	
+	<!-- To display the error messages -->
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			{% for message in messages %}
+            	{% if "Error" in message[1]: %}
+	                <strong>
+	                	{{ message[1] }}
+	                </strong>
+            	{% endif %}
+        	{% endfor %}
+		{% endif %}
+	{% endwith %}
+	
+{% endblock %}
+
