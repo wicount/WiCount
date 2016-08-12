@@ -356,3 +356,92 @@ rect.bordered {
     box-shadow: 3px 3px #ECD900;
 	
 }
+
+#menu-icon {
+    display: none;
+/*	display: hidden;*/
+	width: 40px;
+	height: 40px;
+    background: #16396f url("menu-icon.png") center;
+
+}
+a:hover#menu-icon {
+
+	background-color: #444;
+	border-radius: 4px 4px 0 0;
+}
+
+/*Responsive Styles*/
+@media screen and (max-width : 760px){
+    body{
+        width: 100%;
+    }
+	.header {
+        border: 0;
+	}
+
+	#menu-icon {
+		display:inline-block;
+        position: relative;
+        float: left;   /*floating parent as li floated*/
+        margin: 0;
+        padding: 0;
+        top: 15%;
+	}
+    nav{
+        width: 10%
+    }
+
+	nav ul, nav:active ul { 
+		display: none;
+		position: absolute;
+		padding: 20px;
+		background: #fff;
+		border: 5px solid #444;
+/*		top: 60px;*/
+		width: 50%;
+		border-radius: 4px 0 4px 4px;
+	}
+
+	nav li {
+		text-align: center;
+		width: 100%;
+		padding: 10px 0;
+		margin: 0;
+	}
+
+	nav:hover ul {
+		display: block;
+	}
+    
+    #displayMap{
+        display: none;
+    }
+    
+    .logoHeader{
+        width: 70%;
+        float: right;
+    }
+    /* To style form data on campus map page */
+    .campusFormData{
+        text-align: center;
+        float: none;
+        margin: auto;
+        margin-top: 0px;
+        width: 80%;
+        padding: 0px;
+    }
+    
+    /* To display form data in a box */
+    .formStyle{
+        margin-top: 0px;
+    }
+    #shortlogo{
+        display: none;
+    }
+    
+    footer {
+        width: 100%;
+    }
+
+}

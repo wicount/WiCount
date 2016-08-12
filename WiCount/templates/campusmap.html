@@ -16,10 +16,12 @@ User will be able to select campus, building, room which will directly redirect 
 
 {% block body %}
 <div id="mapMargin">
-    <img class="campusMap" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building" usemap="#buildingmap">
-    <map name="buildingmap">
-        <area shape="poly" coords="304, 121, 335, 139, 300, 160, 285, 130" href="/floorplancsi" alt="building" title="CSI Building">   
-    </map>
+    <div id="displayMap">
+        <img class="campusMap" src="{{url_for('static',filename='buildingmap.jpg')}}" alt="building" usemap="#buildingmap">
+        <map name="buildingmap">
+            <area shape="poly" coords="304, 121, 335, 139, 300, 160, 285, 130" href="/floorplancsi" alt="building" title="CSI Building">   
+        </map>
+    </div>
 	<div class="campusFormData" >
 	<form action="statsforroom" method="get">
 		<label>Campus &nbsp;</label><br>

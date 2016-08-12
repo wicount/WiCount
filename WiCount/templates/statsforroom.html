@@ -13,9 +13,9 @@
 <!--                <p>LEGEND:</p>-->
                 <table class="legendTable">
                     <tr>
-                        <td style="text-align: left;">0%</td>
-                        <td style="text-align: center;">50%</td>
-                        <td style="text-align: right;">100%</td>
+                        <td style="text-align: left;">Low</td>
+                        <td style="text-align: center;">Med</td>
+                        <td style="text-align: right;">High</td>
                     </tr>
                 </table>
             </div>
@@ -75,15 +75,16 @@
     var week2 = surveyData[1];
     
     window.onload = roomDDL();
-    
+//    width = 600 - margin.left - margin.right,
+//        height = 380 - margin.top - margin.bottom,
 //    -------------------------------------------------------------
 //    |                   code for data visualisation             |
 //    -------------------------------------------------------------
 //    used code from http://bl.ocks.org/tjdecke/5558084 as a template
     //var margin = { top: 50, right: 0, bottom: 100, left: 30 },
     var margin = { top: 25, right: 0, bottom: 100, left: 40 },
-          width = 600 - margin.left - margin.right,
-          height = 380 - margin.top - margin.bottom,
+           width = 600 - margin.left - margin.right,
+            height = 380 - margin.top - margin.bottom,
           gridSize = Math.floor(width / 8), //was 24
          // legendElementWidth = gridSize*1.5,
           buckets = 5,
