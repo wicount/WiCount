@@ -49,6 +49,15 @@ def login_required(f):
             return index()
     return wrap
 
+def admin_login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session and session['role'] == 'admin':
+            return f(*args,**kwargs)
+        else:
+            return index()
+    return wrap
+
 #Render login page
 @app.route('/')
 def index():
@@ -79,6 +88,7 @@ def login():
             session['logged_in'] = True
             #velda add user type
             session['role'] = result.role
+            session['user'] = result.username
         else:
             flash('Invalid Credentials. Please try again')    
     except:
@@ -102,9 +112,17 @@ class ReusableForm(Form):
     email = TextField('Email:', validators=[validators.required(), validators.Length(min=6, max=35)])
     password = TextField('Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
 
+class SimpleForm(Form):
+    name = TextField('Name:', validators=[validators.required(),validators.Length(min=4, max=35)])
+
+class SimplestForm(Form):
+    oldpassword = TextField('Existing Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
+    newpassword = TextField('New Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
+    confirmpassword = TextField('Confirm Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
+
 #User registration by admin 
 @app.route("/adduser", methods=['GET', 'POST'])
-@login_required
+@admin_login_required
 def addUser():
     form = ReusableForm(request.form)
     if request.method == 'POST':
@@ -132,7 +150,77 @@ def addUser():
             flash('Error: All the form fields are required OR Enter correct email address ')
     return render_template('adduser.html', form=form)
 
-#User registration by end user 
+#User modification by admin
+@app.route("/moduser", methods=['GET', 'POST'])
+@admin_login_required
+def modUser():
+    form = SimpleForm(request.form)
+    if request.method == 'POST':
+        #Creating session for user registration to send form data to database
+        Session = sessionmaker(bind=engine)
+        sess = Session()
+        name=request.form['name']
+        role=request.form['role']
+
+        #Query for user records
+        myuser = sess.query(User).filter_by(username=name).first()
+        #Add user to the session
+
+        myuser.role = role
+
+        sess.add(myuser)
+        if form.validate():
+            try:
+                sess.commit()
+            except Exception as e:
+                sess.rollback()
+                print(e)
+            finally:
+                return sendEmailChange(name, role, myuser.email)
+        else:
+            #display error message in case of incorrect form data
+            flash('Error: All the form fields are required OR Enter correct email address ')
+    return render_template('moduser.html', form=form)
+
+#User modification by user
+@app.route("/chguser", methods=['GET', 'POST'])
+@login_required
+def chgUser():
+    form = SimplestForm(request.form)
+    if request.method == 'POST':
+        #Creating session for user registration to send form data to database
+        Session = sessionmaker(bind=engine)
+        sess = Session()
+        name=session['user']
+        oldpassword=request.form['oldpassword']
+        newpassword=request.form['newpassword']
+        confirmpassword=request.form['confirmpassword']
+
+        #Query for user records
+        myuser = sess.query(User).filter_by(username=name).first()
+        #Add user to the session
+
+        if sha256_crypt.verify(oldpassword, myuser.password) and newpassword == confirmpassword:
+
+            myuser.password = sha256_crypt.encrypt(newpassword)
+
+            sess.add(myuser)
+            if form.validate():
+                try:
+                    sess.commit()
+                except Exception as e:
+                    sess.rollback()
+                    print(e)
+                finally:
+                    return sendEmailPassword(name, myuser.email)
+            else:
+                #display error message in case of incorrect form data
+                flash('Error: All the form fields are required OR Enter correct email address ')
+        else:
+            flash('Error: Ensure that you have entered your existing password correctly and that the new password has been entered correctly')
+    return render_template('chguser.html', form=form)
+
+#User registration by end user
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     form = ReusableForm(request.form)
@@ -170,18 +258,33 @@ def sendEmail(name,password,email):
     mail.send(msg)
     return render_template('email.html')
 
-
 @app.route("/sendemailadmin")
-@login_required
+@admin_login_required
 def sendEmailAdmin(name,password,email):
    msg = Message('WiCount - Username and Password', sender = 'ucd.wicount@gmail.com', recipients = [email])
    msg.body = "Please use following credentials to login \n\n username: %s\nPassword: %s  " % (name,password )
    mail.send(msg)
    return render_template('emailadmin.html')
 
+@app.route("/sendemailchange")
+@admin_login_required
+def sendEmailChange(name,role,email):
+   msg = Message('WiCount - You have been granted additional access', sender = 'ucd.wicount@gmail.com', recipients = [email])
+   msg.body = "\n%s is now assigned the role of %s  " % (name,role)
+   mail.send(msg)
+   return render_template('emailchange.html')
+
+@app.route("/sendemailpassword")
+@admin_login_required
+def sendEmailPassword(name, email):
+   msg = Message('WiCount - Password Change Notification', sender = 'ucd.wicount@gmail.com', recipients = [email])
+   msg.body = "\n%s your password has been changed. Please reply if you have not changed the password" % (name)
+   mail.send(msg)
+   return render_template('emailpassword.html')
+
 #Initial file upload template
 @app.route('/fileupload')
-@login_required
+@admin_login_required
 def fileupload():
     return render_template('fileupload.html')
 
@@ -191,7 +294,7 @@ def allowed_file(filename):
 
 #Route that will process the file upload
 @app.route('/upload', methods=['POST'])
-@login_required
+@admin_login_required
 def upload():
     # Get the name of the uploaded files
     uploaded_files1 = request.files.getlist("survey")

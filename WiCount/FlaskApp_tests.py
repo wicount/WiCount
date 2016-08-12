@@ -1,7 +1,5 @@
-from FlaskApp import login
 import unittest
-import tempfile
-import os
+
 
 class FlaskAppTest(unittest.TestCase):
     
