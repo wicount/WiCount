@@ -113,7 +113,7 @@ def StatsForRoom(room_id):
             date = row[1]
             data['day'] = row[2]
             data['hour'] = date[11:16]
-            data['percent'] = (row[13]/100)
+            data['percent'] = (float(row[13])/100.0)
 #             print(WeekNo(parse(date)), ", ", even, ", ")
 #             print(WeekNo(parse(date)) == even)
             if WeekNo(parse(date)) == even:
