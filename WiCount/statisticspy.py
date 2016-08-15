@@ -18,11 +18,6 @@ def percentage_utilisation():
                 GROUP BY room_id, PredictedPercentage \
                 Order by room_id'
 
-    # sqlstring = 'SELECT DISTINCT room, (CAST (COUNT(room) AS FLOAT) / \
-    #     (SELECT DISTINCT COUNT(room) FROM analytics) *100) AS PercentageUtilised \
-    #     FROM analytics \
-    #     WHERE PredictedPercentage > 0 and Room = ?'
-
     try:
         percentage = cur.execute(sqlstring).fetchall()
         con.commit()
