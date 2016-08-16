@@ -1,3 +1,4 @@
+# Redirecting Path on Server
 #import sys
 #sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
@@ -40,7 +41,7 @@ app.config['TIMETABLE'] = 'timetable/'
 app.config['CSILogs'] = 'CSILogs/'
 app.config['ALLOWED_EXTENSIONS'] = set(['csv','xlsx']) 
     
-# Decorator to make the web pages required login - @login_required
+# Decorator to make the web pages require login - @login_required
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -50,6 +51,7 @@ def login_required(f):
             return index()
     return wrap
 
+# Decorator to make the web pages require login as admin - @admin_login_required
 def admin_login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -76,7 +78,6 @@ def login():
     POST_USERNAME = str(request.form['username'])
     POST_PASSWORD = str(request.form['password'])
 
-
     #Create a session
     Session = sessionmaker(bind=engine)
     s = Session()
@@ -84,13 +85,15 @@ def login():
         #Make the query with database against the form data
         query = s.query(User).filter(User.username.in_([POST_USERNAME]))
         result = query.first()
+        
+        #Compare password from form and from the database
         if (sha256_crypt.verify(POST_PASSWORD, result.password)) :
-            #Set session to true if login is successful
+            #Set session to true if login is successful. Set username and role in session.
             session['logged_in'] = True
-            #velda add user type
             session['role'] = result.role
             session['user'] = result.username
         else:
+            #Display credential if passwords don't match
             flash('Invalid Credentials. Please try again')    
     except:
         #Display error message if login is unsuccessful
@@ -113,13 +116,16 @@ class ReusableForm(Form):
     email = TextField('Email:', validators=[validators.required(), validators.Length(min=6, max=35)])
     password = TextField('Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
 
+#Class to take form input for user role change
 class SimpleForm(Form):
     name = TextField('Name:', validators=[validators.required(),validators.Length(min=4, max=35)])
 
+#Class to take form input for deletiing user
 class AnotherForm(Form):
     name = TextField('Name:', validators=[validators.required(),validators.Length(min=4, max=35)])
     password = TextField('Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
 
+#Class to take form input for user password change
 class SimplestForm(Form):
     oldpassword = TextField('Existing Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
     newpassword = TextField('New Password:', validators=[validators.required(), validators.Length(min=6, max=35)])
@@ -142,6 +148,7 @@ def addUser():
         user = User(name,password,email,role)
         #Add user to the session
         session.add(user)
+        #Check if form data is valid. Commit to database if error rollback and log.
         if form.validate():
             try:
                 session.commit()
@@ -169,11 +176,14 @@ def modUser():
 
         #Query for user records
         myuser = sess.query(User).filter_by(username=name).first()
-        #Add user to the session
-
+        
+        #Change role in myuser object
         myuser.role = role
 
+        #Add myuser to the session
         sess.add(myuser)
+        
+        #Check if form data is valid. Commit to database if error rollback and log.
         if form.validate():
             try:
                 sess.commit()
@@ -199,15 +209,17 @@ def delUser():
         name=request.form['name']
         password=request.form['password']
         sessname = session['user']
+        
         #Query for user records
         myuser = sess.query(User).filter_by(username=name).first()
-        #Add user to the session
-
         adminuser = sess.query(User).filter_by(username=sessname).first()
 
+        #If the myuser exists in the database
         if myuser is not None:
+            #Delete myuser from the database 
             sess.delete(myuser)
-
+            
+            #Check if form is valid and the admin password is correct if error rollback and log
             if form.validate() and sha256_crypt.verify(password, adminuser.password):
                 try:
                     sess.commit()
@@ -221,7 +233,7 @@ def delUser():
             flash('Error: All the form fields are required OR Enter correct email address ')
     return render_template('deluser.html', form=form)
 
-#User modification by user
+#User password change
 @app.route("/chguser", methods=['GET', 'POST'])
 @login_required
 def chgUser():
@@ -237,13 +249,16 @@ def chgUser():
 
         #Query for user records
         myuser = sess.query(User).filter_by(username=name).first()
-        #Add user to the session
-
+        
+        #Check if old password matches in form and database and that the new password has been entered correctly twice
         if sha256_crypt.verify(oldpassword, myuser.password) and newpassword == confirmpassword:
-
+            #Encryot new password and store in the myuser object
             myuser.password = sha256_crypt.encrypt(newpassword)
-
+            
+            #Add myuser object to the session
             sess.add(myuser)
+            
+            #Check if form data is valid. Commit to database if error rollback and log.
             if form.validate():
                 try:
                     sess.commit()
@@ -276,7 +291,7 @@ def signup():
         #Add user to the session
         session.add(user)
         if form.validate():
-            #Commit user data to database
+            #Commit user data to database and rolls back and logs on exception 
             try:
                 session.commit()                
             except Exception as e:
@@ -297,6 +312,7 @@ def sendEmail(name,password,email):
     mail.send(msg)
     return render_template('email.html')
 
+#To send email when admin creates a user
 @app.route("/sendemailadmin")
 @admin_login_required
 def sendEmailAdmin(name,password,email):
@@ -305,6 +321,7 @@ def sendEmailAdmin(name,password,email):
    mail.send(msg)
    return render_template('emailadmin.html')
 
+#To send email to notify user of role change
 @app.route("/sendemailchange")
 @admin_login_required
 def sendEmailChange(name,role,email):
@@ -313,6 +330,7 @@ def sendEmailChange(name,role,email):
    mail.send(msg)
    return render_template('emailchange.html')
 
+#To send email to notify user of password change
 @app.route("/sendemailpassword")
 @admin_login_required
 def sendEmailPassword(name, email):
@@ -340,18 +358,21 @@ def upload():
     uploaded_files2 = request.files.getlist("timetable")
     uploaded_files3 = request.files.getlist("log")
     filenames = []
+    #Check if file type is acceptable and saves file to appropriate directory
     for file in uploaded_files1:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['SURVEY'], filename))
             filenames.append(filename)
             flash('Files Uploaded Successfully')
+    #Check if file type is acceptable and saves file to appropriate directory
     for file in uploaded_files2:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['TIMETABLE'], filename))
             filenames.append(filename)
             flash('Files Uploaded Successfully')
+    #Check if file type is acceptable and saves file to appropriate directory
     for file in uploaded_files3:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -366,7 +387,6 @@ def upload():
 def campusMap():
     json_data = DataRetrieval.getAllCampusDetails()
     return render_template('campusmap.html',CampusDetails = json_data)
-
 
 #To display the floor plan of rooms
 @app.route('/floorplancsi')
