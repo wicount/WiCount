@@ -1,3 +1,4 @@
+#Remove comments below to configure on the server
 #import sys
 #sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
@@ -9,8 +10,7 @@ from dateutil.parser import parse
 import wicount
 import zipfile
 
-
-
+#Extracts wireless access point log data from the CSV file
 def ExtractDataCSV(fileName):
     fileHandle = open(fileName)
     full_db_values=[]
@@ -28,6 +28,8 @@ def ExtractDataCSV(fileName):
             if day == "Sat" or day == "Sun":
                 return ""   #skip weekends
             time = data[3].split(' ')[3]
+            
+            #Classes are timetabled between 9:00 and 18:00
             if time < "09:00:00" or time > "18:00;00":
                 continue
         
@@ -43,7 +45,7 @@ def ExtractDataCSV(fileName):
     else:        
         return full_db_values
 
-
+#OPen connection to the database
 con = db.get_connection()
 c=con.cursor()
 
