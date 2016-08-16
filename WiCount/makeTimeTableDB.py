@@ -1,3 +1,4 @@
+#Imports correct libraries on the server
 #import sys
 #sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
@@ -32,7 +33,6 @@ def GetWeekNo(week):
     date = parse(date)
     week1 = date.isocalendar()
     week_nos = [str(week1[1]) + "/" + str(week1[0]), str(week1[1] +1) + "/" + str(week1[0])]
-    #print(week_nos)
     return week_nos
    
 def AddDetailsToTimeTable(line, weekNo,room_id):
@@ -67,14 +67,13 @@ def UpdateModuleTable(module_list, week_no):
         else:
             values = [module_list[x][0], week_no, module_list[x][1]]
             sqlvalues.append(values)
-#             print(sqlvalues)
+
     try:            
         c.executemany('INSERT OR REPLACE INTO modules VALUES (?,?,?)', sqlvalues)
     except OperationalError:
         print ("Command skipped: ", sqlvalues)
     con.commit()
      
-
 con = db.get_connection()
 c=con.cursor()
 
@@ -85,6 +84,8 @@ def main():
     #set up hard codeing this will need to be passed in.
     campus = "Belfield"
     building = "Computer Science"
+    
+    #Extract Timetable data from Excel file
     for file in glob.glob("*.xlsx"):
         wb = openpyxl.load_workbook(file)
         sheetnames = wb.get_sheet_names()
