@@ -9,6 +9,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from passlib.hash import sha256_crypt
 
+#Configures SQLalchemy for connections to the user database
+
 # To connect to users database
 engine = create_engine('sqlite:///usersdb.db', echo=True)
 Base = declarative_base()
