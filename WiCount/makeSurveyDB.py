@@ -1,3 +1,4 @@
+#Lines below to import correct libraries on the server
 #import sys
 #sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
@@ -27,7 +28,6 @@ def UpdateRoomTable(occupancy_details):
 
 def UpdateSurveyTable(all_details):
     ''' update the survey table'''
-    #print(all_details)
     try:
         c.executemany('INSERT OR REPLACE INTO survey VALUES (?,?,?,?)', all_details)
     except OperationalError:
@@ -39,7 +39,6 @@ def ConvertToCSV(file):
     data_xls = pd.read_excel(file, 'JustData', index_col=None)
     data_xls.to_csv('survey.csv', encoding='utf-8')
     
-    
 def GetRoomNo(room):
     ''' format the room number so it is in the standard format B-002'''
     if room != "":
@@ -50,6 +49,7 @@ def GetRoomNo(room):
     #print ("room ", room_no)
     return room_no
 
+#Open connection to the database
 con = db.get_connection()
 c=con.cursor()
 
@@ -81,7 +81,6 @@ def main():
         dataArray = sheet.as_matrix()   # create a matrix from the data
         
         for data in dataArray:
-            #print (data)
             if data[0] in dayList:  
                 #if the first cell is the day format the day
                 day = data[0]
@@ -95,7 +94,6 @@ def main():
                         roomNo = GetRoomNo(data[x])
                         details.append(roomNo)
                     occupancyDetails.append(details) # occupancyDetails:  [['B-004', 'B-002', 'B-003', 'B-106', 'B-108', 'B-109']]
-                    #print("occupancyDetails: ", occupancyDetails)
             elif data[0] == "Time":
                 # if the first cell is Time this row contains the capacity of the room
                 # Update the room table with these details and get the room ID from the room table
