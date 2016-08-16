@@ -13,6 +13,7 @@ import sqlite3 as sql
 import DataRetrieval    
 import os
 import statisticspy
+import statisticsRakesh
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
@@ -417,13 +418,32 @@ def statistics():
         return render_template('login.html')
     else:
         if request.method == 'GET':
-            room = request.args.get('category2')
-            occupancy = request.args.get('category2')
-            results = statisticspy.percentage_utilisation(room)
-            results2 = statisticspy.list_occupancy_x(occupancy)
+            print("dssd")
+            question1 = ""
+            question2 = ""
+            question3 = ""
+            question4 = ""
+            question5 = ""
+            question6 = ""
+            abc = request.args.get('category')
+            if (abc == 'ques1'):
+                question1 = statisticsRakesh.frequencyReport()
+                print(question1)
+            elif (abc == 'ques2'):
+                question2 = statisticsRakesh.occupancyReport()
+                print(question2)
+            elif (abc == 'ques3'):
+                question3 = statisticsRakesh.utilizationReport()
+            elif (abc == 'ques5'):
+                question5 = statisticsRakesh.emptyRooms()
+            else:
+                question6 = statisticsRakesh.fullRooms()
+                print(question6)
         else:
-            results = ""
-        
-        return render_template('statistics.html', results = results,results2 = results2)
+            return 0
+            
+        return render_template('statistics.html',question1=question1,question2=question2,
+                               question3=question3,question5=question5,
+                               question6=question6)
 if __name__ == '__main__':
     app.run(debug = True)

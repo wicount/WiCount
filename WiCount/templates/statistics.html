@@ -6,54 +6,129 @@
 
 {% block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
 {% endblock %}
 
 {% block body %}
-<form class="formStyleStatistics" action="" method="GET">
-    <select name="category1" id="category1">
+<form class="formStyleStatistics" action="/statistics" method="GET">
+    <select id="category" name="category" value="category">
     	<option value="">Select Question</option>
- 		<option value="question1">Rate of occupation of rooms in the Computer Science building?</option>
-  		<option value="question2">List rooms where occupancy is greater than x people.</option>
-  		<option value="question3">List rooms where occupancy is lesser than x people.</option>
-  		<option value="question4">List of full/empty rooms, times and class timetabled.</option>
-	</select>
-	<select disabled="disabled" id="category2" name="category2">
-		<option value="">Enter Value</option>
-		<option rel="question1" value="B-001">B-001</option>
-		<option rel="question1" value="B-002">B-002</option>
-		<option rel="question1" value="B-003">B-003</option>
-		<option rel="question2" value="twentyfive">25</option>
-		<option rel="question2" value="fifty">50</option>
-		<option rel="question3" value="fifty">50</option>
-		<option rel="question3" value="twentyfive">25</option>	
-		<option rel="question4" value="20">50</option>
-		<option rel="question4" value="50">50</option>
-		<option rel="question4" value="100">25</option>
+ 		<option value="ques1">Frequency Report</option>
+  		<option value="ques2">Occupancy Report</option>
+  		<option value="ques3">Utilization Report</option>
+  		<option value="ques4">Occupancy of individual rooms</option>
+  		<option value="ques5">List of empty rooms</option>
+  		<option value="ques6">List of full rooms</option>
 	</select><br><br>
-		
     <input type="submit" class="submitButton" value="Submit">
-    
-    <script type="text/javascript">
-    $(function(){
-        
-        var $cat = $("#category1"),
-            $subcat = $("#category2");
-        
-        $cat.on("change",function(){
-            var _rel = $(this).val();
-            $subcat.find("option").attr("style","");
-            $subcat.val("");
-            if(!_rel) return $subcat.prop("disabled",true);
-            $subcat.find("[rel="+_rel+"]").show();
-            $subcat.prop("disabled",false);
-        });
-        
-    });
+</form>
 
-    </script>
-    <div>
-            {{ results }}
-            {{ results2 }}
-    </div>
+
+<script type="text/javascript">
+{}
+var frequency = {{question1|tojson}};
+frequency = JSON.parse(frequency);
+
+google.charts.load('current', {'packages':['table']});
+google.charts.setOnLoadCallback(drawChart1);
+function drawChart1() {
+    var data = new google.visualization.DataTable();
+   	data.addColumn('string', 'Room');
+    data.addColumn('string', 'Frequency');
+ 	var f,n;
+    for(var i = 0 ; i<frequency.length;i++){
+    	f = frequency[i].Room
+    	n = frequency[i].frequency
+    	data.addRows([[f,n]])
+    }
+
+    var table = new google.visualization.Table(document.getElementById('freqDiv'));
+    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+}
+
+var occupancy = {{question2|tojson}};
+occupancy = JSON.parse(occupancy);
+google.charts.setOnLoadCallback(drawChart2);
+function drawChart2() {
+    var data = new google.visualization.DataTable();
+   	data.addColumn('string', 'Room');
+    data.addColumn('string', 'Occupancy');
+ 	var f,n;
+    for(var i = 0 ; i<occupancy.length;i++){
+    	f = occupancy[i].Room
+    	n = occupancy[i].occupancy
+    	data.addRows([[f,n]])
+    }
+
+    var table = new google.visualization.Table(document.getElementById('occuDiv'));
+    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+}
+
+var utilization = {{question3|tojson}};
+utilization = JSON.parse(utilization);
+google.charts.setOnLoadCallback(drawChart3);
+function drawChart3() {
+    var data = new google.visualization.DataTable();
+   	data.addColumn('string', 'Room');
+    data.addColumn('string', 'Utilization');
+ 	var f,n;
+    for(var i = 0 ; i<utilization.length;i++){
+    	f = utilization[i].Room
+    	n = utilization[i].utilization
+    	data.addRows([[f,n]])
+    }
+
+    var table = new google.visualization.Table(document.getElementById('utilDiv'));
+    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+}
+
+var emptyRoom = {{question5|tojson}};
+emptyRoom = JSON.parse(emptyRoom);
+google.charts.setOnLoadCallback(drawChart5);
+function drawChart5() {
+    var data = new google.visualization.DataTable();
+   	data.addColumn('string', 'Room');
+    data.addColumn('string', 'Date');
+ 	var f,n;
+    for(var i = 0 ; i<emptyRoom.length;i++){
+    	f = emptyRoom[i].Room
+    	n = emptyRoom[i].date
+    	data.addRows([[f,n]])
+    }
+
+    var table = new google.visualization.Table(document.getElementById('emptyDiv'));
+    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+}
+
+
+var fullRoom = {{question6|tojson}};
+fullRoom = JSON.parse(fullRoom);
+google.charts.setOnLoadCallback(drawChart6);
+
+function drawChart6() {
+    var data = new google.visualization.DataTable();
+   	data.addColumn('string', 'Room');
+    data.addColumn('string', 'Date');
+ 	var f,n;
+    for(var i = 0 ; i<fullRoom.length;i++){
+    	f = fullRoom[i].Room
+    	n = fullRoom[i].date
+    	data.addRows([[f,n]])
+    }
+
+    var table = new google.visualization.Table(document.getElementById('fullDiv'));
+    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+}
+ 
+</script>
+
+<div id="freqDiv"></div>
+<div id="occuDiv"></div>
+<div id="utilDiv"></div>
+<!-- <div id="roomDiv"></div> -->
+<div id="emptyDiv"></div>
+<div id="fullDiv"></div>
 
 {% endblock %}
