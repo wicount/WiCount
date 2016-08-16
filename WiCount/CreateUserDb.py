@@ -1,3 +1,4 @@
+#Uncomment the lines below to allow modules to import successfully on the server
 #import sys
 #sys.path.insert(0, "/home/student/anaconda3/lib/python3.4/site-packages")
 
