@@ -16,6 +16,7 @@ def SetUpDatabase():
     con = db.get_connection()
     c=con.cursor()
     
+    #Create Module Table
     try:
         c.execute ("create table if not exists modules(module varchar(12), week_no varchar(7), \
                 no_students int, PRIMARY KEY (module, week_no));") 
@@ -23,6 +24,7 @@ def SetUpDatabase():
         print("Modules table couldn't be created")
     con.commit()
     
+    #Create Room Table
     try:
         c.execute ("create table if not exists room(room_id INTEGER PRIMARY KEY, campus VARCHAR(8), \
                     building VARCHAR(16), room VARCHAR(5), capacity INTEGER);")     
@@ -30,6 +32,7 @@ def SetUpDatabase():
         print("room table couldn't be created")
     con.commit()    
     
+    #Create Timetable Table
     try:
         c.execute ("create table if not exists timetable(room_id INTEGER NOT NULL, day varchar(3), \
                 time time, week_no varchar(7), module varchar(12), no_students int, \
@@ -40,6 +43,7 @@ def SetUpDatabase():
         print("Timetable table couldn't be created")
     con.commit()
 
+    #Create Logdata Table
     try:
         c.execute ("create table if not exists logdata(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
                     day VARCHAR(3), count INTEGER, PRIMARY KEY (room_id, date) \
@@ -48,6 +52,7 @@ def SetUpDatabase():
         print("Logdata table couldn't be created")
     con.commit()
 
+    #Create Survey Table
     try:
         c.execute ("create table if not exists survey(room_id INTEGER  NOT NULL, date DATETIME  NOT NULL, \
                     day VARCHAR(3), percentage FLOAT, PRIMARY KEY (room_id, date) \
@@ -56,6 +61,7 @@ def SetUpDatabase():
         print("Survey table couldn't be created")
     con.commit()
 
+    #Create Analytics Table
     try:
         c.execute("CREATE TABLE IF NOT EXISTS analytics(room_id INTEGER NOT NULL, date DATETIME NOT NULL, day VARCHAR(3), GroundTruth FLOAT, \
                   SurveyPercentage INTEGER, Capacity INTEGER, Room VARCHAR(8), LogDate VARCHAR(10), MaxCount INTEGER, \
@@ -68,6 +74,7 @@ def SetUpDatabase():
         print("Analytics table couldn't be created")
     con.commit()
     
+#EXtract the Roomm ID value from Room Table
 def GetRoomID(details):
     ''' Get the room ID from the database. 
     
@@ -98,6 +105,7 @@ def GetRoomID(details):
 
     return room_ID
 
+#Decode time string
 def GetTime(data):
     ''' Get the time in the correct format.  
     
