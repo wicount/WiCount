@@ -87,22 +87,35 @@
     }
     function question2() {
         var occupancy = {{question2|tojson}};
+    
+        console.log("1 ", occupancy);
         occupancy = JSON.parse(occupancy);
-        
-        google.charts.setOnLoadCallback(drawChart2);
-        function drawChart2() {
+        console.log("2 ", occupancy[0].name);
+        for (var i=0; i<occupancy.length;i++){
+            console.log("3 ", occupancy[i]);
+            google.charts.setOnLoadCallback(drawOccupancyChart(i));
+        }
+        function drawOccupancyChart(i) {
             var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Room');
+            console.log(occupancy[i].name)
+            var room = occupancy[i].name;
             data.addColumn('string', 'Occupancy');
-            var f,n;
-            for(var i = 0 ; i<occupancy.length;i++){
-                f = occupancy[i].Room
-                n = occupancy[i].occupancy
-                data.addRows([[f,n]])
-            }
+            data.addColumn('number', 'Count');
+            data.addRows([
+              ['Low', occupancy[i].Low],
+              ['Medium', occupancy[i].Med],
+              ['High', occupancy[i].High]
+            ]);
 
-            var table = new google.visualization.Table(document.getElementById('q2Div'));
-            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+            // Set options for Sarah's pie chart.
+            var options = {title:room,
+                          legend: 'bottom',
+                          'width':290,
+                          'height':300};
+
+            // Instantiate and draw the chart for Sarah's pizza.
+            var chart = new google.visualization.PieChart(document.getElementById(room));
+            chart.draw(data, options);
         }
     }
     function question3() {
@@ -198,7 +211,15 @@
 </script>
 
 <div id="q1Div"></div>
-<div id="q2Div"></div>
+<div id="q2Div">
+  <table class="columns">
+       <tr>
+           <td><div id="B-002" style="border: 1px solid #ccc"></div></td>
+           <td><div id="B-003" style="border: 1px solid #ccc"></div></td>
+           <td><div id="B-004" style="border: 1px solid #ccc"></div></td>
+        </tr>
+    </table>
+</div>
 <div id="q3Div"></div>
 <div id="q4Div"></div>
 <div id="q5Div"></div>
