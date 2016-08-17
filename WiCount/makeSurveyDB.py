@@ -101,6 +101,8 @@ def main():
                     details = []
                     for x in range(2, len(data),1):
                         #details.append(data[x]) this is wrong.
+                        # The capacity data in the survey data is wrong so set any rooms not in the
+                        # room table with a capacity of zero. 
                         details.append(0)
                     occupancyDetails.append(details)
                     print(details)
