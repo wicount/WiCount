@@ -29,36 +29,45 @@ def percentage_utilisation():
                 From analytics \
                 GROUP BY room_id, PredictedPercentage'
 
-    percentage = cur.execute(sqlstring).fetchall()
-    roomCounter = 1
-    json_data = []
-    roomdata = {}
-    data = {}
-    for row in percentage:
-        print(row)
-        if roomCounter == row[0]:
-            if row[1] == 0:
-                data["Low"]= row[2]
-            elif row[1] == 50:
-                data["Med"]= row[2]
+    try:
+        percentage = cur.execute(sqlstring).fetchall()
+        roomCounter = 1
+        json_data = []
+        roomdata = []
+        data = {}
+        for row in percentage:
+            #print(row)
+            if roomCounter == row[0]:
+                if row[1] == 0:
+                    data["Low"]= row[2]
+                elif row[1] == 50:
+                    data["Med"]= row[2]
+                else:
+                    data['High'] = row[2]
+                data["name"] = row[3]
             else:
-                data['High'] = row[2]
-            lastroom = row[3]
-        else:
-            roomdata[lastroom] = data
-            roomCounter += 1
-            data = {}
-            if row[1] == 0:
-                data["Low"]= row[2]
-            elif row[1] == 50:
-                data["Med"]= row[2]
-            else:
-                data['High'] = row[2]   
+                roomdata.append(data)
+                roomCounter += 1
+                data = {}
+                if row[1] == 0:
+                    data["Low"]= row[2]
+                elif row[1] == 50:
+                    data["Med"]= row[2]
+                else:
+                    data['High'] = row[2]
                 
-        roomdata[lastroom] = data       
-        print(roomdata)
+        roomdata.append(data)       
+        print("roomdata: ", roomdata)
+        json_data.append(roomdata)
         con.commit()
-        return roomdata
+        json_data = json.dumps(roomdata)
+        print("json_data: ", json_data)
+        return json_data
+    except OperationalError:
+        con.close()
+        return "An error occurred while calculating percentage utilisation"
+    except Exception as e:
+        print(e)
 
 def emptyRooms():
     con = sql.connect("wicount.sqlite3")
