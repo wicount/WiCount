@@ -371,6 +371,54 @@ a:hover#menu-icon {
 	border-radius: 4px 4px 0 0;
 }
 
+#q1Div{
+	margin: auto;
+    width: 70%;
+    box-shadow: 3px 3px #ECD900;
+}
+#p1{
+	font-weight: 600;
+	text-align: center;
+}
+
+
+#q3Div{
+	margin: auto;
+    width: 70%;
+    box-shadow: 3px 3px #ECD900;
+}
+#p3{
+	font-weight: 600;
+	text-align: center;
+}
+#q4Div{
+	margin: auto;
+    width: 70%;
+    box-shadow: 3px 3px #ECD900;
+}
+#p4{
+	font-weight: 600;
+	text-align: center;
+}
+#q5Div{
+	margin: auto;
+    width: 70%;
+    box-shadow: 3px 3px #ECD900;
+}
+#p5{
+	font-weight: 600;
+	text-align: center;
+}
+#q6Div{
+	margin: auto;
+    width: 70%;
+    box-shadow: 3px 3px #ECD900;
+}
+#p6{
+	font-weight: 600;
+	text-align: center;
+}
+
 /*Responsive Styles*/
 @media screen and (max-width : 760px){
     body{

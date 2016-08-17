@@ -28,7 +28,7 @@
 
 <script type="text/javascript">
 //var queryString = "hello";
-    $(document).ready(function() {
+   $(document).ready(function() {
       var queryString = window.location.href.slice(window.location.href.indexOf('='));
         queryString = queryString.slice(1, queryString.length)
       $("#category > option").each(function() {
@@ -37,25 +37,31 @@
         }
       });
         if(queryString == "ques1"){
+        	  document.getElementById("p1").innerHTML = "Overall Report";
               question1();
           }
         else if(queryString == "ques2"){
+        	document.getElementById("p1").innerHTML = "Utilisation per room";
               question2();
           }
         
         else if(queryString == "ques3"){
+        	document.getElementById("p1").innerHTML = "List of Empty rooms";
               question3();
           }
         
         else if(queryString == "ques4"){
+        	document.getElementById("p1").innerHTML = "List of Full rooms";
               question4();
           }
         
         else if(queryString == "ques5"){
+        	document.getElementById("p1").innerHTML = "List of rooms";
               question5();
           }
         
         else if(queryString == "ques6"){
+        	document.getElementById("p1").innerHTML = "List of rooms";
               question6();
           }
     });
@@ -82,7 +88,7 @@
             }
 
             var table = new google.visualization.Table(document.getElementById('q1Div'));
-            table.draw(data, {showRowNumber: true, width: '70%', height: '100%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
         }
     }
     function question2() {
@@ -138,7 +144,7 @@
             	data.addRows([[x,a,b]])
             }
             var table = new google.visualization.Table(document.getElementById('q3Div'));
-            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
         }
     }
     
@@ -162,7 +168,7 @@
             	data.addRows([[x,a,b]])
             }
             var table = new google.visualization.Table(document.getElementById('q4Div'));
-            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
         }
     }
 
@@ -185,7 +191,7 @@
             }
 
             var table = new google.visualization.Table(document.getElementById('q5Div'));
-            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
         }
     }
     function question6() {
@@ -205,24 +211,29 @@
             }
 
             var table = new google.visualization.Table(document.getElementById('q6Div'));
-            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
         }
     }
 </script>
 
+<p id="p1"></p>
 <div id="q1Div"></div>
+<p id="p2"></p>
 <div id="q2Div">
-  <table class="columns">
+<!--   <table class="columns">
        <tr>
            <td><div id="B-002" style="border: 1px solid #ccc"></div></td>
            <td><div id="B-003" style="border: 1px solid #ccc"></div></td>
            <td><div id="B-004" style="border: 1px solid #ccc"></div></td>
         </tr>
-    </table>
+    </table> -->
 </div>
+<p id="p3"></p>
 <div id="q3Div"></div>
+<p id="p4"></p>
 <div id="q4Div"></div>
+<p id="p5"></p>
 <div id="q5Div"></div>
+<p id="p6"></p>
 <div id="q6Div"></div>
-
 {% endblock %}
