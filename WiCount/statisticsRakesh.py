@@ -2,50 +2,63 @@ import sqlite3 as sql
 from sqlite3 import OperationalError
 import json
 
-def frequencyReport():
+def overallReport():
     con = sql.connect("wicount.sqlite3")
     con.row_factory = sql.Row
     cur = con.cursor()
 
-    rows = cur.execute('''SELECT AVG(PredictedPercentage) as frequency, room FROM analytics WHERE PredictedPercentage > 0 GROUP BY room''').fetchall()
+    rows = cur.execute('''SELECT
+    (sum(case when PredictedPercentage > '0' then 1 else 0 end)*1.0/count(*)*1.0)*100.0 as frequency,
+    AVG(PredictedPercentage) as occupancy,
+    ((sum(case when PredictedPercentage > '0' then 1 else 0 end)*1.0/count(*)*1.0) * (AVG(PredictedPercentage)/100.0))*100.0 as Utilisation,
+    room 
+    FROM analytics  GROUP BY room''').fetchall()
     con.commit()
     con.close()
 
     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
 
-def occupancyReport():
+def percentage_utilisation():
+
     con = sql.connect("wicount.sqlite3")
-    con.row_factory = sql.Row
+    #con.row_factory = sql.Row # Enables column access by name: row['column_name']
+
     cur = con.cursor()
 
-    rows = cur.execute('''SELECT AVG(PredictedPercentage) as occupancy, room FROM analytics GROUP BY room''').fetchall()
-    con.commit()
-    con.close()
+    sqlstring = 'SELECT room_id, PredictedPercentage, count(*) as count, room \
+                From analytics \
+                GROUP BY room_id, PredictedPercentage'
 
-    return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
-
-def utilizationReport():
-    con = sql.connect("wicount.sqlite3")
-    con.row_factory = sql.Row
-    cur = con.cursor()
-
-    rows = cur.execute('''SELECT AVG(PredictedPercentage) as utilization, room FROM analytics GROUP BY room''').fetchall()
-    con.commit()
-    con.close()
-
-    return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
-
-# def roomOccupancy():
-#     con = sql.connect("wicount.sqlite3")
-#     con.row_factory = sql.Row
-#     cur = con.cursor()
-# 
-#     rows = cur.execute('''SELECT date, ROUND(predictions) as predictions FROM analytics GROUP BY date''').fetchall()
-# 
-#     con.commit()
-#     con.close()
-# 
-#     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
+    percentage = cur.execute(sqlstring).fetchall()
+    roomCounter = 1
+    json_data = []
+    roomdata = {}
+    data = {}
+    for row in percentage:
+        print(row)
+        if roomCounter == row[0]:
+            if row[1] == 0:
+                data["Low"]= row[2]
+            elif row[1] == 50:
+                data["Med"]= row[2]
+            else:
+                data['High'] = row[2]
+            lastroom = row[3]
+        else:
+            roomdata[lastroom] = data
+            roomCounter += 1
+            data = {}
+            if row[1] == 0:
+                data["Low"]= row[2]
+            elif row[1] == 50:
+                data["Med"]= row[2]
+            else:
+                data['High'] = row[2]   
+                
+        roomdata[lastroom] = data       
+        print(roomdata)
+        con.commit()
+        return roomdata
 
 def emptyRooms():
     con = sql.connect("wicount.sqlite3")
@@ -73,8 +86,8 @@ def fullRooms():
 
 
 
-# def greaterOccupancy(greater):
-#     return 0
+def greaterOccupancy(greater):
+    return 0
 # #     con = sql.connect("wicount.sqlite3")
 # #     con.row_factory = sql.Row
 # #     cur = con.cursor()
@@ -88,25 +101,23 @@ def fullRooms():
 # #     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
 #     
 # 
-# def lesserOccupancy(lesser):
-#     return 0
-# #     con = sql.connect("wicount.sqlite3")
-# #     con.row_factory = sql.Row
-# #     cur = con.cursor()
-# #  
-# #     rows = cur.execute("SELECT date, Room, ((PredictedPercentage/100)*Capacity) as occupancy FROM analytics WHERE ((PredictedPercentage/100)*Capacity) <" + str(lesser)).fetchall()
-# #  
-# #     con.commit()
-# #     con.close()
-# #  
-# #     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
+def lesserOccupancy(lesser):
+    return 0
+#     con = sql.connect("wicount.sqlite3")
+#     con.row_factory = sql.Row
+#     cur = con.cursor()
+#  
+#     rows = cur.execute("SELECT date, Room, ((PredictedPercentage/100)*Capacity) as occupancy FROM analytics WHERE ((PredictedPercentage/100)*Capacity) <" + str(lesser)).fetchall()
+#  
+#     con.commit()
+#     con.close()
+#  
+#     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
 
 
 if __name__ == '__main__':
     
-    print(frequencyReport())
-    print(occupancyReport())
-    print(utilizationReport())
+    print(percentage_utilisation())
     print(emptyRooms())
     print(fullRooms())
     

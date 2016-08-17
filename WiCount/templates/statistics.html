@@ -15,120 +15,193 @@
 <form class="formStyleStatistics" action="/statistics" method="GET">
     <select id="category" name="category" value="category">
     	<option value="">Select Question</option>
- 		<option value="ques1">Frequency Report</option>
-  		<option value="ques2">Occupancy Report</option>
-  		<option value="ques3">Utilization Report</option>
-  		<option value="ques4">Occupancy of individual rooms</option>
-  		<option value="ques5">List of empty rooms</option>
-  		<option value="ques6">List of full rooms</option>
+ 		<option value="ques1">Overall Report</option>
+  		<option value="ques2">Percentage Utilisation per room</option>
+  		<option value="ques3">List of empty rooms</option>
+  		<option value="ques4">List of full rooms</option>
+  		<option value="ques5">Occupancy greater than X</option>
+  		<option value="ques6">Occupancy lesser than X</option>
 	</select><br><br>
     <input type="submit" class="submitButton" value="Submit">
 </form>
 
 
 <script type="text/javascript">
-{}
-var frequency = {{question1|tojson}};
-frequency = JSON.parse(frequency);
+//var queryString = "hello";
+    $(document).ready(function() {
+      var queryString = window.location.href.slice(window.location.href.indexOf('='));
+        queryString = queryString.slice(1, queryString.length)
+      $("#category > option").each(function() {
+        if (this.value == queryString) {
+          this.selected = 'selected';
+        }
+      });
+        if(queryString == "ques1"){
+              question1();
+          }
+        else if(queryString == "ques2"){
+              question2();
+          }
+        
+        else if(queryString == "ques3"){
+              question3();
+          }
+        
+        else if(queryString == "ques4"){
+              question4();
+          }
+        
+        else if(queryString == "ques5"){
+              question5();
+          }
+        
+        else if(queryString == "ques6"){
+              question6();
+          }
+    });
+    google.charts.load('current', {'packages':['table','corechart']});
+    
+    function question1() {
+        var question1 = {{question1|tojson}};
+        question1 = JSON.parse(question1);
 
-google.charts.load('current', {'packages':['table']});
-google.charts.setOnLoadCallback(drawChart1);
-function drawChart1() {
-    var data = new google.visualization.DataTable();
-   	data.addColumn('string', 'Room');
-    data.addColumn('string', 'Frequency');
- 	var f,n;
-    for(var i = 0 ; i<frequency.length;i++){
-    	f = frequency[i].Room
-    	n = frequency[i].frequency
-    	data.addRows([[f,n]])
+        google.charts.setOnLoadCallback(drawChart1);
+        function drawChart1() {
+        	var data = new google.visualization.DataTable();
+           	data.addColumn('string', 'Room');
+            data.addColumn('number', 'Frequency');
+            data.addColumn('number', 'Occupancy');
+            data.addColumn('number', 'Utilization');
+         	var f,n,x,y;
+            for(var i = 0 ; i<question1.length;i++){
+            	f = question1[i].Room
+            	n = question1[i].frequency
+            	x = question1[i].occupancy
+            	y = question1[i].Utilisation
+            	data.addRows([[f,n,x,y]])
+            }
+
+            var table = new google.visualization.Table(document.getElementById('q1Div'));
+            table.draw(data, {showRowNumber: true, width: '70%', height: '100%'});
+        }
+    }
+    function question2() {
+        var occupancy = {{question2|tojson}};
+        occupancy = JSON.parse(occupancy);
+        
+        google.charts.setOnLoadCallback(drawChart2);
+        function drawChart2() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Room');
+            data.addColumn('string', 'Occupancy');
+            var f,n;
+            for(var i = 0 ; i<occupancy.length;i++){
+                f = occupancy[i].Room
+                n = occupancy[i].occupancy
+                data.addRows([[f,n]])
+            }
+
+            var table = new google.visualization.Table(document.getElementById('q2Div'));
+            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+        }
+    }
+    function question3() {
+        var question3 = {{question3|tojson}};
+        question3 = JSON.parse(question3);
+        google.charts.setOnLoadCallback(drawChart3);
+        function drawChart3() {
+            var data = new google.visualization.DataTable();
+           	data.addColumn('string', 'Room');
+            data.addColumn('string', 'Date');
+            data.addColumn('string', 'Time');
+
+         	var x,y,z,a,b;
+            for(var i = 0 ; i<question3.length;i++){
+            	x = question3[i].Room
+            	y = question3[i].date
+            	z = y.split(" ");
+            	a = z[0];
+            	b = z[1];
+            	data.addRows([[x,a,b]])
+            }
+            var table = new google.visualization.Table(document.getElementById('q3Div'));
+            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+        }
+    }
+    
+    function question4() {
+        var question4 = {{question4|tojson}};
+        question4 = JSON.parse(question4);
+        google.charts.setOnLoadCallback(drawChart3);
+        function drawChart3() {
+        	var data = new google.visualization.DataTable();
+        	data.addColumn('string', 'Room');
+        	data.addColumn('string', 'Date');
+        	data.addColumn('string', 'Time');
+
+         	var x,y,z,a,b;
+            for(var i = 0 ; i<question4.length;i++){
+            	x = question4[i].Room
+            	y = question4[i].date
+            	z = y.split(" ");
+            	a = z[0];
+            	b = z[1];
+            	data.addRows([[x,a,b]])
+            }
+            var table = new google.visualization.Table(document.getElementById('q4Div'));
+            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+        }
     }
 
-    var table = new google.visualization.Table(document.getElementById('freqDiv'));
-    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
-}
+    
+    
+    
+    function question5() {
+        var emptyRoom = {{question5|tojson}};
+        emptyRoom = JSON.parse(emptyRoom);
+        google.charts.setOnLoadCallback(drawChart5);
+        function drawChart5() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Room');
+            data.addColumn('string', 'Date');
+            var f,n;
+            for(var i = 0 ; i<emptyRoom.length;i++){
+                f = emptyRoom[i].Room
+                n = emptyRoom[i].date
+                data.addRows([[f,n]])
+            }
 
-var occupancy = {{question2|tojson}};
-occupancy = JSON.parse(occupancy);
-google.charts.setOnLoadCallback(drawChart2);
-function drawChart2() {
-    var data = new google.visualization.DataTable();
-   	data.addColumn('string', 'Room');
-    data.addColumn('string', 'Occupancy');
- 	var f,n;
-    for(var i = 0 ; i<occupancy.length;i++){
-    	f = occupancy[i].Room
-    	n = occupancy[i].occupancy
-    	data.addRows([[f,n]])
+            var table = new google.visualization.Table(document.getElementById('q5Div'));
+            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+        }
     }
+    function question6() {
+        var fullRoom = {{question6|tojson}};
+        fullRoom = JSON.parse(fullRoom);
+        google.charts.setOnLoadCallback(drawChart6);
 
-    var table = new google.visualization.Table(document.getElementById('occuDiv'));
-    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
-}
+        function drawChart6() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Room');
+            data.addColumn('string', 'Date');
+            var f,n;
+            for(var i = 0 ; i<fullRoom.length;i++){
+                f = fullRoom[i].Room
+                n = fullRoom[i].date
+                data.addRows([[f,n]])
+            }
 
-var utilization = {{question3|tojson}};
-utilization = JSON.parse(utilization);
-google.charts.setOnLoadCallback(drawChart3);
-function drawChart3() {
-    var data = new google.visualization.DataTable();
-   	data.addColumn('string', 'Room');
-    data.addColumn('string', 'Utilization');
- 	var f,n;
-    for(var i = 0 ; i<utilization.length;i++){
-    	f = utilization[i].Room
-    	n = utilization[i].utilization
-    	data.addRows([[f,n]])
+            var table = new google.visualization.Table(document.getElementById('q6Div'));
+            table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
+        }
     }
-
-    var table = new google.visualization.Table(document.getElementById('utilDiv'));
-    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
-}
-
-var emptyRoom = {{question5|tojson}};
-emptyRoom = JSON.parse(emptyRoom);
-google.charts.setOnLoadCallback(drawChart5);
-function drawChart5() {
-    var data = new google.visualization.DataTable();
-   	data.addColumn('string', 'Room');
-    data.addColumn('string', 'Date');
- 	var f,n;
-    for(var i = 0 ; i<emptyRoom.length;i++){
-    	f = emptyRoom[i].Room
-    	n = emptyRoom[i].date
-    	data.addRows([[f,n]])
-    }
-
-    var table = new google.visualization.Table(document.getElementById('emptyDiv'));
-    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
-}
-
-
-var fullRoom = {{question6|tojson}};
-fullRoom = JSON.parse(fullRoom);
-google.charts.setOnLoadCallback(drawChart6);
-
-function drawChart6() {
-    var data = new google.visualization.DataTable();
-   	data.addColumn('string', 'Room');
-    data.addColumn('string', 'Date');
- 	var f,n;
-    for(var i = 0 ; i<fullRoom.length;i++){
-    	f = fullRoom[i].Room
-    	n = fullRoom[i].date
-    	data.addRows([[f,n]])
-    }
-
-    var table = new google.visualization.Table(document.getElementById('fullDiv'));
-    table.draw(data, {showRowNumber: true, width: '25%', height: '25%'});
-}
- 
 </script>
 
-<div id="freqDiv"></div>
-<div id="occuDiv"></div>
-<div id="utilDiv"></div>
-<!-- <div id="roomDiv"></div> -->
-<div id="emptyDiv"></div>
-<div id="fullDiv"></div>
+<div id="q1Div"></div>
+<div id="q2Div"></div>
+<div id="q3Div"></div>
+<div id="q4Div"></div>
+<div id="q5Div"></div>
+<div id="q6Div"></div>
 
 {% endblock %}

@@ -430,7 +430,6 @@ def lecturerApp():
         json_data = DataRetrieval.getAllCampusDetails()
         return render_template('lecturerapp.html', CampusDetails = json_data, message = message)
     
-#Page to display statistics
 @app.route('/statistics',methods=['GET', 'POST'])
 #@login_required
 def statistics():
@@ -438,7 +437,6 @@ def statistics():
         return render_template('login.html')
     else:
         if request.method == 'GET':
-            print("dssd")
             question1 = ""
             question2 = ""
             question3 = ""
@@ -447,23 +445,23 @@ def statistics():
             question6 = ""
             abc = request.args.get('category')
             if (abc == 'ques1'):
-                question1 = statisticsRakesh.frequencyReport()
-                print(question1)
+                question1 = statisticsRakesh.overallReport()
             elif (abc == 'ques2'):
-                question2 = statisticsRakesh.occupancyReport()
-                print(question2)
+                question2 = statisticsRakesh.percentage_utilisation()
             elif (abc == 'ques3'):
-                question3 = statisticsRakesh.utilizationReport()
+                question3 = statisticsRakesh.emptyRooms()
+            elif (abc == 'ques4'):
+                question4 = statisticsRakesh.fullRooms()
             elif (abc == 'ques5'):
-                question5 = statisticsRakesh.emptyRooms()
+                question5 = statisticsRakesh.greaterOccupancy(abc)
             else:
-                question6 = statisticsRakesh.fullRooms()
+                question6 = statisticsRakesh.lesserOccupancy(abc)
                 print(question6)
         else:
             return 0
             
         return render_template('statistics.html',question1=question1,question2=question2,
-                               question3=question3,question5=question5,
+                               question3=question3,question4=question4,question5=question5,
                                question6=question6)
 if __name__ == '__main__':
     app.run(debug = True)
