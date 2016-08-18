@@ -96,37 +96,43 @@ def fullRooms():
 
 
 def greaterOccupancy(greater):
-    return 0
-# #     con = sql.connect("wicount.sqlite3")
-# #     con.row_factory = sql.Row
-# #     cur = con.cursor()
-# #     occupancy = "SELECT ((PredictedPercentage/100)*Capacity) as occupancy FROM analytics"
-# #     thisRoom = cur.execute(occupancy).fetchall()[0]
-# #     rows = cur.execute("SELECT date, Room, ((PredictedPercentage/100)*Capacity) as occupancy FROM analytics WHERE %d > ?" % thisRoom,(greater,)).fetchall()
-# #    
-# #     con.commit()
-# #     con.close()
-# #    
-# #     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
+
+    con = sql.connect("wicount.sqlite3")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    try:
+        great = int(greater)
+    except:
+        great = 0
+        
+    rows = cur.execute("SELECT date, Room, ((PredictedPercentage*Capacity)/100) as occupancy FROM analytics WHERE occupancy > ?",((great),) ).fetchall()
+  
+    con.commit()
+    con.close()
+  
+    return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
 #     
 # 
 def lesserOccupancy(lesser):
-    return 0
-#     con = sql.connect("wicount.sqlite3")
-#     con.row_factory = sql.Row
-#     cur = con.cursor()
-#  
-#     rows = cur.execute("SELECT date, Room, ((PredictedPercentage/100)*Capacity) as occupancy FROM analytics WHERE ((PredictedPercentage/100)*Capacity) <" + str(lesser)).fetchall()
-#  
-#     con.commit()
-#     con.close()
-#  
-#     return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
+
+    con = sql.connect("wicount.sqlite3")
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    try:
+        less = int(lesser)
+    except:
+        less = 0
+    rows = cur.execute("SELECT date, Room, ((PredictedPercentage*Capacity)/100) as occupancy FROM analytics WHERE occupancy < ?",((less),) ).fetchall()
+  
+    con.commit()
+    con.close()
+  
+    return json.dumps( [dict(ix) for ix in rows],sort_keys=False)
 
 
 if __name__ == '__main__':
     
-    print(percentage_utilisation())
+    print(greaterOccupancy(100))
     print(emptyRooms())
     print(fullRooms())
     

@@ -444,6 +444,7 @@ def statistics():
             question5 = ""
             question6 = ""
             abc = request.args.get('category')
+            xyz = request.args.get('number')
             if (abc == 'ques1'):
                 question1 = statisticsRakesh.overallReport()
             elif (abc == 'ques2'):
@@ -453,9 +454,9 @@ def statistics():
             elif (abc == 'ques4'):
                 question4 = statisticsRakesh.fullRooms()
             elif (abc == 'ques5'):
-                question5 = statisticsRakesh.greaterOccupancy(abc)
+                question5 = statisticsRakesh.greaterOccupancy(xyz)
             else:
-                question6 = statisticsRakesh.lesserOccupancy(abc)
+                question6 = statisticsRakesh.lesserOccupancy(xyz)
                 print(question6)
         else:
             return 0

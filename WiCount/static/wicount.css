@@ -376,6 +376,19 @@ a:hover#menu-icon {
     width: 70%;
     box-shadow: 3px 3px #ECD900;
 }
+
+#p2{
+	font-weight: 600;
+	text-align: center;
+}
+
+#q2Div{
+	margin: auto;
+    width: 100%;
+    box-shadow: 3px 3px #ECD900;
+}
+
+
 #p1{
 	font-weight: 600;
 	text-align: center;
@@ -419,6 +432,9 @@ a:hover#menu-icon {
 	text-align: center;
 }
 
+#number {
+	width:100px;
+}
 /*Responsive Styles*/
 @media screen and (max-width : 760px){
     body{

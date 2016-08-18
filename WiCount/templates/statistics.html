@@ -21,22 +21,30 @@
   		<option value="ques4">List of full rooms</option>
   		<option value="ques5">Occupancy greater than X</option>
   		<option value="ques6">Occupancy lesser than X</option>
-	</select><br><br>
+	</select>
+	<input type="number" id="number" name="number"><br><br>
     <input type="submit" class="submitButton" value="Submit">
 </form>
 
 
 <script type="text/javascript">
-//var queryString = "hello";
+
    $(document).ready(function() {
       var queryString = window.location.href.slice(window.location.href.indexOf('='));
-        queryString = queryString.slice(1, queryString.length)
+        queryString = queryString.slice(1, queryString.indexOf('&'))
+        queryS = queryString.slice(-1)
+        
       $("#category > option").each(function() {
         if (this.value == queryString) {
           this.selected = 'selected';
         }
       });
+
         if(queryString == "ques1"){
+        	$("#edit").click(function(event){
+        		   event.preventDefault();
+        		   $('.inputDisabled').prop("disabled", false); // Element(s) are now enabled.
+        		});
         	  document.getElementById("p1").innerHTML = "Overall Report";
               question1();
           }
@@ -56,11 +64,13 @@
           }
         
         else if(queryString == "ques5"){
+        	$("input").prop('disabled', false);
         	document.getElementById("p1").innerHTML = "List of rooms";
               question5();
           }
         
         else if(queryString == "ques6"){
+        	$("input").prop('disabled', false);
         	document.getElementById("p1").innerHTML = "List of rooms";
               question6();
           }
@@ -131,13 +141,13 @@
               ['High', occupancy[i].High]
             ]);
 
-            // Set options for Sarah's pie chart.
+        
             var options = {title:"Utilisation of " + room,
                           legend: 'bottom',
                           'width':290,
                           'height':300};
 
-            // Instantiate and draw the chart for Sarah's pizza.
+      
             var chart = new google.visualization.PieChart(document.getElementById(room));
             chart.draw(data, options);
         }
@@ -194,42 +204,56 @@
     
     
     function question5() {
-        var emptyRoom = {{question5|tojson}};
-        emptyRoom = JSON.parse(emptyRoom);
+        var question5 = {{question5|tojson}};
+        question5 = JSON.parse(question5);
         google.charts.setOnLoadCallback(drawChart5);
         function drawChart5() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Room');
-            data.addColumn('string', 'Date');
-            var f,n;
-            for(var i = 0 ; i<emptyRoom.length;i++){
-                f = emptyRoom[i].Room
-                n = emptyRoom[i].date
-                data.addRows([[f,n]])
-            }
 
-            var table = new google.visualization.Table(document.getElementById('q5Div'));
-            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+            	var data = new google.visualization.DataTable();
+            	data.addColumn('string', 'Room');
+            	data.addColumn('string', 'Date');
+            	data.addColumn('string', 'Time');
+            	data.addColumn('number', 'Occupancy');
+            	
+             	var x,y,z,a,b,m;
+                for(var i = 0 ; i<question5.length;i++){
+                	x = question5[i].Room
+                	y = question5[i].date
+                	m = question5[i].occupancy
+                	z = y.split(" ");
+                	a = z[0];
+                	b = z[1];
+                	data.addRows([[x,a,b,m]])
+                }
+                var table = new google.visualization.Table(document.getElementById('q5Div'));
+                table.draw(data, {showRowNumber: true, width: '100%', height: '100%'})
         }
     }
     function question6() {
-        var fullRoom = {{question6|tojson}};
-        fullRoom = JSON.parse(fullRoom);
+        var question6 = {{question6|tojson}};
+        question6 = JSON.parse(question6);
         google.charts.setOnLoadCallback(drawChart6);
 
         function drawChart6() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Room');
-            data.addColumn('string', 'Date');
-            var f,n;
-            for(var i = 0 ; i<fullRoom.length;i++){
-                f = fullRoom[i].Room
-                n = fullRoom[i].date
-                data.addRows([[f,n]])
-            }
+        	var data = new google.visualization.DataTable();
+        	data.addColumn('string', 'Room');
+        	data.addColumn('string', 'Date');
+        	data.addColumn('string', 'Time');
+        	data.addColumn('number', 'Occupancy');
+        	
 
+         	var x,y,z,a,b,m;
+            for(var i = 0 ; i<question6.length;i++){
+            	x = question6[i].Room
+            	y = question6[i].date
+            	m = question6[i].occupancy
+            	z = y.split(" ");
+            	a = z[0];
+            	b = z[1];
+            	data.addRows([[x,a,b,m]])
+            }
             var table = new google.visualization.Table(document.getElementById('q6Div'));
-            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+            table.draw(data, {showRowNumber: true, width: '100%', height: '100%'})
         }
     }
 </script>
@@ -237,15 +261,7 @@
 <p id="p1"></p>
 <div id="q1Div"></div>
 <p id="p2"></p>
-<div id="q2Div">
-<!--   <table class="columns">
-       <tr>
-           <td><div id="B-002" style="border: 1px solid #ccc"></div></td>
-           <td><div id="B-003" style="border: 1px solid #ccc"></div></td>
-           <td><div id="B-004" style="border: 1px solid #ccc"></div></td>
-        </tr>
-    </table> -->
-</div>
+<div id="q2Div"></div>
 <p id="p3"></p>
 <div id="q3Div"></div>
 <p id="p4"></p>
