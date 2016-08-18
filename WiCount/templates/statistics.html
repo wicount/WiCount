@@ -93,17 +93,35 @@
     }
     function question2() {
         var occupancy = {{question2|tojson}};
-    
-        console.log("1 ", occupancy);
         occupancy = JSON.parse(occupancy);
-        console.log("2 ", occupancy[0].name);
+        var counter = 0;    // variable to hold where we are in the loop for the drawOccupancyChart
+        var buildTableHtml = ""
+        
+        buildTableHtml = '<table class="columns"><tr>'
         for (var i=0; i<occupancy.length;i++){
-            console.log("3 ", occupancy[i]);
-            google.charts.setOnLoadCallback(drawOccupancyChart(i));
+            //show three charts per line
+            if (i % 3 == 0){ 
+                buildTableHtml += '<tr></tr>'
+            }
+            buildTableHtml += '<td><div id="' + occupancy[i].name +'" style="border: 1px solid #ccc"></div></td>'
+         
         }
-        function drawOccupancyChart(i) {
+        buildTableHtml += '</tr></table>'
+        document.getElementById("q2Div").innerHTML = buildTableHtml
+        console.log(buildTableHtml)
+        
+        //draw a chart for each room
+        for (var i=0; i<occupancy.length;i++){
+            
+            console.log("3 ", occupancy[i]);
+            google.charts.setOnLoadCallback(drawOccupancyChart);
+        }
+        function drawOccupancyChart() {
+            var i = counter;
+            console.log(occupancy[i].name);
+            console.log("counter: ", counter);
+            counter += 1
             var data = new google.visualization.DataTable();
-            console.log(occupancy[i].name)
             var room = occupancy[i].name;
             data.addColumn('string', 'Occupancy');
             data.addColumn('number', 'Count');
@@ -114,7 +132,7 @@
             ]);
 
             // Set options for Sarah's pie chart.
-            var options = {title:room,
+            var options = {title:"Utilisation of " + room,
                           legend: 'bottom',
                           'width':290,
                           'height':300};
