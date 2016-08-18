@@ -13,8 +13,7 @@ from CreateUserDb import *
 import sqlite3 as sql
 import DataRetrieval    
 import os
-import statisticspy
-import statisticsRakesh
+import statisticsQuery
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
@@ -446,17 +445,17 @@ def statistics():
             abc = request.args.get('category')
             xyz = request.args.get('number')
             if (abc == 'ques1'):
-                question1 = statisticsRakesh.overallReport()
+                question1 = statisticsQuery.overallReport()
             elif (abc == 'ques2'):
-                question2 = statisticsRakesh.percentage_utilisation()
+                question2 = statisticsQuery.percentage_utilisation()
             elif (abc == 'ques3'):
-                question3 = statisticsRakesh.emptyRooms()
+                question3 = statisticsQuery.emptyRooms()
             elif (abc == 'ques4'):
-                question4 = statisticsRakesh.fullRooms()
+                question4 = statisticsQuery.fullRooms()
             elif (abc == 'ques5'):
-                question5 = statisticsRakesh.greaterOccupancy(xyz)
+                question5 = statisticsQuery.greaterOccupancy(xyz)
             else:
-                question6 = statisticsRakesh.lesserOccupancy(xyz)
+                question6 = statisticsQuery.lesserOccupancy(xyz)
                 print(question6)
         else:
             return 0
