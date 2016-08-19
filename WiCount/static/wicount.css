@@ -10,9 +10,10 @@ body{
 /* General layout to display header for all web pages including menu and logo*/
 .header{
     margin: auto;
-    height: 60px;
+/*    height: 60px;*/
     border-bottom: solid 5px #16396f;
     padding: 10px 20px;
+    overflow: hidden;
 }
 
 /* To display the menu  */
@@ -97,6 +98,7 @@ nav ul ul{
 
 nav ul ul li{
     float: none;
+    width: 10em;  
 }
 
 nav ul ul a {
@@ -261,7 +263,7 @@ input[type=text],input[type=password],select {
     padding-bottom: 20px;
     border: solid 5px #16396f;
     border-radius: 20px;
-    box-shadow: 3px 3px #008AC9;
+    box-shadow: 3px 3px #ECD900;
 }
 .twoBoxes p{
     margin: 5px;
@@ -273,6 +275,7 @@ rect.bordered {
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
+
 .statsButtons{
     border: 2px solid #16396f;
     text-align: center;
@@ -435,6 +438,7 @@ a:hover#menu-icon {
 #number {
 	width:100px;
 }
+
 /*Responsive Styles*/
 @media screen and (max-width : 760px){
     body{
@@ -481,7 +485,9 @@ a:hover#menu-icon {
     #displayMap{
         display: none;
     }
-    
+    .twoBoxes{
+        width: 45%;
+    }
     .logoHeader{
         width: 70%;
         float: right;
