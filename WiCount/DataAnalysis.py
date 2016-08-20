@@ -173,6 +173,3 @@ def main():
     df = make_predictions(df, wicountlm)
 #   print(df)
     update_analytics_table(df)
-
-main()
-
