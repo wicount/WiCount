@@ -108,17 +108,31 @@
         var buildTableHtml = ""
         
         buildTableHtml = '<table class="columns"><tr>'
-        for (var i=0; i<occupancy.length;i++){
-            //show three charts per line
-            if (i % 3 == 0){ 
-                buildTableHtml += '<tr></tr>'
-            }
-            buildTableHtml += '<td><div id="' + occupancy[i].name +'" style="border: 1px solid #ccc"></div></td>'
+        
+        // media query for diagram
+        var mq = window.matchMedia( "(max-width : 760px)" );
+        if (mq.matches) {
+            for (var i=0; i<occupancy.length;i++){
+                buildTableHtml += '<tr></tr><td class="columnsTD"><div id="' + occupancy[i].name +'"></div></td>'
          
+            }
+            buildTableHtml += '</tr></table>'
+            document.getElementById("q2Div").innerHTML = buildTableHtml
+            console.log(buildTableHtml)
+
+        }else{
+            for (var i=0; i<occupancy.length;i++){
+                //show three charts per line
+                if ((i % 3 == 0) && ( i!=0)){ 
+                    buildTableHtml += '<tr></tr>'
+                }
+                buildTableHtml += '<td class="columnsTD"><div id="' + occupancy[i].name +'"></div></td>'
+
+            }
+            buildTableHtml += '</tr></table>'
+            document.getElementById("q2Div").innerHTML = buildTableHtml
+            console.log(buildTableHtml)
         }
-        buildTableHtml += '</tr></table>'
-        document.getElementById("q2Div").innerHTML = buildTableHtml
-        console.log(buildTableHtml)
         
         //draw a chart for each room
         for (var i=0; i<occupancy.length;i++){
@@ -144,8 +158,7 @@
         
             var options = {title:"Utilisation of " + room,
                           legend: 'bottom',
-                          'width':290,
-                          'height':300};
+                          'width':'28%'};
 
       
             var chart = new google.visualization.PieChart(document.getElementById(room));

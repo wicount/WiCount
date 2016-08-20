@@ -81,24 +81,32 @@
 //    |                   code for data visualisation             |
 //    -------------------------------------------------------------
 //    used code from http://bl.ocks.org/tjdecke/5558084 as a template
-    //var margin = { top: 50, right: 0, bottom: 100, left: 30 },
-    var margin = { top: 25, right: 0, bottom: 100, left: 40 },
-           width = 600 - margin.left - margin.right,
-            height = 380 - margin.top - margin.bottom,
-          gridSize = Math.floor(width / 8), //was 24
-         // legendElementWidth = gridSize*1.5,
-          buckets = 5,
-          colors = ["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"], // alternatively colorbrewer.YlGnBu[9]
-          days = ["Mon", "Tue", "Wed", "Thu", "Fri"],
-          times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
-          datasets = [week1, week2],
-          datasetName = ["Week 1", "Week 2"]
-          showlegend = 0;
-          colorLow = '#ffffd9', 
-          colorMed = '#41b6c4', 
-          colorHigh = '#081d58';
-         
-console.log("margin: ",margin)
+    
+        // media query for diagram
+         var mq = window.matchMedia( "(max-width : 760px)" );
+        if (mq.matches) {
+            var margin = { top: 50, right: 0, bottom: 100, left: 40 },
+                width = 330 - margin.left - margin.right,
+                height = 240 - margin.top - margin.bottom;
+            var displaytimes = ["9", "10", "11", "12", "13", "14", "15", "16", "17"];
+        }else{
+            var margin = { top: 25, right: 0, bottom: 100, left: 40 },
+                width = 600 - margin.left - margin.right,
+                height = 380 - margin.top - margin.bottom;
+            var displaytimes = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+            
+        }
+            var gridSize = Math.floor(width / 9), //was 24; 
+                buckets = 5,
+              colors = ["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+              days = ["Mon", "Tue", "Wed", "Thu", "Fri"],
+              times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+              datasets = [week1, week2],
+              datasetName = ["Week 1", "Week 2"]
+              showlegend = 0;
+              colorLow = '#ffffd9', 
+              colorMed = '#41b6c4', 
+              colorHigh = '#081d58'; 
     
       var svg = d3.select("#chart").append("svg")
           .attr("width", width + margin.left + margin.right)
@@ -127,14 +135,16 @@ console.log("dayLabels: ",dayLabels[0])
 
 // This sets up the lables for the times across the top
       var timeLabels = svg.selectAll(".timeLabel")
-          .data(times)
+          .data(displaytimes)
           .enter().append("text")
             .text(function(d) { return d; })
             .attr("x", function(d, i) { return i * gridSize; })
             .attr("y", 0)
             .style("text-anchor", "middle")
             .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+//            .attr("transform", function(d){return "rotate(-65)"})
             .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+    
 console.log("timeLabels: ",timeLabels)
            
         function heatmapChart(dataset) {

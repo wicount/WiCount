@@ -36,15 +36,13 @@
                     </ul>
                 </li>
             {% endif %}
-<!--
-            <li><a href="{{url_for('chgUser')}}">Password</a></li>
-            <li><a href="{{url_for('logout')}}">Logout</a></li>
--->
+            <li class="passwordMenu"><a href="{{url_for('chgUser')}}">Password</a></li>
+            <li class="LogoutMenu"><a href="{{url_for('logout')}}">Logout</a></li>
         </ul>
     </nav>
     <img class="logoHeader" src="{{url_for('static',filename='longlogo2.png')}}" alt="logo"/>
-        <a href="{{url_for('chgUser')}}">Password</a>
-        <a href="{{url_for('logout')}}">Logout</a>
+        <a href="{{url_for('chgUser')}}" class="passwordLink">Password</a>
+        <a href="{{url_for('logout')}}" class="LogoutLink">Logout</a>
 	</header>
   	{% block body %}{% endblock %}
     <footer>

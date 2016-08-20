@@ -140,7 +140,7 @@ footer{
     right: 0;
     text-align: center;
     margin: auto;
-    margin-top: 100px;
+    margin-top: 75px;
     width: 80%;
 	padding: 20px;
     padding-top: 0px;
@@ -149,6 +149,11 @@ footer{
     box-shadow: 3px 3px #ECD900;
 }
 
+.OccSurvey{
+    text-align: center;
+    margin: auto;
+    width: 50%;
+}
 /* To display logo on form data box */
 .logoForm{
     margin: auto;
@@ -158,7 +163,7 @@ footer{
 
 /* To align the form data */
 .dispalyLeft{
-    text-align: right;
+    text-align: left;
     vertical-align: middle;
     height: 50px;
 }
@@ -387,8 +392,18 @@ a:hover#menu-icon {
 
 #q2Div{
 	margin: auto;
+    width: 80%;
+/*    box-shadow: 3px 3px #ECD900;*/
+}
+
+.columns{
+    border: none;
     width: 100%;
-    box-shadow: 3px 3px #ECD900;
+}
+.columnsTD{
+    border-bottom: 3px solid #ECD900;
+    border-right: 3px solid #ECD900;
+    width: 28%;
 }
 
 
@@ -438,6 +453,20 @@ a:hover#menu-icon {
 #number {
 	width:100px;
 }
+/* display the menu depending on the layout*/
+.passwordMenu{
+    visibility: hidden;
+}
+.LogoutMenu{
+    visibility: hidden;
+}
+
+.passwordLink{
+    visibility: visible;
+}
+.LogoutLink{
+    visibility: visible;
+}
 
 /*Responsive Styles*/
 @media screen and (max-width : 760px){
@@ -477,11 +506,24 @@ a:hover#menu-icon {
 		padding: 10px 0;
 		margin: 0;
 	}
-
+    nav ul ul li{
+        width: 7em;  
+    }
 	nav:hover ul {
 		display: block;
 	}
-    
+    .passwordMenu{
+        visibility: visible;
+    }
+    .LogoutMenu{
+        visibility: visible;
+    }
+    .passwordLink{
+        visibility: hidden;
+    }
+    .LogoutLink{
+        visibility: hidden;
+    }
     #displayMap{
         display: none;
     }
@@ -499,7 +541,7 @@ a:hover#menu-icon {
         margin: auto;
         margin-top: 0px;
         width: 80%;
-        padding: 0px;
+        padding: 20px 0px;
     }
     
     /* To display form data in a box */
@@ -513,5 +555,61 @@ a:hover#menu-icon {
     footer {
         width: 100%;
     }
+    .logoForm{
+        margin-top: -65px;
+        width: 140px;   
+    }
 
+    .OccSurvey{
+        width: 100%;
+    }
+    select{
+        font-weight: 200;
+    }
+    #q1Div{
+        width: 90%;
+    }
+    #q2Div{
+        width: 90%;
+    }
+    #q3Div{
+        width: 90%;
+    }
+    #q4Div{
+        width: 90%;
+    }
+    #q5Div{
+        width: 90%;
+    }#q6Div{
+        width: 90%;
+    }
+    
+    .columns{
+        border: none;
+        width: 100%;
+    }
+    .columnsTD{
+        border-bottom: 3px solid #ECD900;
+        border-right: 3px solid #ECD900;
+        width: 100%;
+    }
+    .statsmargin{
+        width:95%;
+        padding: 3px;
+    }
+    
+    #chart{
+        width: 100%;
+    }
+    #legend{
+        width: 330px;
+    }
+    #legend p{
+        font-weight: 700;
+    }
+    .legendTable{
+        width: 280px;
+        margin-left: 20px;
+    }
+    
 }
