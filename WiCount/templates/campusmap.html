@@ -38,24 +38,6 @@ User will be able to select campus, building, room which will directly redirect 
 	</div>
 </div>
 
-<!-- Tooltip functionality - to display the tooltip when mouse is hovered around a map -->
-<script type="text/javascript">
-jQuery(document).ready(function (e) {
-    jQuery('area').qtip({
-        style: {
-            classes: 'qtip-dark'
-        },
-        events: {
-            show: function(event, api) {
-                api.set({
-                    'content.text': api.elements.target.attr('title')
-                });
-            }
-        }
-    });
-});
-</script>
-
 <!-- Javascript functions to redirect to appropriate pages -->
 <script type="text/javascript">
     function CampusDDL() {
