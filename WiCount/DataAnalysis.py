@@ -10,18 +10,12 @@ import BuildDataframes
 
 
 def read_data():
-    # Read csv file into a dataframe.
-    # Ideally this should just import the dataframe from BuildDataframes.py but issue with PATH file.
     df = []
     try:
-#         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
         df = BuildDataframes.CreateTrainingSet()
-        # index_col parameter removes the 'unnamed column' which is added when reading from a csv
         df['GroundTruth'] = df.Capacity * df.SurveyPercentage
         df = df[['room_id', 'Count', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate', 'Date']]
         df['SurveyPercentage'] = df['SurveyPercentage'].apply(lambda x: x*100)
-    except OSError:
-        print("Filename not found!")
     except Exception as e: print(e)
     return df
 
@@ -57,7 +51,7 @@ def prepare_data(df):
         # make max list
         average = float(format(np.average(temp), '.2f'))
         # make average list
-        #formatting to 2 decimal places produces string so need to cast as float
+        # formatting to 2 decimal places produces string so need to cast as float
         median = np.median(temp)
         # make median list
         mode = stats.mode(temp[0])
@@ -94,7 +88,7 @@ def prepare_data(df):
 
 
 def train_model(trainingdf):
-    wicountlm = sm.ols(formula="GroundTruth ~  MedianCount", data=trainingdf).fit()
+    wicountlm = sm.ols(formula="GroundTruth ~  MedianCount + AverageCount + Capacity", data=trainingdf).fit()
     return wicountlm
 
 
@@ -142,13 +136,9 @@ def make_predictions(df, wicountlm):
 
 def get_predicion_data():
 
-    # toDo: this needs the name of the file upload with count values. Currently using original dataset minus
-    # surveypercentage for testing
     try:
-#         df = pd.read_csv('full_dataset_hour.csv', index_col=0)
         df = BuildDataframes.CreatePredictionSet()
         df['GroundTruth'] = df.Capacity * df.SurveyPercentage
-        #df = df.drop('SurveyPercentage', axis=1)
     except Exception as e:
         print(e)
     return df
@@ -158,14 +148,11 @@ def update_analytics_table(df):
     try:
         con = db.get_connection()
         c=con.cursor()
-#         con = lite.connect('wicount.sqlite3')
         df = df[['room_id', 'Date', 'Day', 'GroundTruth', 'SurveyPercentage', 'Capacity', 'Room', 'LogDate',
                  'MaxCount' , 'AverageCount', 'MedianCount', 'ModeCount', 'Predictions', 'PredictedPercentage']]
         numpyMatrix = df.as_matrix()
         for row in numpyMatrix:
             c.execute('INSERT OR REPLACE INTO analytics VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', row)
-#         df.to_sql(con=con, name='analytics', if_exists='replace', flavor='sqlite', index=False)
-        # Set index to False because it's not a column but will be treated as one.
         con.commit()
         print("Success! Table created or updated.")
     except Exception as e:
@@ -182,10 +169,10 @@ def main():
 
     df = get_predicion_data()
     df = prepare_data(df)
-    # toDo: get dataframe from the count upload. Needs same columns to be present as the training data,
-    # can fix by dropping SurveyData etc.
 
     df = make_predictions(df, wicountlm)
 #   print(df)
     update_analytics_table(df)
+
+main()
 
