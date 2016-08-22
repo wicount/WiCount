@@ -10,10 +10,9 @@ body{
 /* General layout to display header for all web pages including menu and logo*/
 .header{
     margin: auto;
-/*    height: 60px;*/
+    height: 60px;
     border-bottom: solid 5px #16396f;
     padding: 10px 20px;
-    overflow: hidden;
 }
 
 /* To display the menu  */
